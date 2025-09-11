@@ -12,7 +12,7 @@ import AuthLayout from '@/layouts/auth-layout';
 
 export default function Register() {
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+        <AuthLayout title="Créer un compte" description="Entrez vos coordonnées ci-dessous pour créer votre compte">
             <Head title="Register" />
             <Form
                 {...RegisteredUserController.store.form()}
@@ -54,7 +54,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Phone</Label>
+                                <Label htmlFor="name">Téléphone</Label>
                                 <Input
                                     id="phone"
                                     type="text"
@@ -63,7 +63,7 @@ export default function Register() {
                                     tabIndex={2}
                                     autoComplete="phone"
                                     name="phone"
-                                    placeholder="phone"
+                                    placeholder="784651 ...."
                                 />
                                 <InputError message={errors.phone} className="mt-2" />
                             </div>
@@ -125,7 +125,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">Mot de pass</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -133,13 +133,13 @@ export default function Register() {
                                     tabIndex={3}
                                     autoComplete="new-password"
                                     name="password"
-                                    placeholder="Password"
+                                    placeholder="mot de passe"
                                 />
                                 <InputError message={errors.password} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
+                                <Label htmlFor="password_confirmation">Confirmer le mot de passe</Label>
                                 <Input
                                     id="password_confirmation"
                                     type="password"
@@ -147,21 +147,21 @@ export default function Register() {
                                     tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
-                                    placeholder="Confirm password"
+                                    placeholder="Confirmer le mot de passe"
                                 />
                                 <InputError message={errors.password_confirmation} />
                             </div>
 
                             <Button type="submit" className="mt-2 w-full" tabIndex={5}>
                                 {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                Create account
+                                Créer un compte
                             </Button>
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
+                            Vous avez déjà un compte?{' '}
                             <TextLink href={login()} tabIndex={6}>
-                                Log in
+                                Se connecter
                             </TextLink>
                         </div>
                     </>
