@@ -5,12 +5,12 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, PackageSearch } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, PackageSearch ,UsersRound  ,Car ,Cog ,FileSliders   } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Tableau de bord',
         href: dashboard(),
         icon: LayoutGrid,
     },
@@ -18,6 +18,26 @@ const mainNavItems: NavItem[] = [
         title: 'Products',
         href: '/products',
         icon: PackageSearch,
+    },
+    {
+        title: 'Conducteurs',
+        href: '/conduicteurs',
+        icon: UsersRound ,
+    },
+    {
+        title: 'Vehicules',
+        href: '/vehicles',
+        icon: Car,
+    },
+    {
+        title: 'Maintenance et réparations',
+        href: '/maintenance',
+        icon: Cog,
+    },
+    {
+        title: 'Gestion administrative',
+        href: '/maintenance',
+        icon: FileSliders  ,
     },
 ];
 
@@ -50,7 +70,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className='justify-center'>
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
