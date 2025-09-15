@@ -46,7 +46,7 @@ export default function Register() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label htmlFor="name">Prenom</Label>
+                                            <Label htmlFor="Prenom">Prenom</Label>
                                             <Input
                                                 id="prenom"
                                                 type="text"
@@ -61,7 +61,7 @@ export default function Register() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label htmlFor="name">Téléphone</Label>
+                                            <Label htmlFor="Téléphone">Téléphone</Label>
                                             <Input
                                                 id="phone"
                                                 type="text"
@@ -76,7 +76,7 @@ export default function Register() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label htmlFor="email">Statut</Label>
+                                            <Label htmlFor="Statut">Statut</Label>
                                             <Input
                                                 id="statut"
                                                 type="statut"
@@ -90,7 +90,7 @@ export default function Register() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label htmlFor="email">Fonction</Label>
+                                            <Label htmlFor="Fonction">Fonction</Label>
                                             <Input
                                                 id="fonction"
                                                 type="fonction"
@@ -104,8 +104,8 @@ export default function Register() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label htmlFor="email">Rôle</Label>
-                                            <Input id="role" type="role" required tabIndex={2} autoComplete="role" name="role" placeholder="Admin" />
+                                            {/* <Label htmlFor="Rôle">Rôle</Label> */}
+                                            <Input type="hidden" id="role" required tabIndex={2} autoComplete="role" value={"utilisateur"} name="role"  placeholder="Admin" />
                                             <InputError message={errors.role} />
                                         </div>
 

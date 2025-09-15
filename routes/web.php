@@ -8,10 +8,19 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+// Route::middleware(['auth', 'verified', 'role:utilisateur'])->group(function () {
+//     Route::get('/dashboard', fn() => Inertia::render('dashboard'))
+//         ->name('dashboard');
+// });
+
+Route::middleware(['auth', 'verified', 'role:direction'])->group(function () {
+    Route::get('/dashboard', fn() => Inertia::render('dashboard'))
+        ->name('dashboard');
+});
+
+
+// Routes produits accessibles par admin uniquement
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/products', [ProductController::class, 'index'])
         ->name('products.index');
     Route::get('/products/create', [ProductController::class, 'create'])
