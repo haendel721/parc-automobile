@@ -80,7 +80,6 @@ export default function Index() {
                                     <TableCell className="text-center">
                                         <div className='flex gap-2 justify-center'>
                                             <Link href={route('products.edit',product.id)}><Button className='bg-slate-600 hover:bg-slate-700'><SquarePen/></Button></Link>
-                                            
                                             <Button disabled={precessing} onClick={()=>handleDelete(product.id , product.name)} className='bg-red-500 hover:bg-red-700'><Trash2/></Button>
                                         </div>
                                     </TableCell>

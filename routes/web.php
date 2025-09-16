@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\VehiculeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,9 +14,22 @@ Route::get('/', function () {
 //         ->name('dashboard');
 // });
 
-Route::middleware(['auth', 'verified', 'role:direction'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin,direction'])->group(function () {
     Route::get('/dashboard', fn() => Inertia::render('dashboard'))
         ->name('dashboard');
+    // Crud vehicule
+    Route::get('/vehicules',[VehiculeController::class,'index'])
+        ->name('vehicules.index');
+    Route::get('/vehicules/create', [VehiculeController::class, 'create'])
+        ->name('vehicules.create');
+    Route::post('/vehicules', [VehiculeController::class, 'store'])
+        ->name('vehicules.store');
+    Route::get('/vehicules/{vehicule}/edit', [VehiculeController::class, 'edit'])
+        ->name('vehicules.edit');
+    Route::put('/vehicules/{vehicule}', [VehiculeController::class, 'update'])
+        ->name('vehicules.update');
+    Route::delete('/vehicules/{vehicule}', [VehiculeController::class, 'destroy'])
+        ->name('vehicules.destroy');
 });
 
 

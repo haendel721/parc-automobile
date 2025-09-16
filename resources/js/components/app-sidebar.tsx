@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Vehicules',
-        href: '/vehicles',
+        href: '/vehicules',
         icon: Car,
     },
     {
@@ -36,7 +36,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Gestion administrative',
-        href: '/maintenance',
+        href: '/gestionAdmin',
         icon: FileSliders  ,
     },
 ];
