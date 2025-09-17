@@ -77,7 +77,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                     <Label htmlFor="phone">Phone</Label>
 
                                     <Input
-                                        id="prenom"
+                                        id="phone"
                                         className="mt-1 block w-full"
                                         defaultValue={auth.user.phone}
                                         name="phone"

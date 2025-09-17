@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehiculeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,8 +34,10 @@ Route::middleware(['auth', 'verified', 'role:admin,direction'])->group(function 
 });
 
 
-// Routes produits accessibles par admin uniquement
+// Routes accessibles par admin uniquement
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+   
+    // Routes pour les produits
     Route::get('/products', [ProductController::class, 'index'])
         ->name('products.index');
     Route::get('/products/create', [ProductController::class, 'create'])
@@ -47,6 +50,20 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
         ->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])
         ->name('products.destroy');
+
+    // Routes pour les utilisateurs
+    Route::get('/utilisateurs', [UserController::class, 'index'])
+        ->name('utilisateurs.index');
+    Route::get('/utilisateurs/create', [UserController::class, 'create'])
+        ->name('utilisateurs.create');
+    // Route::post('/utilisateurs', [UserController::class, 'store'])
+    //     ->name('utilisateurs.store');
+    Route::get('/utilisateurs/{user}/edit', [UserController::class, 'edit'])
+        ->name('utilisateurs.edit');
+    Route::put('/utilisateurs/{user}', [UserController::class, 'update'])
+        ->name('utilisateurs.update');
+    // Route::delete('/utilisateurs/{user}', [UserController::class, 'destroy'])
+    //     ->name('utilisateurs.destroy');
 });
 
 require __DIR__ . '/settings.php';

@@ -60,7 +60,6 @@ export default function Index() {
             {products.length > 0 && (
                 <div className="m-4">
                     <Table>
-                        <TableCaption>A list of your recent invoices.</TableCaption>
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[100px]">Id</TableHead>
@@ -72,7 +71,7 @@ export default function Index() {
                         </TableHeader>
                         <TableBody>
                             {products.map((product) => (
-                                <TableRow>
+                                <TableRow key={product.id}>
                                     <TableCell className="font-medium">{product.id}</TableCell>
                                     <TableCell>{product.name}</TableCell>
                                     <TableCell>{product.price}</TableCell>

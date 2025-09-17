@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
@@ -36,7 +36,7 @@ interface PageProps {
 
 export default function Index() {
     const { vehicules, flash } = usePage().props as PageProps;
-    const { precessing, delete: destroy } = useForm();
+    const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {
             destroy(route('vehicules.destroy', id));
@@ -64,7 +64,7 @@ export default function Index() {
             {vehicules.length > 0 && (
                 <div className="m-4">
                     <Table>
-                        <TableCaption>A list of your recent invoices.</TableCaption>
+                        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[100px]">Id</TableHead>
@@ -82,7 +82,7 @@ export default function Index() {
                         </TableHeader>
                         <TableBody>
                             {vehicules.map((vehicule) => (
-                                <TableRow>
+                                <TableRow key={vehicule.id}>
                                     <TableCell className="font-medium">{vehicule.id}</TableCell>
                                     <TableCell>{vehicule.immatriculation}</TableCell>
                                     <TableCell>{vehicule.marque_id}</TableCell>
@@ -102,7 +102,7 @@ export default function Index() {
                                                 </Button>
                                             </Link>
                                             <Button
-                                                disabled={precessing}
+                                                disabled={processing}
                                                 onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
                                                 className="bg-red-500 hover:bg-red-700"
                                             >

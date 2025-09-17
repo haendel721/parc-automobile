@@ -20,8 +20,8 @@ const mainNavItems: NavItem[] = [
         icon: PackageSearch,
     },
     {
-        title: 'Conducteurs',
-        href: '/conduicteurs',
+        title: 'Utilisateurs',
+        href: '/utilisateurs',
         icon: UsersRound ,
     },
     {
