@@ -15,7 +15,7 @@ Route::get('/', function () {
 //         ->name('dashboard');
 // });
 
-Route::middleware(['auth', 'verified', 'role:admin,direction'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin,utilisateur'])->group(function () {
     Route::get('/dashboard', fn() => Inertia::render('dashboard'))
         ->name('dashboard');
     // Crud vehicule

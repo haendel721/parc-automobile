@@ -16,6 +16,7 @@ class Vehicule extends Model
         'numSerie',
         'anneeFabrication',
         'dateAcquisition',
+        'user_id'
     ];
     // Un véhicule appartient à une seule marque
     public function marque()
@@ -33,4 +34,9 @@ class Vehicule extends Model
     {
         return $this->belongsTo(TypeVehicule::class);
     }
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 }

@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Carburant;
 use App\Models\TypeVehicule;
 use App\Models\Marque;
+use Illuminate\Support\Facades\Auth;
 
 class VehiculeController extends Controller
 {
@@ -17,7 +18,19 @@ class VehiculeController extends Controller
     public function index()
     {
         $vehicules = Vehicule::all();
-        return Inertia::render('Vehicules/Index', ['vehicules' => $vehicules]);
+        if (Auth::user()->role === 'admin') {
+            $vehicules = Vehicule::all();
+        } else {
+            $vehicules = Auth::user()->vehicules;
+        }
+
+        // dd($roleUser);
+        return Inertia::render('Vehicules/Index', [
+            'vehicules' => $vehicules,
+            'roleUser' => [
+                'role' => Auth::user()->role, // récupère le rôle de l'utilisateur connecté
+            ],
+        ]);
     }
 
     /**
@@ -40,7 +53,7 @@ class VehiculeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'immatriculation' => 'required|string|max:255|unique:vehicules,immatriculation',
             'marque_Id' => 'required|exists:marques,id',
             'model' => 'required|string|max:255',
@@ -51,8 +64,13 @@ class VehiculeController extends Controller
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
         ]);
-        Vehicule::create($request->all());
-        return redirect()->route('vehicules.index')->with('message', 'vehicule créer avec succès.');
+
+        // Ajouter l'utilisateur connecté automatiquement
+        $data['user_id'] = Auth::id();
+        // dd($data);
+
+        Vehicule::create($data);
+        return redirect()->route('vehicules.index')->with('message', 'vehicule ajouter avec succès.');
     }
 
     /**

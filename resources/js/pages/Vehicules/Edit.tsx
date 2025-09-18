@@ -88,9 +88,8 @@ export default function Edit({ Vehicule, typesVehicules, carburants , marques }:
                             onChange={(e) => setData('marque_id', Number(e.target.value))}
                             className="w-full rounded border border-gray-300 px-3 py-2"
                         >
-                            <option value="">--Choisir un marque--</option>
                             {marques.map((m) => (
-                                <option key={m.id} value={m.id}>
+                                <option key={m.id} value={m.id} className='bg-white text-black'>
                                     {m.nom}
                                 </option>
                             ))}
@@ -116,9 +115,8 @@ export default function Edit({ Vehicule, typesVehicules, carburants , marques }:
                             onChange={(e) => setData('typeVehicule_id', Number(e.target.value))}
                             className="w-full rounded border border-gray-300 px-3 py-2"
                         >
-                            <option value="">--Choisir un type de véhicule--</option>
                             {typesVehicules.map((type) => (
-                                <option key={type.id} value={type.id}>
+                                <option key={type.id} value={type.id} className='bg-white text-black'>
                                     {type.nom}
                                 </option>
                             ))}
@@ -144,9 +142,8 @@ export default function Edit({ Vehicule, typesVehicules, carburants , marques }:
                             onChange={(e) => setData('carburant_id', Number(e.target.value))}
                             className="w-full rounded border border-gray-300 px-3 py-2"
                         >
-                            <option value="">--Choisir un type de carburant--</option>
                             {carburants.map((c) => (
-                                <option key={c.id} value={c.id}>
+                                <option key={c.id} value={c.id} className='bg-white text-black'>
                                     {c.type}
                                 </option>
                             ))}

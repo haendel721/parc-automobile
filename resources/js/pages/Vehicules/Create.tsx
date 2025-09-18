@@ -75,7 +75,7 @@ export default function Index() {
                         >
                             <option value="">--Choisir une marque de voiture--</option>
                             {marques.map((type: any) => (
-                                <option key={type.id} value={type.id}>
+                                <option key={type.id} value={type.id} className='bg-white text-black'>
                                     {type.nom}
                                 </option>
                             ))}
@@ -99,7 +99,7 @@ export default function Index() {
                         >
                             <option value="">--Choisir un type de vehicule--</option>
                             {typesVehicules.map((type: any) => (
-                                <option key={type.id} value={type.id}>
+                                <option key={type.id} value={type.id} className='bg-white text-black'>
                                     {type.nom}
                                 </option>
                             ))}
@@ -123,7 +123,7 @@ export default function Index() {
                         >
                             <option value="">--Choisir un type de carburant--</option>
                             {carburants.map((c: any) => (
-                                <option key={c.id} value={c.id}>
+                                <option key={c.id} value={c.id} className='bg-white text-black'>
                                     {c.type}
                                 </option>
                             ))}

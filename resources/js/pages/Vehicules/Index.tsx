@@ -27,95 +27,110 @@ interface Vehicules {
     dateAcquisition: string;
 }
 
+interface roleUser {   
+    role: string;
+}
+
 interface PageProps {
     flash: {
         message?: string;
     };
     vehicules: Vehicules[];
+    roleUser: roleUser;
 }
 
 export default function Index() {
-    const { vehicules, flash } = usePage().props as PageProps;
+    const { roleUser, vehicules, flash } = usePage().props as PageProps;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {
             destroy(route('vehicules.destroy', id));
         }
     };
+    console.log(roleUser.role);
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Vehicules" />
-            <div className="m-4">
-                <Link href={route('vehicules.create')}>
-                    <Button>Créer un nouveau vehicule</Button>
-                </Link>
-            </div>
-            <div className="m-4">
-                <div>
-                    {flash.message && (
-                        <Alert>
-                            <BellDot />
-                            <AlertTitle>Notification !</AlertTitle>
-                            <AlertDescription>{flash.message}</AlertDescription>
-                        </Alert>
-                    )}
-                </div>
-            </div>
-            {vehicules.length > 0 && (
+        <>
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Vehicules" />
+                
+                
                 <div className="m-4">
-                    <Table>
-                        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[100px]">Id</TableHead>
-                                <TableHead>Immatriculation</TableHead>
-                                <TableHead>Marque_Id</TableHead>
-                                <TableHead>Model</TableHead>
-                                <TableHead>TypeVehicule_id</TableHead>
-                                <TableHead>Couleur</TableHead>
-                                <TableHead>Carbrant_Id</TableHead>
-                                <TableHead>Numéro de série</TableHead>
-                                <TableHead>Année de fabrication</TableHead>
-                                <TableHead>Date d'acquisition</TableHead>
-                                <TableHead className="text-center">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {vehicules.map((vehicule) => (
-                                <TableRow key={vehicule.id}>
-                                    <TableCell className="font-medium">{vehicule.id}</TableCell>
-                                    <TableCell>{vehicule.immatriculation}</TableCell>
-                                    <TableCell>{vehicule.marque_id}</TableCell>
-                                    <TableCell>{vehicule.model}</TableCell>
-                                    <TableCell>{vehicule.typeVehicule_id}</TableCell>
-                                    <TableCell>{vehicule.couleur}</TableCell>
-                                    <TableCell>{vehicule.carburant_id}</TableCell>
-                                    <TableCell>{vehicule.numSerie}</TableCell>
-                                    <TableCell>{vehicule.anneeFabrication}</TableCell>
-                                    <TableCell>{vehicule.dateAcquisition}</TableCell>
-
-                                    <TableCell className="text-center">
-                                        <div className="flex justify-center gap-2">
-                                            <Link href={route('vehicules.edit', vehicule.id)}>
-                                                <Button className="bg-slate-600 hover:bg-slate-700">
-                                                    <SquarePen />
-                                                </Button>
-                                            </Link>
-                                            <Button
-                                                disabled={processing}
-                                                onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
-                                                className="bg-red-500 hover:bg-red-700"
-                                            >
-                                                <Trash2 />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    <Link href={route('vehicules.create')}>
+                        <Button>Créer un nouveau vehicule</Button>
+                    </Link>
                 </div>
-            )}
-        </AppLayout>
+                {roleUser.role === 'admin' ? 
+                <>
+                <div className="m-4">
+                    <div>
+                        {flash.message && (
+                            <Alert>
+                                <BellDot />
+                                <AlertTitle>Notification !</AlertTitle>
+                                <AlertDescription>{flash.message}</AlertDescription>
+                            </Alert>
+                        )}
+                    </div>
+                </div>
+                {vehicules.length > 0 && (
+                    <div className="m-4">
+                        <Table>
+                            {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[100px]">Id</TableHead>
+                                    <TableHead>Immatriculation</TableHead>
+                                    <TableHead>Marque_Id</TableHead>
+                                    <TableHead>Model</TableHead>
+                                    <TableHead>TypeVehicule_id</TableHead>
+                                    <TableHead>Couleur</TableHead>
+                                    <TableHead>Carbrant_Id</TableHead>
+                                    <TableHead>Numéro de série</TableHead>
+                                    <TableHead>Année de fabrication</TableHead>
+                                    <TableHead>Date d'acquisition</TableHead>
+                                    <TableHead className="text-center">Action</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {vehicules.map((vehicule) => (
+                                    <TableRow key={vehicule.id}>
+                                        <TableCell className="font-medium">{vehicule.id}</TableCell>
+                                        <TableCell>{vehicule.immatriculation}</TableCell>
+                                        <TableCell>{vehicule.marque_id}</TableCell>
+                                        <TableCell>{vehicule.model}</TableCell>
+                                        <TableCell>{vehicule.typeVehicule_id}</TableCell>
+                                        <TableCell>{vehicule.couleur}</TableCell>
+                                        <TableCell>{vehicule.carburant_id}</TableCell>
+                                        <TableCell>{vehicule.numSerie}</TableCell>
+                                        <TableCell>{vehicule.anneeFabrication}</TableCell>
+                                        <TableCell>{vehicule.dateAcquisition}</TableCell>
+
+                                        <TableCell className="text-center">
+                                            <div className="flex justify-center gap-2">
+                                                <Link href={route('vehicules.edit', vehicule.id)}>
+                                                    <Button className="bg-slate-600 hover:bg-slate-700">
+                                                        <SquarePen />
+                                                    </Button>
+                                                </Link>
+                                                <Button
+                                                    disabled={processing}
+                                                    onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
+                                                    className="bg-red-500 hover:bg-red-700"
+                                                >
+                                                    <Trash2 />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                )}
+                </>
+                : <h1>Utilisateur</h1>}
+                
+            </AppLayout>
+        </>
     );
 }

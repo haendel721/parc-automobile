@@ -22,7 +22,7 @@ interface Props {
     user: user;
 }
 
-export default function Edit({ user}: Props) {
+export default function Edit({ user }: Props) {
     const { data, setData, put, processing, errors } = useForm({
         id: user.id,
         name: user.name,
@@ -40,11 +40,7 @@ export default function Edit({ user}: Props) {
     };
 
     return (
-        <AppLayout
-            breadcrumbs={[
-                { title: 'Modifier un véhicule', href: `/utilisateurs/${user.id}/edit` },
-            ]}
-        >
+        <AppLayout breadcrumbs={[{ title: 'Modifier un véhicule', href: `/utilisateurs/${user.id}/edit` }]}>
             <Head title="Mise à jour d'un véhicule" />
             <div className="w-8/12 p-4">
                 <form onSubmit={handleUpdate} className="flex flex-col space-y-4">
@@ -65,30 +61,17 @@ export default function Edit({ user}: Props) {
 
                     <div className="gap-1.5">
                         <Label>Id</Label>
-                        <Input
-                            disabled={true}
-                            type="text"
-                            value={data.id}
-                            onChange={(e) => setData('id', Number(e.target.value))}
-                        />
+                        <Input disabled={true} type="text" value={data.id} onChange={(e) => setData('id', Number(e.target.value))} />
                     </div>
 
                     <div className="gap-1.5">
                         <Label>Nom</Label>
-                        <Input 
-                            type='text'
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                        />
+                        <Input type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} />
                     </div>
 
                     <div className="gap-1.5">
                         <Label>Prénom</Label>
-                        <Input
-                            type="text"
-                            value={data.prenom}
-                            onChange={(e) => setData('prenom', e.target.value)}
-                        />
+                        <Input type="text" value={data.prenom} onChange={(e) => setData('prenom', e.target.value)} />
                     </div>
 
                     <div className="gap-1.5">
@@ -104,11 +87,7 @@ export default function Edit({ user}: Props) {
 
                     <div className="gap-1.5">
                         <Label>Statut</Label>
-                        <Input
-                            type="text"
-                            value={data.statut}
-                            onChange={(e) => setData('statut', e.target.value)}
-                        />
+                        <Input type="text" value={data.statut} onChange={(e) => setData('statut', e.target.value)} />
                     </div>
 
                     <div className="gap-1.5">
@@ -124,23 +103,30 @@ export default function Edit({ user}: Props) {
 
                     <div className="gap-1.5">
                         <Label>E-Mail</Label>
-                        <Input
-                            type="text"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                        />
+                        <Input type="text" value={data.email} onChange={(e) => setData('email', e.target.value)} />
                     </div>
 
                     <div className="gap-1.5">
                         <Label>Rôle</Label>
-                        <Input
-                            type="text"
-                            value={data.role}
-                            onChange={(e) =>
-                                setData('role', e.target.value)
-                            }
-                        />
+                        <Input type="text" value={data.role} onChange={(e) => setData('role', e.target.value)} />
                     </div>
+
+                    <select
+                        id="role"
+                        value={data.role}
+                        onChange={(e) => setData('role', e.target.value)}
+                        className="w-full  rounded border border-gray-300 bg-black-500 px-3 py-2 text-white"
+                    >
+                        <option value="admin" className="bg-white text-black">
+                            admin
+                        </option>
+                        <option value="user" className="bg-white text-black">
+                            utilisateur
+                        </option>
+                        <option value="direction" className="bg-white text-black">
+                            direction
+                        </option>
+                    </select>
 
                     <Button disabled={processing} className="t-4" type="submit">
                         Mettre à jour le véhicule
