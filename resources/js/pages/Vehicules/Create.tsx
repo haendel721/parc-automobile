@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm , usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { CircleAlert } from 'lucide-react';
 import { route } from 'ziggy-js';
 
@@ -17,13 +17,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Index() {
     const { props } = usePage();
-     const { carburants, typesVehicules, marques } = props; // données envoyées depuis Laravel
+    const { carburants, typesVehicules, marques } = props; // données envoyées depuis Laravel
     const { data, setData, post, processing, errors } = useForm({
         immatriculation: '',
         marque_Id: '',
         model: '',
         typeVehicule_id: '',
         couleur: '',
+        photo: '',
         carburant_id: '',
         numSerie: '',
         anneeFabrication: '',
@@ -40,7 +41,7 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer un nouveaux vehicule" />
             <div className="w-8/12 p-4">
-                <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+                <form onSubmit={handleSubmit} className="flex flex-col space-y-4" enctype="multipart/form-data">
                     {/* display errors */}
 
                     {Object.keys(errors).length > 0 && (
@@ -75,7 +76,7 @@ export default function Index() {
                         >
                             <option value="">--Choisir une marque de voiture--</option>
                             {marques.map((type: any) => (
-                                <option key={type.id} value={type.id} className='bg-white text-black'>
+                                <option key={type.id} value={type.id} className="bg-white text-black">
                                     {type.nom}
                                 </option>
                             ))}
@@ -83,11 +84,7 @@ export default function Index() {
                     </div>
                     <div className="gap-1.5">
                         <Label htmlFor="vehicule model ">Model</Label>
-                        <Input 
-                            type='text' 
-                            placeholder="Toyota" 
-                            value={data.model} 
-                            onChange={(e) => setData('model', e.target.value)} />
+                        <Input type="text" placeholder="Toyota" value={data.model} onChange={(e) => setData('model', e.target.value)} />
                     </div>
                     <div className="gap-1.5">
                         <Label htmlFor="typeVehicule">Type de véhicule</Label>
@@ -99,7 +96,7 @@ export default function Index() {
                         >
                             <option value="">--Choisir un type de vehicule--</option>
                             {typesVehicules.map((type: any) => (
-                                <option key={type.id} value={type.id} className='bg-white text-black'>
+                                <option key={type.id} value={type.id} className="bg-white text-black">
                                     {type.nom}
                                 </option>
                             ))}
@@ -107,11 +104,7 @@ export default function Index() {
                     </div>
                     <div className="gap-1.5">
                         <Label htmlFor="vehicule couleur ">Couleur</Label>
-                        <Input 
-                            type='text' 
-                            placeholder="rouge" 
-                            value={data.couleur} 
-                            onChange={(e) => setData('couleur', e.target.value)} />
+                        <Input type="text" placeholder="rouge" value={data.couleur} onChange={(e) => setData('couleur', e.target.value)} />
                     </div>
                     <div className="gap-1.5">
                         <Label htmlFor="carburant">Carburant</Label>
@@ -123,7 +116,7 @@ export default function Index() {
                         >
                             <option value="">--Choisir un type de carburant--</option>
                             {carburants.map((c: any) => (
-                                <option key={c.id} value={c.id} className='bg-white text-black'>
+                                <option key={c.id} value={c.id} className="bg-white text-black">
                                     {c.type}
                                 </option>
                             ))}
@@ -131,24 +124,18 @@ export default function Index() {
                     </div>
                     <div className="gap-1.5">
                         <Label htmlFor="vehicule numéro de dérie ">Numéro de série</Label>
-                        <Input 
-                            placeholder="numéro de série" 
-                            value={data.numSerie} 
-                            onChange={(e) => setData('numSerie', e.target.value)} />
+                        <Input placeholder="numéro de série" value={data.numSerie} onChange={(e) => setData('numSerie', e.target.value)} />
                     </div>
                     <div className="gap-1.5">
-                        <Label htmlFor='Année de fabrication'>Année de fabrication</Label>
-                        <Input 
-                            type='number' 
-                            value={data.anneeFabrication}
-                            onChange={(e) => setData('anneeFabrication',e.target.value)} />
+                        <Label htmlFor="Année de fabrication">Année de fabrication</Label>
+                        <Input type="number" value={data.anneeFabrication} onChange={(e) => setData('anneeFabrication', e.target.value)} />
                     </div>
                     <div className="gap-1.5">
-                        <Label htmlFor='Date d acquisition'>date d'acquisition du vehicule</Label>
-                        <Input 
-                            type='date' 
-                            value={data.dateAcquisition}
-                            onChange={(e) => setData('dateAcquisition',e.target.value)} />
+                        <Label htmlFor="Date d acquisition">date d'acquisition du vehicule</Label>
+                        <Input type="date" value={data.dateAcquisition} onChange={(e) => setData('dateAcquisition', e.target.value)} />
+                    </div>
+                    <div className="gap-1.5">
+                        <Input type="file" onChange={(e) => setData('photo', e.target.files[0])} />
                     </div>
                     <Button disabled={processing} className="t-4" type="submit">
                         Ajouter

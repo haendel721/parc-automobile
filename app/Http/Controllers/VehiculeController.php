@@ -59,6 +59,7 @@ class VehiculeController extends Controller
             'model' => 'required|string|max:255',
             'typeVehicule_id' => 'required|exists:type_vehicules,id',
             'couleur' => 'required|string|max:100',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // optionnel
             'carburant_id' => 'required|exists:carburants,id',
             'numSerie' => 'nullable|string|max:255',
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
@@ -67,6 +68,10 @@ class VehiculeController extends Controller
 
         // Ajouter l'utilisateur connecté automatiquement
         $data['user_id'] = Auth::id();
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos_voitures', 'public');
+            $data['photo'] = $photoPath;
+        }
         // dd($data);
 
         Vehicule::create($data);

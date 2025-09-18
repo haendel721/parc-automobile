@@ -16,7 +16,8 @@ class Vehicule extends Model
         'numSerie',
         'anneeFabrication',
         'dateAcquisition',
-        'user_id'
+        'user_id',
+        'photo',
     ];
     // Un véhicule appartient à une seule marque
     public function marque()
