@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehiculeController;
+use App\Http\Controllers\AssuranceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,10 +28,23 @@ Route::middleware(['auth', 'verified', 'role:admin,utilisateur'])->group(functio
         ->name('vehicules.store');
     Route::get('/vehicules/{vehicule}/edit', [VehiculeController::class, 'edit'])
         ->name('vehicules.edit');
-    Route::put('/vehicules/{vehicule}', [VehiculeController::class, 'update'])
+    Route::post('/vehicules/{vehicule}', [VehiculeController::class, 'update'])
         ->name('vehicules.update');
     Route::delete('/vehicules/{vehicule}', [VehiculeController::class, 'destroy'])
         ->name('vehicules.destroy');
+    // Crud Assurance
+    Route::get('/assurances',[AssuranceController::class,'index'])
+        ->name('assurances.index');
+    Route::get('/assurances/create', [AssuranceController::class, 'create'])
+        ->name('assurances.create');
+    Route::post('/assurances', [AssuranceController::class, 'store'])
+        ->name('assurances.store');
+    Route::get('/assurances/{assurance}/edit', [AssuranceController::class, 'edit'])
+        ->name('assurances.edit');
+    Route::post('/assurances/{assurance}', [AssuranceController::class, 'update'])
+        ->name('assurances.update');
+    Route::delete('/assurances/{assurance}', [AssuranceController::class, 'destroy'])
+        ->name('assurances.destroy');
 });
 
 

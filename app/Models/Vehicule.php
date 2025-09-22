@@ -35,9 +35,16 @@ class Vehicule extends Model
     {
         return $this->belongsTo(TypeVehicule::class);
     }
-    public function user()
-{
-    return $this->belongsTo(User::class);
-}
 
+    public function assurances()
+    {
+        return $this->hasMany(Assurance::class, 'vehicule_id');
+    }
+    /**
+     * Un véhicule peut avoir plusieurs assurances.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

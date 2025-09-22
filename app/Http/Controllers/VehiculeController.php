@@ -8,7 +8,9 @@ use Inertia\Inertia;
 use App\Models\Carburant;
 use App\Models\TypeVehicule;
 use App\Models\Marque;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class VehiculeController extends Controller
 {
@@ -17,19 +19,15 @@ class VehiculeController extends Controller
      */
     public function index()
     {
-        $vehicules = Vehicule::all();
-        if (Auth::user()->role === 'admin') {
-            $vehicules = Vehicule::all();
-        } else {
-            $vehicules = Auth::user()->vehicules;
-        }
+        $vehicules = Auth::user()->role === 'admin' ? Vehicule::all() : Auth::user()->vehicules;
 
-        // dd($roleUser);
         return Inertia::render('Vehicules/Index', [
             'vehicules' => $vehicules,
-            'roleUser' => [
-                'role' => Auth::user()->role, // récupère le rôle de l'utilisateur connecté
-            ],
+            'roleUser' => ['role' => Auth::user()->role],
+            'carburants' => Carburant::all(),
+            'typeVehicules' => TypeVehicule::all(),
+            'marques' => Marque::all(),
+            'userNames' => User::pluck('name', 'id'),
         ]);
     }
 
@@ -55,7 +53,7 @@ class VehiculeController extends Controller
     {
         $data = $request->validate([
             'immatriculation' => 'required|string|max:255|unique:vehicules,immatriculation',
-            'marque_Id' => 'required|exists:marques,id',
+            'marque_id' => 'required|exists:marques,id',
             'model' => 'required|string|max:255',
             'typeVehicule_id' => 'required|exists:type_vehicules,id',
             'couleur' => 'required|string|max:100',
@@ -106,22 +104,38 @@ class VehiculeController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, Vehicule $vehicule)
     {
-        $request->validate([
+        $data = $request->validate([
             'immatriculation' => 'required|string|max:255',
             'marque_id' => 'required|exists:marques,id',
             'model' => 'required|string|max:255',
             'typeVehicule_id' => 'required|exists:type_vehicules,id',
             'couleur' => 'required|string|max:100',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'carburant_id' => 'required|exists:carburants,id',
             'numSerie' => 'nullable|string|max:255',
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
         ]);
 
-        $vehicule->update($request->all());
-        return redirect()->route('vehicules.index')->with('message', 'vehicule mis à jour avec succès.');
+        // Gestion du fichier photo
+        if ($request->hasFile('photo')) {
+            // Supprimer l'ancienne photo si elle existe
+            if ($vehicule->photo && Storage::disk('public')->exists($vehicule->photo)) {
+                Storage::disk('public')->delete($vehicule->photo);
+            }
+            $photoPath = $request->file('photo')->store('photos_voitures', 'public');
+            $data['photo'] = $photoPath;
+        } else {
+            // Si aucune nouvelle photo n'est envoyée, on ne modifie pas la photo existante
+            unset($data['photo']);
+        }
+
+        $vehicule->update($data);
+
+        return redirect()->route('vehicules.index')->with('message', 'Véhicule mis à jour avec succès.');
     }
 
     /**

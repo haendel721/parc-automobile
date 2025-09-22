@@ -20,7 +20,7 @@ export default function Index() {
     const { carburants, typesVehicules, marques } = props; // données envoyées depuis Laravel
     const { data, setData, post, processing, errors } = useForm({
         immatriculation: '',
-        marque_Id: '',
+        marque_id: '',
         model: '',
         typeVehicule_id: '',
         couleur: '',
@@ -67,11 +67,11 @@ export default function Index() {
                         />
                     </div>
                     <div className="gap-1.5">
-                        <Label htmlFor="marque_Id">Marque du véhicule</Label>
+                        <Label htmlFor="marque_id">Marque du véhicule</Label>
                         <select
-                            id="marque_Id"
-                            value={data.marque_Id}
-                            onChange={(e) => setData('marque_Id', e.target.value)}
+                            id="marque_id"
+                            value={data.marque_id}
+                            onChange={(e) => setData('marque_id', e.target.value)}
                             className="w-full rounded border border-gray-300 px-3 py-2"
                         >
                             <option value="">--Choisir une marque de voiture--</option>
