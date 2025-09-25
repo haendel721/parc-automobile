@@ -35,6 +35,7 @@ type PageProps = {
 
 export default function Index() {
     const { roleUser, assurances } = usePage().props as PageProps;
+    console.log('roleUser', roleUser.role , '\nAssurance : ' + assurances);
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -45,15 +46,7 @@ export default function Index() {
                         <Button>Nouvel assurance</Button>
                     </Link>
                 </div>
-                {roleUser.role === 'admin' ? (
-                    <>
-                        <IndexAdmin assurances={assurances} />
-                    </>
-                ) : (
-                    <>
-                        <IndexUser assurances={assurances} />
-                    </>
-                )}
+                {roleUser.role === 'admin' ? <IndexAdmin assurances={assurances} /> : <IndexUser assurances={assurances} />}
             </AppLayout>
         </>
     );

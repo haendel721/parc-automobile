@@ -12,29 +12,48 @@ class RoleMiddleware
     /**
      * Vérifie si le rôle de l'utilisateur connecté est dans la liste autorisée.
      */
-    public function handle(Request $request, Closure $next, $roles): Response
+    // public function handle(Request $request, Closure $next, $roles): Response
+    // {
+    //     // Vérifie que l'utilisateur est connecté
+    //     if (!Auth::check()) {
+    //         abort(403, 'Accès refusé - utilisateur non authentifié');
+    //     }
+
+    //     // Récupère le rôle de l'utilisateur connecté
+    //     $userRole = strtolower(trim(Auth::user()->role));
+
+    //     $rolesArray = ["admin", "utilisateur"];
+    //     // dd([
+    //     //     'Nom ' => Auth::user()->name,
+    //     //     'Rôle ' =>Auth::user()->role,
+    //     //     'userRole' => $userRole,
+    //     //     'Liste de rôles autorisés' => $rolesArray
+    //     // ]);
+    //     // Si le rôle n'est pas dans le tableau, accès refusé
+    //     if (!in_array($userRole, $rolesArray)) {
+    //         abort(403, 'Accès refusé - rôle non autorisé');
+    //     }
+
+    //     // Sinon, accès autorisé
+    //     return $next($request);
+    // }
+    public function handle(Request $request, Closure $next, $roles)
     {
-        // Vérifie que l'utilisateur est connecté
         if (!Auth::check()) {
             abort(403, 'Accès refusé - utilisateur non authentifié');
         }
 
-        // Récupère le rôle de l'utilisateur connecté
+        // rôle utilisateur
         $userRole = strtolower(trim(Auth::user()->role));
+        
+        $allowedRoles = array_map('trim', explode('|', strtolower($roles)));
 
-        $rolesArray = ["admin", "utilisateur"];
-        // dd([
-        //     'Nom ' => Auth::user()->name,
-        //     'Rôle ' =>Auth::user()->role,
-        //     'userRole' => $userRole,
-        //     'Liste de rôles autorisés' => $rolesArray
-        // ]);
-        // Si le rôle n'est pas dans le tableau, accès refusé
-        if (!in_array($userRole, $rolesArray)) {
+        // dd( $roles , $allowedRoles , $userRole);
+        // Vérifie si le rôle de l'utilisateur est dans la liste
+        if (!in_array($userRole, $allowedRoles)) {
             abort(403, 'Accès refusé - rôle non autorisé');
         }
 
-        // Sinon, accès autorisé
         return $next($request);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class assurance extends Model
 {
     protected $fillable = [
+        'user_id',
         'vehicule_id',
         'NomCompagnie',
         'NumContrat',
@@ -21,5 +22,13 @@ class assurance extends Model
     public function vehicule()
     {
         return $this->belongsTo(Vehicule::class, 'vehicule_id');
+    }
+    /**
+     * Une assurance appartient à un seul utilisateur
+     */
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
         // Redirection selon le rôle
         switch ($user->role) {
             case 'admin':
-                return redirect()->intended(route('products.index'));
+                return redirect()->intended(route('dashboard'));
             case 'utilisateur':
                 return redirect()->intended(route('dashboard'));
             default:

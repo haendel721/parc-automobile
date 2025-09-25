@@ -9,22 +9,20 @@ import { CircleAlert } from 'lucide-react';
 import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Nouvel Assaurance',
-        href: '/assurances/create',
-    },
+    { title: 'Nouvelle Assurance', href: '/assurances/create' },
 ];
 
-export default function Index() {
+export default function Create() {
     const { props } = usePage();
-    const { vehicules } = props; // données envoyées depuis Laravel
-    console.log(
-        vehicules.map((v) => (
-            <option key={v.id} value={v.id} className="bg-white text-black">
-                {v.nom}
-            </option>
-        )),
-    );
+    const { vehicules = [], user } = props as any;
+
+    const userRole = user?.role || 'utilisateur';
+    const userId = user?.id || null;
+
+    const filteredVehicules = userRole === 'admin'
+        ? vehicules
+        : vehicules.filter((v: any) => v.user_id === userId);
+
     const { data, setData, post, processing, errors } = useForm({
         vehicule_id: '',
         NomCompagnie: '',
@@ -33,25 +31,21 @@ export default function Index() {
         dateDebut: '',
         dateFin: '',
     });
-    
-    console.log('Vehicule : ' + data.vehicule_id + '\nNom compagnie : ' + data.NomCompagnie + '\n Cout : ' + data.cout + '\ndate début : ' + data.dateDebut + '\ndate de fin : ' + data.dateFin )
+
     const handleSubmit = (e: React.FormEvent) => {
-        console.log(data);
         e.preventDefault();
         post(route('assurances.store'));
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Affecter un nouvelle Assurance à un vehicule" />
+            <Head title="Nouvelle Assurance" />
             <div className="w-8/12 p-4">
-                <form onSubmit={handleSubmit} className="flex flex-col space-y-4" enctype="multipart/form-data">
-                    {/* destion d'erreurs */}
-
+                <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
                     {Object.keys(errors).length > 0 && (
                         <Alert>
                             <CircleAlert />
-                            <AlertTitle>Errors !</AlertTitle>
+                            <AlertTitle>Erreurs !</AlertTitle>
                             <AlertDescription>
                                 <ul>
                                     {Object.entries(errors).map(([key, message]) => (
@@ -61,55 +55,70 @@ export default function Index() {
                             </AlertDescription>
                         </Alert>
                     )}
-                    <div className="gap-1.5">
-                        <Label htmlFor="vehicule_id">Id du vehicule</Label>
+
+                    <div>
+                        <Label htmlFor="vehicule_id">Véhicule</Label>
                         <select
                             id="vehicule_id"
                             value={data.vehicule_id}
                             onChange={(e) => setData('vehicule_id', e.target.value)}
                             className="w-full rounded border border-gray-300 px-3 py-2"
                         >
-                            <option value="">--Choisir l'immatriculation du voiture--</option>
-                            {vehicules?.map((v: any) => (
-                                <option key={v.id} value={v.id} className="bg-white text-black">
+                            <option value="">--Choisit l'immatricule du véhicule--</option>
+                            {filteredVehicules.map((v: any) => (
+                                <option key={v.id} value={v.id} className='text-black'>
                                     {v.immatriculation}
                                 </option>
                             ))}
                         </select>
                     </div>
-                    <div className="gap-1.5">
-                        <Label htmlFor="NomCompagnie">Nom du l'entreprise</Label>
-                        <Input
-                            type='text'
-                            value={data.NomCompagnie}
-                            onChange={(e) => setData('NomCompagnie', e.target.value)}
-                            className="w-full rounded border border-gray-300 px-3 py-2"
-                        />
-                    </div>
-                    <div className="gap-1.5">
-                        <Label htmlFor="NumContrat">Identification du Contrat</Label>
+
+                    <div>
+                        <Label htmlFor="NomCompagnie">Nom de l'entreprise</Label>
                         <Input
                             type="text"
-                            placeholder="564521315KL51"
+                            value={data.NomCompagnie}
+                            onChange={(e) => setData('NomCompagnie', e.target.value)}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="NumContrat">Numéro du contrat</Label>
+                        <Input
+                            type="text"
                             value={data.NumContrat}
                             onChange={(e) => setData('NumContrat', e.target.value)}
                         />
                     </div>
-                    <div className="gap-1.5">
-                        <Label htmlFor="cout">cout</Label>
-                        <Input type="text" placeholder="cout" value={data.cout} onChange={(e) => setData('cout', e.target.value)} />
+
+                    <div>
+                        <Label htmlFor="cout">Coût (Ar)</Label>
+                        <Input
+                            type="text"
+                            value={data.cout}
+                            onChange={(e) => setData('cout', e.target.value)}
+                        />
                     </div>
-                    <div className="gap-1.5">
-                        <Label htmlFor="Date de début">Date de début</Label>
-                        <Input type="date" value={data.dateDebut} onChange={(e) => setData('dateDebut', e.target.value)} />
+
+                    <div>
+                        <Label htmlFor="dateDebut">Date de début</Label>
+                        <Input
+                            type="date"
+                            value={data.dateDebut}
+                            onChange={(e) => setData('dateDebut', e.target.value)}
+                        />
                     </div>
-                    <div className="gap-1.5">
-                        <Label htmlFor="Date de fin">Date de fin</Label>
-                        <Input type="date" value={data.dateFin} onChange={(e) => setData('dateFin', e.target.value)} />
+
+                    <div>
+                        <Label htmlFor="dateFin">Date de fin</Label>
+                        <Input
+                            type="date"
+                            value={data.dateFin}
+                            onChange={(e) => setData('dateFin', e.target.value)}
+                        />
                     </div>
-                    <Button disabled={processing} className="t-4" type="submit">
-                        Ajouter
-                    </Button>
+
+                    <Button disabled={processing} type="submit">Ajouter</Button>
                 </form>
             </div>
         </AppLayout>

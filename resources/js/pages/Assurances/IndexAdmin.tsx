@@ -14,6 +14,7 @@ type assurances = {
     cout: number;
     dateDebut: string;
     dateFin: string;
+    duree_jours: number
 };
 
 type AssuranceProps = {
@@ -22,6 +23,7 @@ type AssuranceProps = {
         message?: string;
     };
 };
+
 
 const AssuranceAdmin: React.FC<AssuranceProps> = ({ assurances }) => {
     const { flash } = usePage().props as AssuranceProps;
@@ -49,12 +51,13 @@ const AssuranceAdmin: React.FC<AssuranceProps> = ({ assurances }) => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Id</TableHead>
-                                <TableHead>Véhicule</TableHead>
+                                <TableHead>Immatricule du Véhicule </TableHead>
                                 <TableHead>Compagnie</TableHead>
-                                <TableHead>Contrat</TableHead>
-                                <TableHead>Coût</TableHead>
+                                <TableHead>Identifiant du Contrat</TableHead>
+                                <TableHead>Coût (Ar)</TableHead>
                                 <TableHead>Date début</TableHead>
                                 <TableHead>Date fin</TableHead>
+                                <TableHead>Durée (jours)</TableHead>
                                 <TableHead className="text-center">Action</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -62,13 +65,13 @@ const AssuranceAdmin: React.FC<AssuranceProps> = ({ assurances }) => {
                             {assurances.map((assurance) => (
                                 <TableRow key={assurance.id}>
                                     <TableCell>{assurance.id}</TableCell>
-                                    <TableCell>{assurance.vehicule_id}</TableCell>
+                                    <TableCell>{assurance.vehicule?.immatriculation||'-'}</TableCell>
                                     <TableCell>{assurance.NomCompagnie}</TableCell>
                                     <TableCell>{assurance.NumContrat}</TableCell>
                                     <TableCell>{assurance.cout}</TableCell>
                                     <TableCell>{assurance.dateDebut}</TableCell>
                                     <TableCell>{assurance.dateFin}</TableCell>
-
+                                    <TableCell>{assurance.duree_jours} jours</TableCell>
                                     <TableCell className="text-center">
                                         <div className="flex justify-center gap-2">
                                             <Link href={route('assurances.edit', assurance.id)}>

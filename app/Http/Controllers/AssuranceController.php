@@ -20,23 +20,50 @@ class AssuranceController extends Controller
      */
     public function index()
     {
-        $assurances = Auth::user()->role === 'admin' ? assurance::all() : Auth::user()->assurance;
+        $user = Auth::user();
 
+        // Récupérer les assurances selon le rôle
+        $assurances = $user->role === 'admin'
+            ? Assurance::with('vehicule')->get() // toutes les assurances pour admin
+            : $user->assurances()->with('vehicule')->get();  // seulement les assurances de l'utilisateur
+
+        // Ajouter la durée en jours pour chaque assurance
+        $assurances->transform(function ($assurance) {
+            $dateDebut = \Carbon\Carbon::parse($assurance->dateDebut);
+            $dateFin = \Carbon\Carbon::parse($assurance->dateFin);
+
+            // Calcul de la durée en jours
+            $assurance->duree_jours = $dateDebut->diffInDays($dateFin);
+
+            return $assurance;
+        });
+
+        // Retourner les données à Inertia
         return Inertia::render('Assurances/Index', [
             'assurances' => $assurances,
-            'roleUser' => ['role' => Auth::user()->role],
-            'userNames' => User::pluck('name', 'id'),
+            'roleUser' => ['role' => $user->role],
+            'flash' => session('message') ? ['message' => session('message')] : [],
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $vehicules = Vehicule::all();
-        return Inertia::render('Assurances/Create',[
+        $user = auth::user();
+
+        $vehicules = $user->role === 'admin'
+            ? Vehicule::all()
+            : Vehicule::where('user_id', $user->id)->get();
+
+        return Inertia::render('Assurances/Create', [ // <-- changer Index en Create
             'vehicules' => $vehicules,
+            'user' => [
+                'id' => $user->id,
+                'role' => $user->role,
+            ],
         ]);
     }
 
@@ -45,19 +72,25 @@ class AssuranceController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'vehicule_id' => 'required|exists:vehicules,id',
-            'NomCompagnie' =>'required|string',
-            'NumContrat' => 'required|string',
-            'cout' => 'required|numeric|min:0',
-            'dateDebut' => 'nullable|date',
-            'dateFin' => 'nullable|date',
-            
+        $validated = $request->validate([
+            'vehicule_id' => [
+                'required',
+                'exists:vehicules,id',
+                'unique:assurances,vehicule_id',
+            ],
+            'NomCompagnie' => 'required|string|max:255',
+            'NumContrat' => 'required|string|max:255|unique:assurances,NumContrat',
+            'cout' => 'required|numeric',
+            'dateDebut' => 'required|date',
+            'dateFin' => 'required|date|after:dateDebut',
         ]);
-        // dd($data);
 
-        assurance::create($data);
-        return redirect()->route('assurances.index')->with('message', 'Assurance Affecter avec succès.');
+        Assurance::create(array_merge($validated, [
+            'user_id' => auth::id(),
+        ]));
+
+        return redirect()->route('assurances.index')
+            ->with('message', 'Assurance créée avec succès.');
     }
 
     /**
@@ -86,12 +119,16 @@ class AssuranceController extends Controller
     public function update(Request $request, Assurance $assurance)
     {
         $data = $request->validate([
-           'vehicule_id' => 'required|exists:vehicules,id',
-            'NomCompagnie' =>'required|string',
-            'NumContrat' => 'required|string',
-            'cout' => 'required|numeric|min:0',
-            'dateDebut' => 'nullable|date',
-            'dateFin' => 'nullable|date',
+            'vehicule_id' => [
+                'required',
+                'exists:vehicules,id',
+                'unique:assurances,vehicule_id',
+            ],
+            'NomCompagnie' => 'required|string|max:255',
+            'NumContrat' => 'required|string|max:255|unique:assurances,NumContrat',
+            'cout' => 'required|numeric',
+            'dateDebut' => 'required|date',
+            'dateFin' => 'required|date|after:dateDebut',
         ]);
         // dd($data);
         $assurance->update($data);
