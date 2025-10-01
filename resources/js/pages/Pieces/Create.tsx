@@ -14,10 +14,11 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/pieces/create',
     },
 ];
-
+type PieceProps = {
+    fournisseurs:[]
+}
 export default function Index() {
-    const { props } = usePage();
-    const { fournisseurs } = props; // données envoyées depuis Laravel
+    const { fournisseurs } = usePage<PieceProps>().props; // données envoyées depuis Laravel
     const { data, setData, post, processing, errors } = useForm({
         nom: '',
         prix: '',

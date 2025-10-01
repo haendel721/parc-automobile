@@ -12,16 +12,30 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Nouvelle Assurance', href: '/assurances/create' },
 ];
 
+interface vehicules {
+    id:number;
+    immatriculation: string;
+    user_id: number
+}
+
+interface user {
+    id: number;
+    role: string;
+}
+
+type AssuranceProps = {
+    vehicules: vehicules[];
+    user:user;
+}
 export default function Create() {
-    const { props } = usePage();
-    const { vehicules = [], user } = props as any;
+    const { vehicules , user } = usePage<AssuranceProps>().props;
 
     const userRole = user?.role || 'utilisateur';
     const userId = user?.id || null;
 
     const filteredVehicules = userRole === 'admin'
         ? vehicules
-        : vehicules.filter((v: any) => v.user_id === userId);
+        : vehicules.filter((v) => v.user_id === userId);
 
     const { data, setData, post, processing, errors } = useForm({
         vehicule_id: '',
@@ -65,7 +79,7 @@ export default function Create() {
                             className="w-full rounded border border-gray-300 px-3 py-2"
                         >
                             <option value="">--Choisit l'immatricule du véhicule--</option>
-                            {filteredVehicules.map((v: any) => (
+                            {filteredVehicules.map((v) => (
                                 <option key={v.id} value={v.id} className='text-black'>
                                     {v.immatriculation}
                                 </option>

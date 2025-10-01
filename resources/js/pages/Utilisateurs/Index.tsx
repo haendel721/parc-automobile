@@ -25,7 +25,7 @@ interface users {
     role: string;
 }
 
-interface PageProps {
+type PageProps = {
     flash: {
         message?: string;
     };
@@ -33,7 +33,7 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { utilisateurs, flash } = usePage().props as PageProps;
+    const { utilisateurs, flash } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, name: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer cette utilisateur: ${name} ?`)) {

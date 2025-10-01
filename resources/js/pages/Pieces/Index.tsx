@@ -24,7 +24,7 @@ type pieces = {
     user_id: number;
 };
 
-interface PageProps {
+type PageProps = {
     flash: {
         message?: string;
     };
@@ -37,7 +37,7 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { user, pieces, flash } = usePage().props as PageProps;
+    const { user, pieces, flash } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     console.log('Role utilisateur :', user.role);
     const handleDelete = (id: number, nom: string) => {

@@ -30,15 +30,11 @@ type Vehicules = {
     user_id: number;
 };
 
-// type userNames = {
-//     name: string
-// }
-
 interface roleUser {
     role: string;
 }
 
-interface PageProps {
+type PageProps = {
     flash: {
         message?: string;
     };
@@ -51,7 +47,7 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { roleUser, vehicules, flash, marques, carburants, typeVehicules , userNames } = usePage().props as PageProps;
+    const { roleUser, vehicules, flash, marques, carburants, typeVehicules , userNames } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {

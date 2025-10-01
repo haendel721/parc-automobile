@@ -14,14 +14,14 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/entretiens/create',
     },
 ];
-interface PageProps {
+type PageProps = {
     vehicules: { id: number; immatriculation: string }[];
     fournisseurs: { id: number; nom: string }[];
     user: { id: number; role: string }[];
 }
 
 export default function CreateEntretien() {
-    const { vehicules, fournisseurs, user } = usePage().props as PageProps;
+    const { vehicules, fournisseurs, user } = usePage<PageProps>().props;
 
     const { data, setData, post, processing, errors } = useForm({
         vehicule_id: '',

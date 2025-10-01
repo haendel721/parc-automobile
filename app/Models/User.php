@@ -17,6 +17,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    use Notifiable; // permet d'utiliser les notifications
     protected $fillable = [
         'name',
         'prenom',
@@ -49,6 +50,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    // Relation pour récupérer toutes les notifications d'un user
+     public function notifications()
+    {
+        return $this->morphMany(\Illuminate\Notifications\DatabaseNotification::class, 'notifiable')
+            ->latest();
     }
     public function vehicules()
     {

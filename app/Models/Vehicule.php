@@ -8,7 +8,7 @@ class Vehicule extends Model
 {
     protected $fillable = [
         'immatriculation',
-        'marque_Id',
+        'marque_id',
         'model',
         'typeVehicule_id',
         'couleur',

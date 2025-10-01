@@ -14,7 +14,19 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type entretiens = {
+interface vehicule {
+    immatriculation: string;
+}
+interface fournisseur {
+    nom: string;
+}
+interface user {
+    id: number;
+    role: string;
+    name: string;
+}
+
+interface entretiens {
     id: number;
     vehicule_id: number;
     fournisseur_id: number;
@@ -28,9 +40,14 @@ type entretiens = {
     description: string;
     dernier_visite: string;
     derniere_vidange: string;
-};
+    statut: string;
 
-interface PageProps {
+    vehicule: vehicule;
+    fournisseur: fournisseur;
+    user: user
+}
+
+type PageProps = {
     flash: {
         message?: string;
     };
@@ -40,10 +57,10 @@ interface PageProps {
         name: string;
     };
     entretiens: entretiens[];
-}
+};
 
 export default function Index() {
-    const { flash, user, entretiens } = usePage().props as PageProps;
+    const { flash, user, entretiens } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer l'entretien pour le vehicule: ${immatriculation} ?`)) {
@@ -103,7 +120,7 @@ export default function Index() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {entretiens.map((entretien: any) => {
+                                    {entretiens.map((entretien) => {
                                         // const vehicule = vehicules.find((v) => v.id === entretien.vehicule_id);
                                         // const fournisseur = fournisseurs.find((f) => f.id === entretien.fournisseur_id);
                                         // const user = fournisseurs.find((u) => u.id === entretien.user_id);

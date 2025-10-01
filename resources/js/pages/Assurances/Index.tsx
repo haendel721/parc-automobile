@@ -34,7 +34,7 @@ type PageProps = {
 };
 
 export default function Index() {
-    const { roleUser, assurances } = usePage().props as PageProps;
+    const { roleUser, assurances } = usePage<PageProps>().props;
     console.log('roleUser', roleUser.role , '\nAssurance : ' + assurances);
     return (
         <>

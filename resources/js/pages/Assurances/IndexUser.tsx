@@ -18,11 +18,12 @@ type assurances = {
 
 type AssuranceProps = {
     assurances: assurances[];
+    flash: { message?: string }
 };
 
 const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
     // ⚡️ récupérer flash uniquement depuis Inertia
-    const { flash } = usePage().props as { flash: { message?: string } };
+    const { flash } = usePage<AssuranceProps>().props;
 
     console.log('assurances reçues :', assurances);
 

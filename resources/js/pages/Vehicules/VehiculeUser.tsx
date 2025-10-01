@@ -61,6 +61,7 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carbura
                                     </Button>
                                 </Link>
                             </div>
+                            <div className="mb-2 text-lg font-bold text-blue-500"><Button className="bg-black-75 text-color hover:bg-slate-700">Signaler</Button></div>
                         </div>
                         {/* Carte principale */}
                         <div className="m-6 flex flex-col rounded-lg bg-zinc-900 p-6 shadow-sm md:flex-row">

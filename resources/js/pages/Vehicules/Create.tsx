@@ -15,9 +15,15 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type PageProps = {
+    carburants: { id: number; type: string }[];
+    typesVehicules: { id: number; nom: string }[];
+    marques: { id: number; nom: string }[];
+}
+
+
 export default function Index() {
-    const { props } = usePage();
-    const { carburants, typesVehicules, marques } = props; // données envoyées depuis Laravel
+    const {  carburants, typesVehicules, marques } = usePage<PageProps>().props;
     const { data, setData, post, processing, errors } = useForm({
         immatriculation: '',
         marque_id: '',
@@ -41,7 +47,7 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer un nouveaux vehicule" />
             <div className="w-8/12 p-4">
-                <form onSubmit={handleSubmit} className="flex flex-col space-y-4" enctype="multipart/form-data">
+                <form onSubmit={handleSubmit} className="flex flex-col space-y-4" encType="multipart/form-data">
                     {/* display errors */}
 
                     {Object.keys(errors).length > 0 && (
@@ -69,7 +75,6 @@ export default function Index() {
                     <div className="gap-1.5">
                         <Label htmlFor="marque_id">Marque du véhicule</Label>
                         <select
-                            id="marque_id"
                             value={data.marque_id}
                             onChange={(e) => setData('marque_id', e.target.value)}
                             className="w-full rounded border border-gray-300 px-3 py-2"

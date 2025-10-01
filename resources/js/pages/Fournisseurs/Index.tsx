@@ -24,7 +24,7 @@ type fournisseurs = {
     siteWeb: string;
 };
 
-interface PageProps {
+type PageProps = {
     flash: {
         message?: string;
     };
@@ -32,7 +32,7 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { fournisseurs, flash } = usePage().props as PageProps;
+    const { fournisseurs, flash } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, nom: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le fournisseur : ${nom} ?`)) {

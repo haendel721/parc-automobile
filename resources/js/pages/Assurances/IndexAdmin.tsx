@@ -26,7 +26,7 @@ type AssuranceProps = {
 
 
 const AssuranceAdmin: React.FC<AssuranceProps> = ({ assurances }) => {
-    const { flash } = usePage().props as AssuranceProps;
+    const { flash } = usePage<AssuranceProps>().props;
     const { delete: destroy } = useForm();
     const handleDelete = (id: number, NumContrat: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer l'assurance qui a un numéro de contrat : ${NumContrat} ?`)) {

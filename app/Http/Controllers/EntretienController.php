@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Entretien;
 use App\Models\Vehicule;
 use App\Models\Fournisseur;
+use App\Models\User;
+use App\Notifications\EntretienDemandeNotification;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,12 +17,12 @@ class EntretienController extends Controller
     // 📌 Liste des entretiens
     public function index()
     {
-       $user = auth()->user();
+        $user = auth()->user();
 
         // Si admin → toutes les entretien
         $entretiens = $user->role === 'admin'
-            ? Entretien::with(['user','fournisseur','vehicule'])->get()
-            : Entretien::with('fournisseur','vehicule')->where('user_id', $user->id)->get();
+            ? Entretien::with(['user', 'fournisseur', 'vehicule'])->get()
+            : Entretien::with('fournisseur', 'vehicule')->where('user_id', $user->id)->get();
 
         return Inertia::render('Entretiens/Index', [
             'entretiens' => $entretiens,
@@ -38,18 +40,18 @@ class EntretienController extends Controller
         $user = auth::user();
 
         $vehicules = $user->role === 'admin'
-             ? Vehicule::all()
-             : Vehicule::where('user_id', $user->id)->get();
+            ? Vehicule::all()
+            : Vehicule::where('user_id', $user->id)->get();
 
         $fournisseurs = Fournisseur::all();
 
         return Inertia::render('Entretiens/Create', [
             'vehicules' => $vehicules,
-            'fournisseurs' =>$fournisseurs,
+            'fournisseurs' => $fournisseurs,
             'user' => [
-                 'id' => $user->id,
-                 'role' => $user->role,
-             ],
+                'id' => $user->id,
+                'role' => $user->role,
+            ],
         ]);
     }
 
@@ -77,7 +79,21 @@ class EntretienController extends Controller
 
         $validated['user_id'] = Auth::id();
 
-        Entretien::create($validated);
+        $entretien = Entretien::create($validated);
+
+        // notifier tous les admins
+        $admins = User::where('role', 'admin')->get();
+
+        // Méthode 1 : boucle (lisible)
+        foreach ($admins as $admin) {
+            $admin->notify(new EntretienDemandeNotification($entretien));
+        }
+
+        // Méthode 2 (alternative) : Notification facade
+        // \Illuminate\Support\Facades\Notification::send($admins, new EntretienDemandeNotification($entretien));
+
+
+
 
         return redirect()->route('entretiens.index')->with('success', 'Entretien ajouté avec succès.');
     }
@@ -85,7 +101,9 @@ class EntretienController extends Controller
     // 📌 Afficher un entretien
     public function show(Entretien $entretien)
     {
-        return Inertia::render('entretiens.show', compact('entretien'));
+        return Inertia::render('Entretiens/Show', [
+            'entretien' =>$entretien ,
+        ]);
     }
 
     // 📌 Formulaire modification
@@ -93,13 +111,14 @@ class EntretienController extends Controller
     {
         $vehicules = Vehicule::all();
         $fournisseurs = Fournisseur::all();
-        return Inertia::render('Entretiens/Edit', compact('entretien','vehicules','fournisseurs'));
+        return Inertia::render('Entretiens/Edit', compact('entretien', 'vehicules', 'fournisseurs'));
     }
 
     // 📌 Enregistrer la modification
     public function update(Request $request, Entretien $entretien)
     {
-        $validated = $request->validate([
+        $role = Auth::user()->role;
+        $role === 'admin' ? $validated = $request->validate([
             'vehicule_id' => 'required|exists:vehicules,id',
             'fournisseur_id' => 'nullable|exists:fournisseurs,id',
             'type' => 'required|string|max:255',
@@ -111,6 +130,10 @@ class EntretienController extends Controller
             'prochaine_visite' => 'nullable|date',
             'description' => 'nullable|string',
             'derniere_vidange' => 'nullable|date',
+        ]) : $validated = $request->validate([
+            'vehicule_id' => 'required|exists:vehicules,id',
+            'probleme' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -125,5 +148,4 @@ class EntretienController extends Controller
         $entretien->delete();
         return redirect()->route('entretiens.index')->with('success', 'Entretien supprimé avec succès.');
     }
-    
 }

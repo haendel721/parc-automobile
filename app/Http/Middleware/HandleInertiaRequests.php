@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Support\Facades\Auth;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -49,6 +50,20 @@ class HandleInertiaRequests extends Middleware
                 'message' => fn() => $request->session()->get('message'),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'unread_notifications_count' => function () {
+                return Auth::check() ? Auth::user()->unreadNotifications->count() : 0;
+            },
+            'notifications' => $request->user() 
+            ? $request->user()->notifications->map(function($n) {
+                return [
+                    'id' => $n->id,
+                    'type' => class_basename($n->type),
+                    'data' => $n->data,
+                    'read_at' => $n->read_at,
+                    'created_at' => $n->created_at,
+                ];
+            })->toArray()
+            : [],
         ];
     }
 }

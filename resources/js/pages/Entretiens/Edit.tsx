@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import vehicules from '@/routes/vehicules';
 import { Head, useForm } from '@inertiajs/react';
 import { CircleAlert } from 'lucide-react';
 import { route } from 'ziggy-js';

@@ -4,9 +4,11 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, PackageSearch ,UsersRound  ,PackagePlus ,Wrench  ,Car ,Hammer,Cog ,FileSliders ,BookLock   } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BookLock, BookOpen, Car, Cog, FileSliders, Folder, Hammer, LayoutGrid, PackagePlus, PackageSearch, UsersRound, Wrench } from 'lucide-react';
+import { route } from 'ziggy-js';
 import AppLogo from './app-logo';
+import NotificationsDrawer from '@/components/NotificationsDrawer';
 
 const mainNavItems: NavItem[] = [
     {
@@ -22,7 +24,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Utilisateurs',
         href: '/utilisateurs',
-        icon: UsersRound ,
+        icon: UsersRound,
     },
     {
         title: 'Vehicules',
@@ -42,12 +44,12 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Pièce',
         href: '/pieces',
-        icon: Wrench ,
+        icon: Wrench,
     },
     {
         title: 'Entretien',
         href: '/entretiens',
-        icon: Hammer ,
+        icon: Hammer,
     },
     {
         title: 'Maintenance et réparations',
@@ -57,7 +59,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Gestion administrative',
         href: '/gestionAdmin',
-        icon: FileSliders  ,
+        icon: FileSliders,
     },
 ];
 
@@ -72,10 +74,10 @@ const footerNavItems: NavItem[] = [
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
     },
-    
 ];
 
 export function AppSidebar() {
+    const { unread_notifications_count, auth } = usePage().props as any;
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -89,8 +91,25 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-
-            <SidebarContent className='justify-center'>
+            <div>
+                {/* Cloche visible uniquement pour les admins */}
+                {auth?.user?.role === 'admin' && (
+                    <Link href={route('admin.notifications.index')} className="relative inline-block">
+                        🔔
+                        {unread_notifications_count > 0 && (
+                            <span className="absolute -top-1 -right-3 rounded-full bg-red-600 px-1 text-xs text-white">
+                                {unread_notifications_count}
+                            </span>
+                        )}
+                    </Link>
+                )}
+                <div className="flex items-center gap-3">
+                    {/* n'affiche la cloche que si admin (optionnel) */}
+                    {auth?.user?.role === 'admin' && <NotificationsDrawer />}
+                    {/* autre actions header */}
+                </div>
+            </div>
+            <SidebarContent className="justify-center">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 

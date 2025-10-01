@@ -7,14 +7,17 @@ use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\EntretienController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\PieceController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Admin\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
-
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+});
 // Route::middleware(['auth', 'verified', 'role:utilisateur'])->group(function () {
 //     Route::get('/dashboard', fn() => Inertia::render('dashboard'))
 //         ->name('dashboard');
@@ -73,6 +76,8 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur'])->group(functio
         ->name('entretiens.create');
     Route::post('/entretiens', [EntretienController::class, 'store'])
         ->name('entretiens.store');
+    Route::get('/entretiens/{entretien}/show', [EntretienController::class, 'show'])
+        ->name('entretiens.show');
     Route::get('/entretiens/{entretien}/edit', [EntretienController::class, 'edit'])
         ->name('entretiens.edit');
     Route::post('/entretiens/{entretien}', [EntretienController::class, 'update'])
@@ -84,6 +89,14 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur'])->group(functio
 
 // Routes accessibles par admin uniquement
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+
+    // Notifications
+    Route::get('/admin/notifications', [NotificationController::class, 'index'])
+        ->name('admin.notifications.index');
+    Route::post('/admin/notifications/mark-read', [NotificationController::class, 'markAsRead'])
+        ->name('admin.notifications.markread');
+    Route::delete('/admin/notifications/{id}', [NotificationController::class, 'destroy'])
+        ->name('admin.notifications.destroy');
 
     // Routes pour les produits
     Route::get('/products', [ProductController::class, 'index'])
@@ -98,6 +111,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
         ->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])
         ->name('products.destroy');
+
     // Crud Fournisseur
     Route::get('/fournisseurs', [FournisseurController::class, 'index'])
         ->name('fournisseurs.index');
@@ -111,6 +125,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
         ->name('fournisseurs.update');
     Route::delete('/fournisseurs/{fournisseur}', [FournisseurController::class, 'destroy'])
         ->name('fournisseurs.destroy');
+
     // Routes pour les utilisateurs
     Route::get('/utilisateurs', [UserController::class, 'index'])
         ->name('utilisateurs.index');
