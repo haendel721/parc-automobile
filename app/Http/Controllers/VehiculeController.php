@@ -19,7 +19,9 @@ class VehiculeController extends Controller
      */
     public function index()
     {
-        $vehicules = Auth::user()->role === 'admin' ? Vehicule::all() : Auth::user()->vehicules;
+        $vehicules = Auth::user()->role === 'admin'
+            ? Vehicule::with('assurance')->get() // <-- Charger la relation assurance
+            : Auth::user()->vehicules()->with('assurance')->get();
 
         return Inertia::render('Vehicules/Index', [
             'vehicules' => $vehicules,
@@ -30,6 +32,7 @@ class VehiculeController extends Controller
             'userNames' => User::pluck('name', 'id'),
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -79,10 +82,21 @@ class VehiculeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Vehicule $vehicules)
     {
-        //
+        $userConnecter = Auth::user()->role;
+
+        // Récupérer l'assurance du véhicule
+        $assurance = $vehicules->assurance;
+        $vehicules = Vehicule::with('assurance')->get();
+
+        return Inertia::render('Vehicules/Show', [
+            'vehicules' => $vehicules,
+            'assurance' => $assurance,
+            'userConnecter' => $userConnecter,
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.

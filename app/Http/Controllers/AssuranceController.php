@@ -26,7 +26,7 @@ class AssuranceController extends Controller
         $assurances = $user->role === 'admin'
             ? Assurance::with('vehicule')->get() // toutes les assurances pour admin
             : $user->assurances()->with('vehicule')->get();  // seulement les assurances de l'utilisateur
-
+        $vehicule = Vehicule::all();
         // Ajouter la durée en jours pour chaque assurance
         $assurances->transform(function ($assurance) {
             $dateDebut = \Carbon\Carbon::parse($assurance->dateDebut);
@@ -41,6 +41,7 @@ class AssuranceController extends Controller
         // Retourner les données à Inertia
         return Inertia::render('Assurances/Index', [
             'assurances' => $assurances,
+            'vehicule' => $vehicule,
             'roleUser' => ['role' => $user->role],
             'flash' => session('message') ? ['message' => session('message')] : [],
         ]);
@@ -96,10 +97,29 @@ class AssuranceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Assurance $assurance)
     {
         //
     }
+    public function showByVehicule($vehicule_id)
+    {
+        // On récupère l’assurance liée au véhicule
+        $assurance = Assurance::where('vehicule_id', $vehicule_id)->first();
+
+        if (!$assurance) {
+            abort(404, 'Aucune assurance trouvée pour ce véhicule');
+        }
+
+        // On récupère aussi les infos du véhicule
+        $vehicule = Vehicule::find($vehicule_id);
+
+        return Inertia::render('Assurances/Show', [
+            'assurance' => $assurance,
+            'vehicule' => $vehicule,
+        ]);
+    }
+
+
 
     /**
      * Show the form for editing the specified resource.

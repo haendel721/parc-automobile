@@ -1,42 +1,42 @@
-import { Button } from '@headlessui/react';
-import { router, usePage } from '@inertiajs/react';
-import { CircleX, Eye } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { router, usePage } from '@inertiajs/react';
+import { Button } from '@headlessui/react';
+import { CircleX, Eye } from 'lucide-react';
 import { route } from 'ziggy-js';
 
+type Notification = {
+    id: string;
+    read_at: string | null;
+    created_at: string;
+    data: {
+        vehicule?: string;
+        message?: string;
+        user?: string;
+        url?: string;
+    };
+};
+
 export default function NotificationsDrawer() {
-    // notifications passées globalement via HandleInertiaRequests.php
     const { notifications: serverNotifications, unread_notifications_count } = usePage().props as any;
 
-    // on garde une copy locale pour enlever les notifs quand on marque comme lues,
-    // sans forcer un reload de page (optimiste)
     const [isOpen, setIsOpen] = useState(false);
-    const [notifications, setNotifications] = useState<any[]>([]);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [filter, setFilter] = useState<'all' | 'read' | 'unread'>('all');
 
-    const notification_data = notifications.map((n) => n.data);
-    console.log('Notification data :', notification_data);
-
-    const getFilteredNotifications = () => {
-        if (filter == 'read') {
-            return notifications.filter((n) => n.read_at !== null);
-        }
-        if (filter == 'unread') {
-            return notifications.filter((n) => n.read_at === null);
-        }
-        return notifications; // tout
-    };
-
-    const filteredNotifications = getFilteredNotifications();
-
     useEffect(() => {
-        console.log('serverNotifications (from Inertia):', serverNotifications);
-        // convert Laravel collection -> array JS (si c'est un array déjà, ok)
         setNotifications(serverNotifications ? JSON.parse(JSON.stringify(serverNotifications)) : []);
     }, [serverNotifications]);
 
     const close = () => setIsOpen(false);
     const open = () => setIsOpen(true);
+
+    const getFilteredNotifications = () => {
+        if (filter === 'read') return notifications.filter((n) => n.read_at !== null);
+        if (filter === 'unread') return notifications.filter((n) => n.read_at === null);
+        return notifications;
+    };
+
+    const filteredNotifications = getFilteredNotifications();
 
     const markAsRead = (id?: string) => {
         router.post(
@@ -44,12 +44,9 @@ export default function NotificationsDrawer() {
             { id },
             {
                 onSuccess: () => {
-                    console.log('markAsRead onSuccess — before local update', notifications);
                     if (id) {
-                        // On garde la notif, mais on la passe en "lue"
                         setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n)));
                     } else {
-                        // On met toutes en "lues"
                         setNotifications((prev) => prev.map((n) => ({ ...n, read_at: new Date().toISOString() })));
                     }
                 },
@@ -58,19 +55,20 @@ export default function NotificationsDrawer() {
             },
         );
     };
+
     const deleteNotification = (id: string) => {
         if (confirm('Voulez-vous vraiment supprimer cette notification ?')) {
             router.delete(route('admin.notifications.destroy', id), {
                 onSuccess: () => {
-                    // Mettre à jour l'état local en retirant la notif
                     setNotifications((prev) => prev.filter((n) => n.id !== id));
                 },
             });
         }
     };
+
     return (
         <>
-            {/* Bouton déclencheur : affiché où tu veux dans le layout */}
+            {/* 🔔 Bouton déclencheur */}
             <button onClick={open} aria-label="Afficher notifications" className="relative inline-flex items-center rounded p-2 hover:bg-gray-100">
                 🔔
                 {unread_notifications_count > 0 && (
@@ -80,57 +78,52 @@ export default function NotificationsDrawer() {
                 )}
             </button>
 
-            {/* Overlay */}
+            {/* 🧭 Drawer (panneau latéral) */}
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex" aria-modal="true" role="dialog">
-                    {/* Drawer panel (glisse depuis la droite) */}
-                    <aside
-                        className={`relative ml-auto w-full max-w-sm transform bg-black shadow-xl transition-transform duration-300 ease-in-out`}
-                        role="complementary"
-                    >
+                    <aside className="relative ml-auto w-full max-w-sm transform bg-black text-white shadow-xl transition-transform duration-300 ease-in-out">
                         <div className="flex items-center justify-between border-b p-4">
                             <h3 className="text-lg font-semibold">Notifications</h3>
                             <div className="flex items-center gap-2">
-                                <button onClick={() => markAsRead(undefined)} className="rounded border px-2 py-1 text-sm">
+                                <button onClick={() => markAsRead()} className="rounded border px-2 py-1 text-sm">
                                     Tout marquer lu
                                 </button>
-                                <button onClick={close} aria-label="Close" className="px-2 text-xl">
+                                <button onClick={close} aria-label="Fermer" className="px-2 text-xl">
                                     ✕
                                 </button>
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 border-b p-4">
-                            <Button
-                                onClick={() => setFilter('read')}
-                                className={`w-full border ${filter === 'read' ? 'bg-gray-700' : 'bg-black-500 text-white'}`}
-                            >
+
+                        {/* 🔘 Filtres */}
+                        <div className="grid grid-cols-3 gap-2 border-b p-4">
+                            <Button onClick={() => setFilter('read')} className={`w-full border ${filter === 'read' ? 'bg-gray-700' : 'bg-gray-900'}`}>
                                 Lues
                             </Button>
-                            <Button
-                                onClick={() => setFilter('unread')}
-                                className={`w-full border ${filter === 'unread' ? 'bg-gray-700' : 'bg-black-500 text-white'}`}
-                            >
+                            <Button onClick={() => setFilter('unread')} className={`w-full border ${filter === 'unread' ? 'bg-gray-700' : 'bg-gray-900'}`}>
                                 Non lues
                             </Button>
-                            <Button
-                                onClick={() => setFilter('all')}
-                                className={`w-full border ${filter === 'all' ? 'bg-gray-700' : 'bg-black-500 text-white'}`}
-                            >
+                            <Button onClick={() => setFilter('all')} className={`w-full border ${filter === 'all' ? 'bg-gray-700' : 'bg-gray-900'}`}>
                                 Tout
                             </Button>
                         </div>
 
+                        {/* 📜 Liste des notifications */}
                         <div className="h-full overflow-y-auto p-4">
                             {filteredNotifications.length === 0 ? (
-                                <div className="mt-6 text-center text-sm text-gray-500">Aucune notification.</div>
+                                <div className="mt-6 text-center text-sm text-gray-400">Aucune notification.</div>
                             ) : (
                                 <ul className="space-y-3">
-                                    {filteredNotifications.map((n: any) => (
-                                        <li key={n.id} className={`rounded border bg-gray-950 p-3 ${n.read_at ? 'bg-neutral-950' : 'bg-gray-50'}`}>
+                                    {filteredNotifications.map((n) => (
+                                        <li
+                                            key={n.id}
+                                            className={`rounded border p-3 transition ${
+                                                n.read_at ? 'bg-gray-900' : 'bg-gray-800 border-gray-600'
+                                            }`}
+                                        >
                                             <div className="flex justify-between">
                                                 <div>
                                                     <div className="font-medium">{n.data?.vehicule ?? 'Véhicule inconnu'}</div>
-                                                    <div className="text-sm text-gray-700">{n.data?.message ?? n.type}</div>
+                                                    <div className="text-sm text-gray-400">{n.data?.message ?? n.type}</div>
                                                     <div className="mt-1 text-xs text-gray-500">
                                                         Par {n.data?.user ?? 'Utilisateur'} — {new Date(n.created_at).toLocaleString()}
                                                     </div>
@@ -146,14 +139,16 @@ export default function NotificationsDrawer() {
                                                         <a
                                                             href={n.data.url}
                                                             className="text-xs underline"
-                                                            onClick={close} /* fermer drawer si on ouvre un detail */
+                                                            onClick={() => {
+                                                                close();
+                                                                markAsRead(n.id);
+                                                            }}
                                                         >
-                                                            <Eye />
+                                                            <Eye size={14} />
                                                         </a>
                                                     )}
-
                                                     <Button onClick={() => deleteNotification(n.id)} className="text-xs text-red-500">
-                                                        <CircleX />
+                                                        <CircleX size={14} />
                                                     </Button>
                                                 </div>
                                             </div>

@@ -21,7 +21,10 @@ type assurances = {
     dateDebut: string;
     dateFin: number;
 };
-
+type vehicule = {
+    id: number;
+    immatriculation: string;
+}
 interface roleUser {
     role: string;
 }
@@ -31,11 +34,12 @@ type PageProps = {
     flash: {
         message?: string;
     };
+    vehicule: vehicule [];
 };
 
 export default function Index() {
-    const { roleUser, assurances } = usePage<PageProps>().props;
-    console.log('roleUser', roleUser.role , '\nAssurance : ' + assurances);
+    const { roleUser, assurances , vehicule } = usePage<PageProps>().props;
+    // console.log('roleUser', roleUser.role , '\nAssurance : ' + assurances , '\nVehicule :' + vehicule);
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>

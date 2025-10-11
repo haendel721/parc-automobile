@@ -19,6 +19,12 @@ class Entretien extends Model
         'description',
         'dernier_visite',
         'derniere_vidange',
+        'statut',
+        'mecanicien_id',
+    ];
+     // ⚡ Dit à Laravel que 'prochaine_visite' est une date
+    protected $casts = [
+        'prochaine_visite' => 'datetime',
     ];
 
     public function vehicule() {
@@ -32,4 +38,8 @@ class Entretien extends Model
     public function fournisseur() {
         return $this->belongsTo(Fournisseur::class);
     }
+    public function interventions()
+{
+    return $this->hasMany(Intervention::class);
+}
 }

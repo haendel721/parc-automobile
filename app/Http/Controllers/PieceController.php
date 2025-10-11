@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Entretien;
 use App\Models\Piece;
 use App\Models\Fournisseur;
+use App\Models\Vehicule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +20,7 @@ class PieceController extends Controller
         $user = auth()->user();
 
         // Si admin → toutes les pièces
-        $pieces = $user->role === 'admin'
-            ? Piece::with(['user','fournisseur'])->get()
-            : Piece::with('fournisseur')->where('user_id', $user->id)->get();
+        $pieces = Piece::with(['user', 'fournisseur'])->get();
 
         return Inertia::render('Pieces/Index', [
             'pieces' => $pieces,
@@ -31,19 +31,37 @@ class PieceController extends Controller
             'flash' => session('message') ? ['message' => session('message')] : [],
         ]);
     }
+    // Vérifie si la pièce existe déjà
+    public function check(Request $request)
+    {
+        $nom = $request->get('nom');
+        $exists = Piece::where('nom', 'like', $nom)->exists();
 
+        return response()->json(['exists' => $exists]);
+    }
 
     /**
      * Show the form for creating a new piece.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $fournisseurs = Fournisseur::all();
-
+        // Récupération des query parameters
+        $entretien_id = $request->query('entretien_id');
+        $vehicule_id = $request->query('vehicule_id');
+        // Récupérer les pièces liées à cet entretien et ce véhicule
+        $pieces = Piece::where('entretien_id', $entretien_id)
+            ->where('vehicule_id', $vehicule_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // Retourner ces données à Inertia
         return Inertia::render('Pieces/Create', [
-            'fournisseurs' => $fournisseurs
+            'fournisseurs' => Fournisseur::all(),
+            'entretien_id' => $entretien_id,
+            'vehicule_id' => $vehicule_id,
+            'pieces' => $pieces,
         ]);
     }
+
 
     /**
      * Store a newly created piece in storage.
@@ -55,12 +73,18 @@ class PieceController extends Controller
             'prix' => 'required|numeric',
             'quantite' => 'required|integer|min:0',
             'fournisseur_id' => 'nullable|exists:fournisseurs,id',
+            'entretien_id' => 'nullable|exists:entretiens,id',
+            'vehicule_id' => 'nullable|exists:vehicules,id',
         ]);
         $validated['user_id'] = Auth::id();
+        // dd($validated);
         Piece::create($validated);
 
-        return redirect()->route('pieces.index')
-            ->with('message', 'Pièce créée avec succès.');
+        // On redirige vers la même page avec les mêmes paramètres
+        return redirect()->route('pieces.create', [
+            'entretien_id' => $request->entretien_id,
+            'vehicule_id' => $request->vehicule_id,
+        ])->with('message', 'Pièce ajoutée avec succès.');
     }
 
     /**

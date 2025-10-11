@@ -54,7 +54,7 @@ export default function Create() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Nouvelle Assurance" />
-            <div className="w-8/12 p-4">
+            <div className="w-8/12 p-4 m-10" >
                 <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
                     {Object.keys(errors).length > 0 && (
                         <Alert>
@@ -132,7 +132,7 @@ export default function Create() {
                         />
                     </div>
 
-                    <Button disabled={processing} type="submit">Ajouter</Button>
+                    <Button disabled={processing} type="submit">Valider</Button>
                 </form>
             </div>
         </AppLayout>

@@ -1,26 +1,25 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import NotificationsDrawer from '@/components/NotificationsDrawer';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookLock, BookOpen, Car, Cog, FileSliders, Folder, Hammer, LayoutGrid, PackagePlus, PackageSearch, UsersRound, Wrench } from 'lucide-react';
-import { route } from 'ziggy-js';
+import { BookLock, BookOpen, Car, Cog, FileSliders, Folder, Hammer, LayoutGrid, PackagePlus, UsersRound, Wrench } from 'lucide-react';
 import AppLogo from './app-logo';
-import NotificationsDrawer from '@/components/NotificationsDrawer';
 
-const mainNavItems: NavItem[] = [
+const mainNavItemsAdmin: NavItem[] = [
     {
         title: 'Tableau de bord',
         href: dashboard(),
         icon: LayoutGrid,
     },
-    {
-        title: 'Products',
-        href: '/products',
-        icon: PackageSearch,
-    },
+    // {
+    //     title: 'Products',
+    //     href: '/products',
+    //     icon: PackageSearch,
+    // },
     {
         title: 'Utilisateurs',
         href: '/utilisateurs',
@@ -63,6 +62,36 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+const mainNavItemsUtilisateur: NavItem[] = [
+    {
+        title: 'Tableau de bord',
+        href: dashboard(),
+        icon: LayoutGrid,
+    },
+      {
+        title: 'Entretien',
+        href: '/entretiens',
+        icon: Hammer,
+    },
+];
+const mainNavItemsMecanicien: NavItem[] = [
+    {
+        title: 'Tableau de bord',
+        href: dashboard(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Vehicules',
+        href: '/vehicules',
+        icon: Car,
+    },
+    {
+        title: 'Assurances',
+        href: '/assurances',
+        icon: BookLock,
+    },
+];
+
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
@@ -77,7 +106,17 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
-    const { unread_notifications_count, auth } = usePage().props as any;
+    const { auth } = usePage().props as any;
+    let navItems = [];
+
+    // Vérifie le rôle de l'utilisateur connecté
+    if (auth?.user?.role === 'admin') {
+        navItems = mainNavItemsAdmin;
+    } else if (auth?.user?.role === 'mecanicien') {
+        navItems = mainNavItemsMecanicien;
+    } else {
+        navItems = mainNavItemsUtilisateur;
+    }
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -91,26 +130,8 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <div>
-                {/* Cloche visible uniquement pour les admins */}
-                {auth?.user?.role === 'admin' && (
-                    <Link href={route('admin.notifications.index')} className="relative inline-block">
-                        🔔
-                        {unread_notifications_count > 0 && (
-                            <span className="absolute -top-1 -right-3 rounded-full bg-red-600 px-1 text-xs text-white">
-                                {unread_notifications_count}
-                            </span>
-                        )}
-                    </Link>
-                )}
-                <div className="flex items-center gap-3">
-                    {/* n'affiche la cloche que si admin (optionnel) */}
-                    {auth?.user?.role === 'admin' && <NotificationsDrawer />}
-                    {/* autre actions header */}
-                </div>
-            </div>
             <SidebarContent className="justify-center">
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>

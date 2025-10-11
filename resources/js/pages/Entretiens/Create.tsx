@@ -18,7 +18,7 @@ type PageProps = {
     vehicules: { id: number; immatriculation: string }[];
     fournisseurs: { id: number; nom: string }[];
     user: { id: number; role: string }[];
-}
+};
 
 export default function CreateEntretien() {
     const { vehicules, fournisseurs, user } = usePage<PageProps>().props;
@@ -45,7 +45,7 @@ export default function CreateEntretien() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer un entretien" />
-            <div className="w-8/12 p-4">
+            <div className="w-8/12 p-4 m-5">
                 <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
                     {Object.keys(errors).length > 0 && (
                         <Alert>
@@ -78,7 +78,7 @@ export default function CreateEntretien() {
                         </select>
                     </div>
 
-                    {user.role === 'admin' ? (
+                    {/* {user.role === 'admin' ? (
                         <>
                             <div className="gap-1.5">
                                 <Label htmlFor="fournisseur_id">Fournisseur</Label>
@@ -128,19 +128,27 @@ export default function CreateEntretien() {
                                 <Input value={data.recommandation} onChange={(e) => setData('recommandation', e.target.value)} />
                             </div>
                         </>
-                    ) : (
-                        ''
-                    )}
+                    ) : (*/}
+                        <> 
+                            <div className="gap-1.5">
+                                <Label htmlFor="probleme">Problème</Label>
+                                <Input value={data.probleme} onChange={(e) => setData('probleme', e.target.value)} />
+                            </div>
 
-                    <div className="gap-1.5">
-                        <Label htmlFor="probleme">Problème</Label>
-                        <Input value={data.probleme} onChange={(e) => setData('probleme', e.target.value)} />
-                    </div>
-
-                    <div className="gap-1.5">
-                        <Label htmlFor="description">Description</Label>
-                        <Input value={data.description} onChange={(e) => setData('description', e.target.value)} />
-                    </div>
+                            <div className="gap-1.5">
+                                <Label htmlFor="description">Description</Label>
+                                <Input value={data.description} onChange={(e) => setData('description', e.target.value)} />
+                            </div>
+                            <div className="gap-1.5">
+                                <Label htmlFor="prochaine_visite">Date de la prochaine visite</Label>
+                                <Input
+                                    type="datetime-local"
+                                    value={data.prochaine_visite}
+                                    onChange={(e) => setData('prochaine_visite', e.target.value)}
+                                />
+                            </div>
+                        </>
+                    {/* )} */}
 
                     <Button disabled={processing} type="submit">
                         Envoyer

@@ -81,7 +81,7 @@ export default function Index() {
                                     <TableCell className="font-medium">{utilisateur.id}</TableCell>
                                     <TableCell>{utilisateur.name}</TableCell>
                                     <TableCell>{utilisateur.prenom}</TableCell>
-                                    <TableCell>{utilisateur.phone}</TableCell>
+                                    <TableCell>0{utilisateur.phone}</TableCell>
                                     <TableCell>{utilisateur.statut}</TableCell>
                                     <TableCell>{utilisateur.fonction}</TableCell>
                                     <TableCell>{utilisateur.email}</TableCell>

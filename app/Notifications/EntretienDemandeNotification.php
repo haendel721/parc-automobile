@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notification;
 class EntretienDemandeNotification extends Notification
 {
     use Queueable;
-    
+
     protected $entretien;
 
     /**
@@ -37,16 +37,31 @@ class EntretienDemandeNotification extends Notification
      */
     public function toDatabase($notifiable)
     {
+        $entretien = $this->entretien;
+        $userRole = $notifiable->role; // rôle de celui qui reçoit la notification
+        $message = '';
+
+        if ($userRole === 'admin') {
+            // Message pour l'admin : nouvelle demande de l'utilisateur
+            $message = "Nouvelle demande d'entretien ";
+        } elseif ($userRole === 'mecanicien') {
+            // Message pour le mécanicien : demande validée
+            $message = "Entretien prévu pour : " . optional($entretien->user)->name;
+        } else {
+            // Message pour l'utilisateur : entretien prévu
+            $message = "Entretien prévu pour votre véhicule : " . optional($entretien->vehicule)->immatriculation;
+        }
+
         return [
-            'entretien_id' => $this->entretien->id,
-            'vehicule'     => optional($this->entretien->vehicule)->immatriculation, 
-            'type'         => $this->entretien->type,
-            'user'         => optional($this->entretien->user)->name,
-            'message'      => "Nouvelle demande d'entretien",
-            // tu peux ajouter une URL vers la page détail
-            'url'          => route('entretiens.show', $this->entretien->id),
+            'entretien_id' => $entretien->id,
+            'vehicule'     => optional($entretien->vehicule)->immatriculation,
+            'type'         => $entretien->type,
+            'user'         => optional($entretien->user)->name,
+            'message'      => $message,
+            'url'          => route('entretiens.show', $entretien->id),
         ];
     }
+
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
