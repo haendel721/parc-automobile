@@ -140,6 +140,7 @@ export default function Index() {
                         <Input type="date" value={data.dateAcquisition} onChange={(e) => setData('dateAcquisition', e.target.value)} />
                     </div>
                     <div className="gap-1.5">
+                        <Label htmlFor="Date d acquisition">Importer votre image</Label>
                         <Input type="file" onChange={(e) => setData('photo', e.target.files[0])} />
                     </div>
                     <Button disabled={processing} className="t-4" type="submit">

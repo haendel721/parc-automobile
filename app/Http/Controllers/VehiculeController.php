@@ -8,7 +8,9 @@ use Inertia\Inertia;
 use App\Models\Carburant;
 use App\Models\TypeVehicule;
 use App\Models\Marque;
+use App\Models\Intervention;
 use App\Models\User;
+use App\Models\entretien;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,7 +24,8 @@ class VehiculeController extends Controller
         $vehicules = Auth::user()->role === 'admin'
             ? Vehicule::with('assurance')->get() // <-- Charger la relation assurance
             : Auth::user()->vehicules()->with('assurance')->get();
-
+        $intervention = Intervention::all();
+        $entretien = Entretien::all();
         return Inertia::render('Vehicules/Index', [
             'vehicules' => $vehicules,
             'roleUser' => ['role' => Auth::user()->role],
@@ -30,6 +33,8 @@ class VehiculeController extends Controller
             'typeVehicules' => TypeVehicule::all(),
             'marques' => Marque::all(),
             'userNames' => User::pluck('name', 'id'),
+            'intervention' => $intervention,
+            'entretien' =>$entretien,
         ]);
     }
 

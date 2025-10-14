@@ -39,8 +39,8 @@ class DashboardController extends Controller
 
             return $assurance;
         });
-
         // Renvoie toutes les données à Inertia
+        // $this->updateDernierVisite();
         return inertia('dashboard', [
             'entretiens' => $entretiens,
             'vehicules'  => $vehicules,
@@ -50,4 +50,11 @@ class DashboardController extends Controller
             'assurances' => $assurances,
         ]);
     }
+    // parcourus tous les entretiens est cherche l'entretien qui est déjà finit et en ce moment là dernier_visite = prochaine_visite
+    // public function updateDernierVisite(Entretien $entretien){
+    //     $derniere_visite = $entretien->prochaine_visite->format('d/m/Y H:i');
+    //         $entretien['dernier_visite'] = $derniere_visite;
+    //         //  dd($entretien);
+    //         $entretien->update();
+    // }
 }

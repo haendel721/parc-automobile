@@ -10,6 +10,7 @@ use App\Models\Piece;
 use App\Models\Intervention;
 use App\Models\User;
 use App\Models\Frais;
+use App\Models\EntretienValidated;
 use App\Notifications\EntretienDemandeNotification;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,6 @@ class EntretienController extends Controller
             ],
         ]);
     }
-
 
     // 📌 Formulaire création
     public function create()
@@ -139,6 +139,7 @@ class EntretienController extends Controller
         $fournisseur = Fournisseur::all();
         $pieces = Piece::all();
         $intervention = Intervention::all();
+        $entretienValidated = EntretienValidated::all();
         return Inertia::render('Entretiens/Show', [
             'entretien' => $entretien,
             'vehicule' => $vehicule,
@@ -147,6 +148,7 @@ class EntretienController extends Controller
             'userConnecter' => $userConnecter,
             'pieces' => $pieces,
             'intervention' => $intervention,
+            'entretienValidated' => $entretienValidated,
         ]);
     }
     // validation des entretiens
@@ -168,43 +170,62 @@ class EntretienController extends Controller
     //         ->with('success', 'Entretien mis à jour avec succès.');
     // }
 
-    public function validate(Request $request, Entretien $entretien)
+    public function validate(Request $request, Entretien $entretien )
     {
         $data = $request->validate([
+            // entretien
             'statut' => 'required|in:Validé,Refusé',
             'type' => 'required|in:Préventif,Correctif,Légal',
             'mecanicien_id' => 'required|exists:users,id',
             'prochaine_visite' => 'required|date',
         ]);
-        $date = Carbon::parse($data['prochaine_visite']);
 
-        // ⚡ Définir l'intervalle de 2h avant et 2h après
+        $date = Carbon::parse($data['prochaine_visite']);
         $start = $date->copy()->subHours(2);
         $end   = $date->copy()->addHours(2);
+        $entretienValidated = EntretienValidated::where('user_id', $entretien->user_id)->first();
 
-        // Vérification si le fournisseur a déjà un entretien dans l'intervalle
-        $exists = Entretien::where('mecanicien_id', $data['mecanicien_id'])
-            ->whereBetween('prochaine_visite', [$start, $end])
-            ->where('id', '!=', $entretien->id) // exclut l'entretien actuel
-            ->exists();
+        // dd($entretien->user_id,$entretienValidated->user_id);
+        // Vérifier si ce n’est PAS le même utilisateur que celui qui a fait la demande initiale
+        if ($entretien->id !== $entretienValidated->entretien_id){
 
-        if ($exists) {
-            return back()->withErrors([
-                'mecanicien_id' => 'Ce mecanicien a déjà un entretien prévu dans les 2 heures autour de cette date.'
-            ]);
+            // Vérification si le mécanicien a déjà un entretien dans cet intervalle
+            $exists = Entretien::where('mecanicien_id', $data['mecanicien_id'])
+                ->whereBetween('prochaine_visite', [$start, $end])
+                ->where('id', '!=', $entretien->id) // exclut l’entretien actuel
+                ->exists();
+
+            if ($exists) {
+                return back()->withErrors([
+                    'mecanicien_id' => 'Ce mécanicien a déjà un entretien prévu dans les 2 heures autour de cette date.'
+                ]);
+            }
         }
-        // dd($data);
+
+        // ✅ Mise à jour de l’entretien
         $entretien->update($data);
+
+        $dataValide['user_id'] = $entretien->user_id;
+        $dataValide['entretien_id'] = $entretien->id;
+        $dataValide['vehicule_id'] = $entretien->vehicule_id;
+        $dataValide['mecanicien_id'] = $entretien->mecanicien_id;
+        $dataValide['Type_entretien'] = $entretien->type;
+        $dataValide['date_prevue'] = $entretien->prochaine_visite;
+        // dd($dataValide);
+        $EntretienValidated = EntretienValidated::create($dataValide);
+
         // notifier le demandeur
         $utilisateurs = User::where('role', 'utilisateur')->get();
         foreach ($utilisateurs as $utilisateur) {
             $utilisateur->notify(new EntretienDemandeNotification($entretien));
         }
+
         // notifier le mécanicien
-        $mecanicier = User::where('id', $data['mecanicien_id'])->get();
-        foreach ($mecanicier as $mecanicien) {
+        $mecanicien = User::find($data['mecanicien_id']);
+        if ($mecanicien) {
             $mecanicien->notify(new EntretienDemandeNotification($entretien));
         }
+
         return redirect()->route('entretiens.show', $entretien->id)
             ->with('success', 'Entretien mis à jour avec succès.');
     }
@@ -260,11 +281,15 @@ class EntretienController extends Controller
         $entretien->delete();
         return redirect()->route('entretiens.index')->with('success', 'Entretien supprimé avec succès.');
     }
-    public function checkDate(Entretien $entretien)
+    public function checkDate(Entretien $entretien, Request $request)
     {
         $now = now(); // date + heure actuelle
 
         if ($entretien->prochaine_visite->isBefore($now)) {
+            $derniere_visite = $entretien->prochaine_visite->format('d/m/Y H:i');
+            $entretien['dernier_visite'] = $derniere_visite;
+            //  dd($entretien);
+            $entretien->update();
             $statut = "En retard";
         } elseif ($entretien->prochaine_visite->isSameDay($now)) {
             $statut = "Aujourd'hui";
@@ -273,6 +298,7 @@ class EntretienController extends Controller
         }
 
         return response()->json([
+            'dernier_visite' => $entretien->prochaine_visite->format('d/m/Y H:i'),
             'entretien_id' => $entretien->id,
             'statut' => $statut,
             'date' => $entretien->prochaine_visite->format('d/m/Y H:i'),

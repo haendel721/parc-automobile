@@ -29,9 +29,20 @@ type Vehicules = {
     photo: string;
     user_id: number;
 };
-
+type intervention = {
+    id: number;
+    user_id: number;
+    entretien_id: number;
+    kilometrage: number;
+}
 interface roleUser {
     role: string;
+}
+type entretien = {
+    id: number;
+    vehicule_id: number;
+    prochaine_visite: string;
+    statut: number;
 }
 
 type PageProps = {
@@ -44,10 +55,12 @@ type PageProps = {
     marques: { id: number; nom: string }[];
     carburants: { id: number; type: string }[];
     typeVehicules: { id: number; nom: string }[];
+    intervention: intervention[];
+    entretien: entretien[];
 };
 
 export default function Index() {
-    const { roleUser, vehicules, flash, marques, carburants, typeVehicules, userNames } = usePage<PageProps>().props;
+    const { roleUser, vehicules, flash, marques, carburants, typeVehicules, userNames ,intervention , entretien  } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {
@@ -56,6 +69,7 @@ export default function Index() {
     };
 
     console.log(roleUser);
+    // console.log("intervention " + intervention.map(e=>e.entretien_id))
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -154,7 +168,7 @@ export default function Index() {
                 ) : (
                     <>
                         {roleUser.role !== 'admin' && (
-                            <VehiculeUser vehicules={vehicules} marques={marques} carburants={carburants} typeVehicules={typeVehicules} />
+                            <VehiculeUser vehicules={vehicules} marques={marques} carburants={carburants} typeVehicules={typeVehicules} intervention={intervention} entretien={entretien} />
                         )}
                     </>
                 )}

@@ -3,9 +3,9 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { ShieldCheck } from 'lucide-react';
+import { PlusCircle, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import background from '../../images/backgroundV.jpg';
+import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -40,6 +40,7 @@ interface entretiens {
     type: string;
     statut: string;
     vehicule?: vehicules;
+    vehicule_id: number;
     prochaine_visite: string;
 }
 
@@ -73,7 +74,7 @@ export default function Dashboard() {
     const vehiculeConnecter = vehicules.filter((v) => v.user_id === userConnecter.id);
     const assuranceConnecter = assurances.filter((a) => a.user_id === userConnecter.id);
     const entretiensConnecter = entretiens.filter((e) => e.user_id === userConnecter.id);
-    console.log(entretiensConnecter);
+    console.log(assuranceConnecter);
     const vehiculesAvecMarque = vehiculeConnecter.map((v) => {
         const marque = marques.find((m) => m.id === v.marque_id);
         return {
@@ -123,12 +124,6 @@ export default function Dashboard() {
                 </div>
             ) : (
                 <div className="relative flex min-h-screen flex-col items-center overflow-hidden p-6">
-                    {/* --- Image de fond sombre --- */}
-                    <div
-                        className="absolute inset-0 -z-10 bg-cover bg-center brightness-50"
-                        style={{ backgroundImage: `url(${background})` }}
-                    ></div>
-
                     {/* Image de la voiture */}
                     <div className="relative mb-8 h-96 w-full overflow-hidden rounded-xl bg-gray-900 shadow-lg">
                         {/* --- Image du véhicule --- */}
@@ -189,43 +184,65 @@ export default function Dashboard() {
                     {/* Statistiques */}
                     <div className="flex grid w-full grid-cols-1 gap-4 text-sm md:grid-cols-2">
                         {/* --- Bloc assurances --- */}
-                        <div className="rounded-xl bg-cyan-700 sm:grid-cols-1">
-                            {assuranceConnecter?.map((assurance) => (
-                                <div
-                                    key={assurance.id}
-                                    className="relative p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-                                >
-                                    {/* Bandeau supérieur */}
-                                    <div className="mb-4 flex items-center justify-between border-b border-white/30 pb-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="rounded-full bg-white/20 p-2">
-                                                <ShieldCheck className="h-6 w-6 text-white" />
-                                            </div>
-                                            <div>
-                                                {vehiculeConnecter.map((v) =>
-                                                    v.id === assurance.vehicule_id ? (
-                                                        <>
-                                                            <h2 className="text-lg font-semibold">
-                                                                {marques.map((m) => (v.marque_id === m.id ? m.nom : ''))}
-                                                            </h2>
-                                                            <h2 className="text-lg font-semibold">{v.immatriculation}</h2>
-                                                        </>
-                                                    ) : (
-                                                        ''
-                                                    ),
-                                                )}
+                        {assuranceConnecter.length !== 0 ? (
+                            <>
+                                <div className="rounded-xl bg-cyan-700 sm:grid-cols-1">
+                                    {assuranceConnecter?.map((assurance) => (
+                                        <div
+                                            key={assurance.id}
+                                            className="relative p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                                        >
+                                            {/* Bandeau supérieur */}
+                                            <div className="mb-4 flex items-center justify-between border-b border-white/30 pb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="rounded-full bg-white/20 p-2">
+                                                        <ShieldCheck className="h-6 w-6 text-white" />
+                                                    </div>
+                                                    <div>
+                                                        {vehiculeConnecter.map((v) =>
+                                                            v.id === assurance.vehicule_id ? (
+                                                                <>
+                                                                    <h2 className="text-lg font-semibold">
+                                                                        {marques.map((m) => (v.marque_id === m.id ? m.nom : ''))}
+                                                                    </h2>
+                                                                    <h2 className="text-lg font-semibold">{v.immatriculation}</h2>
+                                                                </>
+                                                            ) : (
+                                                                ''
+                                                            ),
+                                                        )}
 
-                                                <p className="text-sm text-white/80">Contrat : {assurance.NumContrat}</p>
+                                                        <p className="text-sm text-white/80">N° police : {assurance.NumContrat}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Badge durée restante */}
+                                            <div className="absolute top-6 right-4 rounded-full bg-white/20 px-3 py-1 text-sm font-medium text-white backdrop-blur-md">
+                                                ⏳ {assurance.duree_jours} jours restants
                                             </div>
                                         </div>
-                                    </div>
-                                    {/* Badge durée restante */}
-                                    <div className="absolute top-6 right-4 rounded-full bg-white/20 px-3 py-1 text-sm font-medium text-white backdrop-blur-md">
-                                        ⏳ {assurance.duree_jours} jours restants
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="m-8 flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-10 shadow-lg">
+                                    <h2 className="mb-2 text-2xl font-bold text-gray-800">Gérez vos assurances en toute simplicité</h2>
+                                    <p className="mb-6 max-w-md text-center text-gray-600">
+                                        Ajoutez votre assurance dès maintenant pour suivre facilement vos informations et bénéficier d’un meilleur
+                                        suivi de vos véhicules.
+                                    </p>
+
+                                    <a
+                                        href={route('assurances.create')}
+                                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-xl active:scale-95"
+                                    >
+                                        <PlusCircle className="h-5 w-5" />
+                                        Ajouter une assurance
+                                    </a>
+                                </div>
+                            </>
+                        )}
 
                         <div className="grid gap-4 sm:grid-cols-1">
                             {entretiensConnecter
@@ -253,6 +270,10 @@ export default function Dashboard() {
                                             <p className="flex items-center gap-2">
                                                 <span className="font-medium text-white/80">Prochaine visite :</span>
                                                 <span>{entretien.prochaine_visite}</span>
+                                            </p>
+                                            <p className="flex items-center gap-2">
+                                                <span className="font-medium text-white/80">Immatriculation :</span>
+                                                <span>{vehiculeConnecter.map((v) => (v.id === entretien.vehicule_id ? v.immatriculation : ''))}</span>
                                             </p>
                                         </div>
 

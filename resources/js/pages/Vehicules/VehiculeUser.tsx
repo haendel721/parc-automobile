@@ -1,7 +1,7 @@
 // components/CarDetails.jsx
 import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/react';
-import { Eye, SquarePen } from 'lucide-react';
+import { Link, useForm } from '@inertiajs/react';
+import { Eye, SquarePen, Trash2 } from 'lucide-react';
 import React from 'react';
 import { route } from 'ziggy-js';
 
@@ -40,22 +40,46 @@ type Carburant = {
     id: number;
     type: string;
 };
-
+type intervention = {
+    id: number;
+    user_id: number;
+    entretien_id: number;
+    vehicule_id: number;
+    kilometrage: number;
+}
+type entretien = {
+    id: number;
+    vehicule_id: number;
+    prochaine_visite: string;
+    statut: string;
+}
 type VehiculeUserProps = {
     vehicules: Vehicules[];
     marques: Marque[];
     typeVehicules: TypeVehicule[];
     carburants: Carburant[];
+    intervention: intervention[];
+    entretien: entretien[];
 };
 
-const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carburants, typeVehicules }) => {
+const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carburants, typeVehicules , intervention , entretien }) => {
+    const { processing, delete: destroy } = useForm();
+    const handleDelete = (id: number, immatriculation: string) => {
+        if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {
+            destroy(route('vehicules.destroy', id));
+        }
+    };
+    
+    
     return (
         <>
             {vehicules.map((vehicule) => {
                 const marque = marques.find((m) => m.id === vehicule.marque_id);
                 const carburant = carburants.find((c) => c.id === vehicule.carburant_id);
                 const typeVehicule = typeVehicules.find((t) => t.id === vehicule.typeVehicule_id);
-
+                const kiloFilter = intervention.filter(i=>i.id === vehicule.id)
+                const entretienFilter = entretien.filter(e=>e.vehicule_id === vehicule.id)
+                console.log("entretien " + entretienFilter.map(k=>k.vehicule_id))
                 return (
                     <div key={vehicule.id} className="container mx-auto max-w-7xl space-y-6">
                         {/* Carte principale */}
@@ -88,8 +112,8 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carbura
                                             <span className="font-semibold text-gray-700">N° de série :</span> {vehicule.numSerie}
                                         </div>
                                         <div>
-                                            <span className="font-semibold text-gray-700">Kilométrage :</span>{' '}
-                                            {vehicule.kilometrage || 'Non renseigné'} km
+                                            <span className="font-semibold text-gray-700">Kilométrage :</span>
+                                            {kiloFilter.map(i=>i.vehicule_id === vehicule.id ? i.kilometrage : '')} km
                                         </div>
                                     </div>
                                     <div>
@@ -98,7 +122,7 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carbura
                                         </div>
                                         <div>
                                             <span className="font-semibold text-gray-700">Prochaine maintenance :</span>{' '}
-                                            {vehicule.prochaineMaintenance || 'Aucune'}
+                                            {entretienFilter.map(e=>e.vehicule_id === vehicule.id && e.statut ==='Validé' ? e.prochaine_visite : '')}
                                         </div>
                                         <div>
                                             <span className="font-semibold text-gray-700">État :</span> {vehicule.etat || 'Bon'}
@@ -120,6 +144,14 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carbura
                                             <SquarePen className="h-4 w-4" /> Modifier
                                         </Button>
                                     </Link>
+                                    {/* Bouton Supprimer */}
+                                    <Button
+                                    disabled={processing}
+                                        onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
+                                        className="bg-red-500 hover:bg-red-700"
+                                    >
+                                        <Trash2 /> Supprimer
+                                    </Button>
                                     {/* Bouton voir assurance */}
                                     {vehicule.assurance ? (
                                         <Link href={route('assurances.byVehicule', vehicule.id)}>

@@ -39,6 +39,16 @@ interface pieces {
     id: number;
     nom: string;
 }
+interface entretienValidated {
+    id: number;
+    type_entretien: string;
+    date_prevue: string;
+    user_id: number;
+    entretien_id: number;
+    vehicule_id: number;
+    mecanicien_id: number;
+
+}
 type PropsShow = {
     entretien: entretien;
     fournisseur: fournisseur[];
@@ -46,24 +56,27 @@ type PropsShow = {
     user: { id: number; name: string; role: string }[];
     pieces: pieces[];
     intervention: intervention[];
+    entretienValidated: entretienValidated[];
 };
 
 export default function Index() {
-    const { entretien, fournisseur, vehicule, user, pieces, userConnecter, intervention } = usePage<PropsShow>().props;
+    const { entretien, fournisseur, vehicule, user, pieces, userConnecter, intervention , entretienValidated } = usePage<PropsShow>().props;
     // console.log('user : ' + user.map((e) => e.role));
     const nom = user.find((u) => u.id === entretien.user_id);
     const immatricule = vehicule.find((v) => v.id === entretien.vehicule_id);
-
+    console.log('entretienValidated : ' + entretienValidated.map(e=>e.date_prevue))
     const formatDatetimeLocal = (dateStr: string) => {
         if (!dateStr) return '';
         const dt = new Date(dateStr);
         const year = dt.getFullYear();
         const month = String(dt.getMonth() + 1).padStart(2, '0');
         const day = String(dt.getDate()).padStart(2, '0');
-        const hours = String(dt.getHours()).padStart(2, '0');
+        const hours = String(dt.getHours()-3).padStart(2 , '0');
         const minutes = String(dt.getMinutes()).padStart(2, '0');
+        
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
+    
     const [piece, setPiece] = useState('');
     const [existe, setExiste] = useState<boolean | null>(null);
     const [loading, setLoading] = useState(false);
@@ -105,7 +118,7 @@ export default function Index() {
         duree_immobilisation: '',
         entretien_id: entretien.id,
     });
-
+    // console.log(data.prochaine_visite)
     // console.log('piece_id : ' + piece_id);
 
     const handleValide = (e: React.FormEvent) => {
@@ -131,7 +144,7 @@ export default function Index() {
                 setIsOpen(false);
             },
         });
-        console.log(data);
+        // console.log(data);
     };
 
     const Voir = () => {
@@ -145,7 +158,7 @@ export default function Index() {
 
     const isValide = entretien.statut === 'Validé';
 
-    console.log("entretien : " + entretien.id + "\nvehicule : " + entretien.vehicule_id );
+    // console.log("entretien : " + entretien.id + "\nvehicule : " + entretien.vehicule_id );
     return (
         <>
             <AppLayout>
@@ -274,7 +287,7 @@ export default function Index() {
                                             </select>
                                         </div>
 
-                                        <div className="mb-3 ">
+                                        <div className="mb-3 text-white">
                                             <Label>Date prévue :</Label>
                                             <Input
                                                 value={data.prochaine_visite}

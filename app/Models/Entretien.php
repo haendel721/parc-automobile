@@ -25,6 +25,7 @@ class Entretien extends Model
      // ⚡ Dit à Laravel que 'prochaine_visite' est une date
     protected $casts = [
         'prochaine_visite' => 'datetime',
+        'dernier_visite' => 'datetime',
     ];
 
     public function vehicule() {
