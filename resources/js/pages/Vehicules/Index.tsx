@@ -1,10 +1,10 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, CirclePlus, SquarePen, Trash2 } from 'lucide-react';
+import { BellDot, CirclePlus, Eye, SquarePen, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { route } from 'ziggy-js';
 import VehiculeUser from './VehiculeUser';
 
@@ -28,13 +28,14 @@ type Vehicules = {
     dateAcquisition: string;
     photo: string;
     user_id: number;
+    kilometrique: number;
 };
 type intervention = {
     id: number;
     user_id: number;
     entretien_id: number;
     kilometrage: number;
-}
+};
 interface roleUser {
     role: string;
 }
@@ -43,7 +44,7 @@ type entretien = {
     vehicule_id: number;
     prochaine_visite: string;
     statut: number;
-}
+};
 
 type PageProps = {
     flash: {
@@ -60,31 +61,46 @@ type PageProps = {
 };
 
 export default function Index() {
-    const { roleUser, vehicules, flash, marques, carburants, typeVehicules, userNames ,intervention , entretien  } = usePage<PageProps>().props;
+    const { roleUser, vehicules, flash, marques, carburants, typeVehicules, userNames, intervention, entretien } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {
             destroy(route('vehicules.destroy', id));
         }
     };
+    const [searchTerm, setSearchTerm] = useState('');
+    const filteredVehicules = vehicules.filter((v) => {
+        const proprietaire = userNames[v.user_id]?.toLowerCase() || '';
+        const immatriculation = v.immatriculation?.toLowerCase() || '';
+        const term = searchTerm.toLowerCase();
 
-    console.log(roleUser);
+        return immatriculation.includes(term) || proprietaire.includes(term);
+    });
+
+    console.log("Km " +filteredVehicules.map(v=>v.kilometrique));
     // console.log("intervention " + intervention.map(e=>e.entretien_id))
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Vehicules" />
                 <div className="m-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    {/* Titre à gauche */}
-                    <h1 className="text-center text-2xl font-bold text-gray-800 sm:text-left">Liste des véhicules</h1>
+                    
 
-                    {/* Bouton à droite (ou en dessous sur mobile) */}
+                    {/* Bouton à gauche (ou en dessous sur mobile) */}
                     <Link href={route('vehicules.create')}>
                         <Button className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-white shadow-md transition duration-200 hover:scale-105 hover:bg-blue-700 hover:shadow-lg sm:w-auto">
                             <CirclePlus />
                             <span>Créer un véhicule</span>
                         </Button>
                     </Link>
+                    {/* Titre à droite */}
+                    <input
+                        type="text"
+                        placeholder="Rechercher par immatriculation ou propriétaire..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="focus:ring-opacity-50 w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 sm:w-1/3"
+                    />
                 </div>
 
                 {roleUser.role === 'admin' ? (
@@ -100,75 +116,80 @@ export default function Index() {
                                 )}
                             </div>
                         </div>
-                        {vehicules.length > 0 && (
-                            <div className="m-4">
-                                <Table>
-                                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-[100px]">Id</TableHead>
-                                            <TableHead>Immatriculation</TableHead>
-                                            <TableHead>Propriétaire</TableHead>
-                                            <TableHead>Marque</TableHead>
-                                            <TableHead>Model</TableHead>
-                                            <TableHead>TypeVehicule_id</TableHead>
-                                            <TableHead>Couleur</TableHead>
-                                            <TableHead>Carbrant</TableHead>
-                                            <TableHead>Numéro de série</TableHead>
-                                            <TableHead>Année de fabrication</TableHead>
-                                            <TableHead>Date d'acquisition</TableHead>
-                                            <TableHead className="text-center">Action</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {vehicules.map((vehicule) => {
-                                            const marque = marques.find((m) => m.id === vehicule.marque_id);
-                                            const carburant = carburants.find((c) => c.id === vehicule.carburant_id);
-                                            const typeVehicule = typeVehicules.find((t) => t.id === vehicule.typeVehicule_id);
-                                            // const utilisateur = userName.find((u) => u.id === vehicule.user_id) ;
-                                            // console.log(utilisateur);
-                                            return (
-                                                <TableRow key={vehicule.id}>
-                                                    <TableCell className="font-medium">{vehicule.id}</TableCell>
-                                                    <TableCell>{vehicule.immatriculation}</TableCell>
-                                                    <TableCell>{userNames[vehicule.user_id] ?? 'Non identifié'}</TableCell>
-                                                    <TableCell>{marque ? marque.nom : marque}</TableCell>
-                                                    <TableCell>{vehicule.modele}</TableCell>
-                                                    <TableCell>{typeVehicule ? typeVehicule.nom : typeVehicule}</TableCell>
-                                                    <TableCell>{vehicule.couleur}</TableCell>
-                                                    <TableCell>{carburant ? carburant.type : carburant}</TableCell>
-                                                    <TableCell>{vehicule.numSerie}</TableCell>
-                                                    <TableCell>{vehicule.anneeFabrication}</TableCell>
-                                                    <TableCell>{vehicule.dateAcquisition}</TableCell>
+                        {filteredVehicules.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                {filteredVehicules.map((vehicule) => {
+                                    const marque = marques.find((m) => m.id === vehicule.marque_id);
+                                    const carburant = carburants.find((c) => c.id === vehicule.carburant_id);
+                                    const typeVehicule = typeVehicules.find((t) => t.id === vehicule.typeVehicule_id);
 
-                                                    <TableCell className="text-center">
-                                                        <div className="flex justify-center gap-2">
-                                                            <Link href={route('vehicules.edit', vehicule.id)}>
-                                                                <Button className="bg-slate-600 hover:bg-slate-700">
-                                                                    <SquarePen />
-                                                                </Button>
-                                                            </Link>
-                                                            <Button
-                                                                disabled={processing}
-                                                                onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
-                                                                className="bg-red-500 hover:bg-red-700"
-                                                            >
-                                                                <Trash2 />
-                                                            </Button>
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
+                                    return (
+                                        <div
+                                            key={vehicule.id}
+                                            className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:shadow-xl"
+                                        >
+                                            {/* Image du véhicule */}
+                                            <div className="flex h-36 w-full items-center justify-center bg-gray-100">
+                                                <img
+                                                    src={vehicule.photo ? `/storage/${vehicule.photo}` : `/storage/photos_voitures/automoblie.png`}
+                                                    alt={vehicule.modele}
+                                                    className="h-full object-contain"
+                                                />
+                                            </div>
+
+                                            {/* Contenu principal */}
+                                            <div className="p-4">
+                                                <div className="mt-3 flex justify-between text-sm text-gray-700">
+                                                    <h3 className="text-lg font-semibold text-gray-900">
+                                                        {marque ? marque.nom : '—'} {vehicule.modele}
+                                                    </h3>
+                                                    <p className="mb-2 text-sm text-gray-500">{vehicule.immatriculation}</p>
+                                                </div>
+
+                                                <div className="mt-3 flex justify-between text-sm text-gray-700">
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="font-medium">{vehicule.couleur}</span>
+                                                        <span className="text-xs text-gray-400">Couleur</span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="font-medium">{vehicule.kilometrique ?? '—'} km</span>
+                                                        <span className="text-xs text-gray-400">Kilométrage</span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="font-medium">{carburant ? carburant.type : '—'}</span>
+                                                        <span className="text-xs text-gray-400">Carburant</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-5 flex items-center justify-between">
+                                                    <span className="text-xs text-gray-500">
+                                                        {vehicule.anneeFabrication} • {vehicule.dateAcquisition}
+                                                    </span>
+
+                                                    <div className="flex gap-2">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
+                        ) : (
+                            <p className="mt-10 text-center text-gray-500">Aucun véhicule ne correspond à votre recherche.</p>
                         )}
                     </>
                 ) : (
                     <>
                         {roleUser.role !== 'admin' && (
-                            <VehiculeUser vehicules={vehicules} marques={marques} carburants={carburants} typeVehicules={typeVehicules} intervention={intervention} entretien={entretien} />
+                            <VehiculeUser
+                                vehicules={vehicules}
+                                marques={marques}
+                                carburants={carburants}
+                                typeVehicules={typeVehicules}
+                                intervention={intervention}
+                                entretien={entretien}
+                            />
                         )}
                     </>
                 )}

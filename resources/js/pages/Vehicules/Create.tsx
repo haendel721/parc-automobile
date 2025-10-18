@@ -35,6 +35,7 @@ export default function Index() {
         numSerie: '',
         anneeFabrication: '',
         dateAcquisition: '',
+        kilometrage: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -134,6 +135,10 @@ export default function Index() {
                     <div className="gap-1.5">
                         <Label htmlFor="Année de fabrication">Année de fabrication</Label>
                         <Input type="number" value={data.anneeFabrication} onChange={(e) => setData('anneeFabrication', e.target.value)} />
+                    </div>
+                    <div className="gap-1.5">
+                        <Label htmlFor="kilométrique">kilométrique</Label>
+                        <Input type="number" value={data.kilometrage} onChange={(e) => setData('kilometrage', e.target.value)} />
                     </div>
                     <div className="gap-1.5">
                         <Label htmlFor="Date d acquisition">date d'acquisition du vehicule</Label>

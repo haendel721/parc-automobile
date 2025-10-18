@@ -46,14 +46,9 @@ const mainNavItemsAdmin: NavItem[] = [
         icon: Wrench,
     },
     {
-        title: 'Entretien',
+        title: 'Entretien et Réparations',
         href: '/entretiens',
         icon: Hammer,
-    },
-    {
-        title: 'Maintenance et réparations',
-        href: '/maintenance',
-        icon: Cog,
     },
     {
         title: 'Gestion administrative',
@@ -69,7 +64,7 @@ const mainNavItemsUtilisateur: NavItem[] = [
         icon: LayoutGrid,
     },
       {
-        title: 'Entretien',
+        title: 'Entretien et Réparations',
         href: '/entretiens',
         icon: Hammer,
     },
@@ -89,6 +84,11 @@ const mainNavItemsMecanicien: NavItem[] = [
         title: 'Assurances',
         href: '/assurances',
         icon: BookLock,
+    },
+    {
+        title: 'Entretien et Réparations',
+        href: '/entretiens',
+        icon: Hammer,
     },
 ];
 

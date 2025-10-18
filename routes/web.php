@@ -32,7 +32,10 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
-
+    Route::get('/depenses-vehicules', [DashboardController::class, 'depensesMensuelles'])
+        ->name('dashboard.depensesMensuelles');
+    Route::get('/assurance-expirer', [DashboardController::class, 'getAssurancesStatut'])
+        ->name('dashboard.getAssurancesStatut');
     // Route::get('/dashboard',[DashboardController::class , 'index'])
     //     ->name('dashboard.index');
     // // Crud vehicule
@@ -44,6 +47,8 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('vehicules.store');
     Route::get('/vehicules/{vehicule}/edit', [VehiculeController::class, 'edit'])
         ->name('vehicules.edit');
+    Route::get('/vehicules/{vehicule}', [VehiculeController::class, 'show'])
+        ->name('vehicules.show');
     Route::post('/vehicules/{vehicule}', [VehiculeController::class, 'update'])
         ->name('vehicules.update');
     Route::delete('/vehicules/{vehicule}', [VehiculeController::class, 'destroy'])
@@ -109,6 +114,8 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('admin.notifications.destroy');
     Route::post('/admin/notifications/mark-read', [NotificationController::class, 'markAsRead'])
         ->name('admin.notifications.markread');
+    Route::get('/admin/notifications', [NotificationController::class, 'index'])
+        ->name('admin.notifications.index');
     Route::get('/entretiens-valides', [EntretienController::class, 'getEntretiensValides'])
         ->name('entretiens.valides');
 
@@ -125,8 +132,7 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     // Notifications
-    Route::get('/admin/notifications', [NotificationController::class, 'index'])
-        ->name('admin.notifications.index');
+
 
     Route::put('/admin/notifications/{id}', [NotificationController::class, 'validate'])
         ->name('admin.notifications.validate');

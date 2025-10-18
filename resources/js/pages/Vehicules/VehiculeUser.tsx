@@ -17,12 +17,14 @@ type Vehicules = {
     anneeFabrication: number;
     dateAcquisition: string;
     photo: string;
-    kilometrage?: number;
+    kilometrique?: number;
     prochaineMaintenance?: string;
     etat?: string;
     nbAlertes?: number;
     assurance?: {
         id: number;
+        dateDebut: string;
+        dateFin: string;
     };
 };
 
@@ -46,13 +48,13 @@ type intervention = {
     entretien_id: number;
     vehicule_id: number;
     kilometrage: number;
-}
+};
 type entretien = {
     id: number;
     vehicule_id: number;
     prochaine_visite: string;
     statut: string;
-}
+};
 type VehiculeUserProps = {
     vehicules: Vehicules[];
     marques: Marque[];
@@ -62,24 +64,41 @@ type VehiculeUserProps = {
     entretien: entretien[];
 };
 
-const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carburants, typeVehicules , intervention , entretien }) => {
+const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carburants, typeVehicules, intervention, entretien }) => {
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number, immatriculation: string) => {
         if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule: ${immatriculation} ?`)) {
             destroy(route('vehicules.destroy', id));
         }
     };
-    
-    
+
     return (
         <>
             {vehicules.map((vehicule) => {
                 const marque = marques.find((m) => m.id === vehicule.marque_id);
                 const carburant = carburants.find((c) => c.id === vehicule.carburant_id);
                 const typeVehicule = typeVehicules.find((t) => t.id === vehicule.typeVehicule_id);
-                const kiloFilter = intervention.filter(i=>i.id === vehicule.id)
-                const entretienFilter = entretien.filter(e=>e.vehicule_id === vehicule.id)
-                console.log("entretien " + entretienFilter.map(k=>k.vehicule_id))
+                // const kiloFilter = intervention.filter((i) => i.id === vehicule.id);
+
+                const entretienFilter = entretien.filter((e) => e.vehicule_id === vehicule.id);
+                // console.log("kiloFilter " + kiloFilter.map(k=>k.kilometrage))
+
+                // --- Calcul dynamique des alertes ---
+                let alertes = 0;
+                const today = new Date();
+                // console.log("Assurance du véhicule :", vehicule.assurance);
+
+                // Si le véhicule a une assurance
+                if (vehicule.assurance && vehicule.assurance.dateFin) {
+                    const dateFin = new Date(vehicule.assurance.dateFin);
+                    const diffDays = (dateFin.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+                    // console.log('diffDays' + diffDays);
+                    if (diffDays <= 7) {
+                        // expiration dans 7 jours ou moins
+                        alertes += 1;
+                    }
+                } // Ajouter d'autres alertes dynamiques si nécessaire
+                alertes += vehicule.nbAlertes || 0;
                 return (
                     <div key={vehicule.id} className="container mx-auto max-w-7xl space-y-6">
                         {/* Carte principale */}
@@ -111,27 +130,37 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carbura
                                         <div>
                                             <span className="font-semibold text-gray-700">N° de série :</span> {vehicule.numSerie}
                                         </div>
-                                        <div>
-                                            <span className="font-semibold text-gray-700">Kilométrage :</span>
-                                            {kiloFilter.map(i=>i.vehicule_id === vehicule.id ? i.kilometrage : '')} km
-                                        </div>
                                     </div>
                                     <div>
                                         <div>
                                             <span className="font-semibold text-gray-700">Acquisition :</span> {vehicule.dateAcquisition}
                                         </div>
                                         <div>
+                                            <span className="font-semibold text-gray-700">Kilométrage :</span>
+                                            {vehicule.kilometrique} km
+                                        </div>
+                                        {/* <div>
                                             <span className="font-semibold text-gray-700">Prochaine maintenance :</span>{' '}
                                             {entretienFilter.map(e=>e.vehicule_id === vehicule.id && e.statut ==='Validé' ? e.prochaine_visite : '')}
-                                        </div>
-                                        <div>
-                                            <span className="font-semibold text-gray-700">État :</span> {vehicule.etat || 'Bon'}
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="flex flex-col items-start sm:items-end">
                                         <span className="font-semibold text-gray-700">Alertes :</span>
-                                        <span className="mt-1 inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                                            {vehicule.nbAlertes || 0} alerte(s)
+
+                                        <span className="group relative mt-1 inline-block cursor-pointer rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+                                            {alertes} alerte(s)
+                                            {/* Tooltip avec jours restants */}
+                                            {vehicule.assurance?.dateFin &&
+                                                (() => {
+                                                    const today = new Date();
+                                                    const dateFin = new Date(vehicule.assurance.dateFin);
+                                                    const diffDays = Math.ceil((dateFin.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                                                    return (
+                                                        <span className="absolute bottom-full left-1/2 z-10 mb-2 w-max -translate-x-1/2 rounded bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                                            {diffDays} jour(s) restant(s)
+                                                        </span>
+                                                    );
+                                                })()}
                                         </span>
                                     </div>
                                 </div>
@@ -146,7 +175,7 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({ vehicules, marques, carbura
                                     </Link>
                                     {/* Bouton Supprimer */}
                                     <Button
-                                    disabled={processing}
+                                        disabled={processing}
                                         onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
                                         className="bg-red-500 hover:bg-red-700"
                                     >

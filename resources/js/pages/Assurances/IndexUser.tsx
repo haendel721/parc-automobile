@@ -56,7 +56,12 @@ const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
                                     <ShieldCheck className="h-6 w-6 text-blue-400" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-semibold">Assurance n°{index + 1}</h2>
+                                    <div className="flex items-center gap-2">
+                                        <p>
+                                            <span className="font-semibold text-gray-200">Assurance de </span>
+                                            {vehicule.find((v) => v.id === assurance.vehicule_id)?.immatriculation || 'Inconnu'}
+                                        </p>
+                                    </div>
                                     <p className="text-sm text-gray-400">Contrat : {assurance.NumContrat}</p>
                                 </div>
                             </div>
@@ -93,14 +98,6 @@ const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
                                 <p>
                                     <span className="font-semibold text-gray-200">Fin : </span>
                                     {assurance.dateFin}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <DollarSign className="h-4 w-4 text-green-400" />
-                                <p>
-                                    <span className="font-semibold text-gray-200">Immatriculation : </span>
-                                    {vehicule.find((v) => v.id === assurance.vehicule_id)?.immatriculation || 'Inconnu'}
                                 </p>
                             </div>
                         </div>

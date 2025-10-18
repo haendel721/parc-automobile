@@ -81,6 +81,7 @@ export default function Edit({ assurance , Vehicule }: Props) {
                             value={data.vehicule_id}
                             onChange={(e) => setData('vehicule_id', Number(e.target.value))}
                             className="w-full rounded border border-gray-300 px-3 py-2"
+                            // disabled={true}
                         >
                             <option value="">--Choisir l'immatriculation du voiture--</option>
                             {Vehicule?.map((v: any) => (
@@ -98,7 +99,7 @@ export default function Edit({ assurance , Vehicule }: Props) {
 
                     <div className="gap-1.5">
                         <Label>Identifiant du contrat</Label>
-                        <Input type="text" value={data.NumContrat} onChange={(e) => setData('NumContrat', e.target.value)} />
+                        <Input type="text" disabled={true} value={data.NumContrat} onChange={(e) => setData('NumContrat', e.target.value)} />
                     </div>
 
                     <div className="gap-1.5">
@@ -107,12 +108,12 @@ export default function Edit({ assurance , Vehicule }: Props) {
                     </div>
 
                     <div className="gap-1.5">
-                        <Label>Date début</Label>
+                        <Label>Date de début</Label>
                         <Input type="date" value={data.dateDebut} onChange={(e) => setData('dateDebut', e.target.value)} />
                     </div>
 
                     <div className="gap-1.5">
-                        <Label>Date début</Label>
+                        <Label>Date de fin</Label>
                         <Input type="date" value={data.dateFin} onChange={(e) => setData('dateFin', e.target.value)} />
                     </div>
                     

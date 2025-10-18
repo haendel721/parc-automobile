@@ -10,6 +10,7 @@ use App\Models\Carburant;
 use App\Models\TypeVehicule;
 use App\Models\Marque;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,9 +30,14 @@ class AssuranceController extends Controller
         $vehicule = Vehicule::all();
         // Ajouter la durée en jours pour chaque assurance
         $assurances->transform(function ($assurance) {
-            $dateDebut = \Carbon\Carbon::parse($assurance->dateDebut);
-            $dateFin = \Carbon\Carbon::parse($assurance->dateFin);
-
+            $dateDebut = Carbon::parse($assurance->dateDebut);
+            $dateFin = Carbon::parse($assurance->dateFin)->startOfDay();
+            $today = Carbon::today();
+            // dd($dateFin , $today);
+            //calcul de la duré du jour restant
+            $assurance->jour_restant = $today->greaterThanOrEqualTo($dateFin)
+                ? 0
+                : $today->diffInDays($dateFin);
             // Calcul de la durée en jours
             $assurance->duree_jours = $dateDebut->diffInDays($dateFin);
 
@@ -142,10 +148,9 @@ class AssuranceController extends Controller
             'vehicule_id' => [
                 'required',
                 'exists:vehicules,id',
-                'unique:assurances,vehicule_id',
             ],
             'NomCompagnie' => 'required|string|max:255',
-            'NumContrat' => 'required|string|max:255|unique:assurances,NumContrat',
+            'NumContrat' => 'required|string|max:255',
             'cout' => 'required|numeric',
             'dateDebut' => 'required|date',
             'dateFin' => 'required|date|after:dateDebut',

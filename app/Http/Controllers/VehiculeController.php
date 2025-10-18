@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\entretien;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\EntretienKilometrageNotification;
 
 class VehiculeController extends Controller
 {
@@ -34,7 +35,7 @@ class VehiculeController extends Controller
             'marques' => Marque::all(),
             'userNames' => User::pluck('name', 'id'),
             'intervention' => $intervention,
-            'entretien' =>$entretien,
+            'entretien' => $entretien,
         ]);
     }
 
@@ -70,6 +71,7 @@ class VehiculeController extends Controller
             'numSerie' => 'nullable|string|max:255',
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
+            'kilometrage' => 'required|integer|min:0',
         ]);
 
         // Ajouter l'utilisateur connecté automatiquement
@@ -87,20 +89,26 @@ class VehiculeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Vehicule $vehicules)
+    public function show(Vehicule $vehicule)
     {
+        // Récupérer le rôle de l'utilisateur connecté
         $userConnecter = Auth::user()->role;
+        // Charger la relation assurance pour ce véhicule uniquement
+        $vehicule->load('assurance');
 
-        // Récupérer l'assurance du véhicule
-        $assurance = $vehicules->assurance;
-        $vehicules = Vehicule::with('assurance')->get();
-
+        $carburants = Carburant::all(); // récupère tous les carburants
+        $typesVehicules = TypeVehicule::all(); // récupère tous les types
+        $marques = Marque::all(); // récupère tous les marque de vehicules
         return Inertia::render('Vehicules/Show', [
-            'vehicules' => $vehicules,
-            'assurance' => $assurance,
+            'vehicule' => $vehicule,        // un seul véhicule
+            'assurance' => $vehicule->assurance, // assurance associée
             'userConnecter' => $userConnecter,
+            'carburants' => $carburants,
+            'typesVehicules' => $typesVehicules,
+            'marques' => $marques,
         ]);
     }
+
 
 
     /**
@@ -124,8 +132,11 @@ class VehiculeController extends Controller
      * Update the specified resource in storage.
      */
 
+
+
     public function update(Request $request, Vehicule $vehicule)
     {
+        // ✅ Validation des champs
         $data = $request->validate([
             'immatriculation' => 'required|string|max:255',
             'marque_id' => 'required|exists:marques,id',
@@ -137,25 +148,46 @@ class VehiculeController extends Controller
             'numSerie' => 'nullable|string|max:255',
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
+            'kilometrique' => 'required|integer|min:0',
         ]);
 
-        // Gestion du fichier photo
+        // ✅ Gestion du fichier photo
         if ($request->hasFile('photo')) {
             // Supprimer l'ancienne photo si elle existe
             if ($vehicule->photo && Storage::disk('public')->exists($vehicule->photo)) {
                 Storage::disk('public')->delete($vehicule->photo);
             }
+
+            // Sauvegarde de la nouvelle photo
             $photoPath = $request->file('photo')->store('photos_voitures', 'public');
             $data['photo'] = $photoPath;
         } else {
-            // Si aucune nouvelle photo n'est envoyée, on ne modifie pas la photo existante
+            // Si aucune nouvelle photo n'est envoyée, ne pas modifier la photo existante
             unset($data['photo']);
         }
 
+        // ✅ Mise à jour des données du véhicule
         $vehicule->update($data);
+
+        // ✅ Vérification du kilométrage pour déclencher une notification
+        if ($vehicule->kilometrique >= 5000) {
+            // Récupération de l'utilisateur propriétaire (assure-toi que la relation user() existe dans ton modèle Vehicule)
+            $user = $vehicule->user;
+
+            // Vérification pour éviter les doublons (par exemple, si la notification a déjà été envoyée)
+            $dejaNotif = $user->notifications()
+                ->where('data->vehicule_id', $vehicule->id)
+                ->where('data->type', 'kilometrage')
+                ->exists();
+
+            if (!$dejaNotif) {
+                $user->notify(new EntretienKilometrageNotification($vehicule));
+            }
+        }
 
         return redirect()->route('vehicules.index')->with('message', 'Véhicule mis à jour avec succès.');
     }
+
 
     /**
      * Remove the specified resource from storage.

@@ -19,6 +19,7 @@ interface Vehicule {
     anneeFabrication: number;
     dateAcquisition: string; // garder string (format date ISO)
     photo: string;
+    kilometrique: number;
 }
 
 interface Props {
@@ -41,11 +42,12 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
         numSerie: Vehicule.numSerie ?? '',
         anneeFabrication: Vehicule.anneeFabrication ?? '',
         dateAcquisition: Vehicule.dateAcquisition ?? '',
+        kilometrique: Vehicule.kilometrique ?? '',
     });
 
     const handleUpdate = (e: React.FormEvent) => {
         e.preventDefault();
-
+// console.log(data.kilometrique)
         post(route('vehicules.update', Vehicule.id), {
             forceFormData: true, // 👈 obligatoire pour que l'image + les autres champs passent
             method: 'put', // car update
@@ -157,6 +159,11 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                     <div className="gap-1.5">
                         <Label>Date d’acquisition</Label>
                         <Input type="date" value={data.dateAcquisition} onChange={(e) => setData('dateAcquisition', e.target.value)} />
+                    </div>
+                     {/* Kilométrage */}
+                    <div className="gap-1.5">
+                        <Label>Kilométrique</Label>
+                        <Input type="number" value={data.kilometrique} onChange={(e) => setData('kilometrique', Number(e.target.value))} />
                     </div>
                     <div className="gap-1.5">
                         {/* Affiche la photo déjà enregistrée */}

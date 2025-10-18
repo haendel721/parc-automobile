@@ -18,6 +18,7 @@ class Vehicule extends Model
         'dateAcquisition',
         'user_id',
         'photo',
+        'kilometrique',
     ];
     // Un véhicule appartient à une seule marque
     public function marque()

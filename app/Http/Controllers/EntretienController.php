@@ -7,6 +7,8 @@ use App\Models\Entretien;
 use App\Models\Vehicule;
 use App\Models\Fournisseur;
 use App\Models\Piece;
+use App\Models\Assurance;
+use App\Models\Marque;
 use App\Models\Intervention;
 use App\Models\User;
 use App\Models\Frais;
@@ -170,7 +172,7 @@ class EntretienController extends Controller
     //         ->with('success', 'Entretien mis à jour avec succès.');
     // }
 
-    public function validate(Request $request, Entretien $entretien )
+    public function validate(Request $request, Entretien $entretien)
     {
         $data = $request->validate([
             // entretien
@@ -187,7 +189,7 @@ class EntretienController extends Controller
 
         // dd($entretien->user_id,$entretienValidated->user_id);
         // Vérifier si ce n’est PAS le même utilisateur que celui qui a fait la demande initiale
-        if ($entretien->id !== $entretienValidated->entretien_id){
+        if ($entretien->id !== $entretienValidated->entretien_id) {
 
             // Vérification si le mécanicien a déjà un entretien dans cet intervalle
             $exists = Entretien::where('mecanicien_id', $data['mecanicien_id'])
@@ -310,5 +312,39 @@ class EntretienController extends Controller
         $entretiensValides = Entretien::where('statut', 'validé')->get();
 
         return response()->json($entretiensValides);
+    }
+
+    public function statistiquesEntretien()
+    {
+        $user = auth()->user();
+
+        // Récupérer tous les véhicules de l'utilisateur
+        $vehicules = Vehicule::where('user_id', $user->id)->get();
+
+        // Récupérer tous les entretiens de l'utilisateur
+        $entretiens = Entretien::where('user_id', $user->id)->get();
+
+        // Récupérer toutes les assurances de l'utilisateur (si nécessaire)
+        $assurances = Assurance::where('user_id', $user->id)->get();
+
+        // Récupérer toutes les marques (pour enrichir les véhicules)
+        $marques = Marque::all();
+            
+        // Construire les données pour le graphe
+        $stats = $vehicules->map(function ($v) use ($entretiens) {
+            return [
+                'nom' => $v->immatriculation,
+                'entretiens' => $entretiens->where('vehicule_id', $v->id)->where('statut', 'validé')->count(),
+            ];
+        })->toArray();
+
+        return Inertia::render('Dashboard', [
+            'vehicules' => $vehicules,
+            'entretiens' => $entretiens,
+            'assurances' => $assurances,
+            'marques' => $marques,
+            'userConnecter' => $user,
+            'stats' => $stats,
+        ]);
     }
 }
