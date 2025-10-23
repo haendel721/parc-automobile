@@ -119,15 +119,26 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
     Route::get('/entretiens-valides', [EntretienController::class, 'getEntretiensValides'])
         ->name('entretiens.valides');
 
-
     // Crud frais
     Route::post('/frais', [FraisController::class, 'store'])
         ->name('frais.store');
 });
 
-// Route::middleware(['auth', 'verified', 'role:admin|utilisateur'])->group(function () {
-
-// });
+Route::middleware(['auth', 'verified', 'role:admin|mecanicien'])->group(function () {
+    // Crud Fournisseur
+    Route::get('/fournisseurs', [FournisseurController::class, 'index'])
+        ->name('fournisseurs.index');
+    Route::get('/fournisseurs/create', [FournisseurController::class, 'create'])
+        ->name('fournisseurs.create');
+    Route::post('/fournisseurs', [FournisseurController::class, 'store'])
+        ->name('fournisseurs.store');
+    Route::get('/fournisseurs/{fournisseur}/edit', [FournisseurController::class, 'edit'])
+        ->name('fournisseurs.edit');
+    Route::post('/fournisseurs/{fournisseur}', [FournisseurController::class, 'update'])
+        ->name('fournisseurs.update');
+    Route::delete('/fournisseurs/{fournisseur}', [FournisseurController::class, 'destroy'])
+        ->name('fournisseurs.destroy');
+});
 // Routes accessibles par admin uniquement
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
@@ -158,19 +169,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])
         ->name('products.destroy');
 
-    // Crud Fournisseur
-    Route::get('/fournisseurs', [FournisseurController::class, 'index'])
-        ->name('fournisseurs.index');
-    Route::get('/fournisseurs/create', [FournisseurController::class, 'create'])
-        ->name('fournisseurs.create');
-    Route::post('/fournisseurs', [FournisseurController::class, 'store'])
-        ->name('fournisseurs.store');
-    Route::get('/fournisseurs/{fournisseur}/edit', [FournisseurController::class, 'edit'])
-        ->name('fournisseurs.edit');
-    Route::post('/fournisseurs/{fournisseur}', [FournisseurController::class, 'update'])
-        ->name('fournisseurs.update');
-    Route::delete('/fournisseurs/{fournisseur}', [FournisseurController::class, 'destroy'])
-        ->name('fournisseurs.destroy');
+
 
     // Routes pour les utilisateurs
     Route::get('/utilisateurs', [UserController::class, 'index'])

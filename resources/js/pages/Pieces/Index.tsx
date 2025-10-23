@@ -74,7 +74,8 @@ const [searchTerm, setSearchTerm] = useState('');
                         )}
                     </div>
                 </div>
-                {pieces.length > 0 && (
+                <div className="m-4">
+{pieces.length > 0 && (
                     <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-xl">
                         {/* HEADER + BARRE DE RECHERCHE */}
                         <div className="mb-6 flex items-center justify-between">
@@ -100,7 +101,7 @@ const [searchTerm, setSearchTerm] = useState('');
                                         <TableHead>Prix</TableHead>
                                         <TableHead>Quantité</TableHead>
                                         <TableHead>Fournisseur</TableHead>
-                                        {user.role === 'admin' && <TableHead>Utilisateur</TableHead>}
+                                        {user.role === 'admin' && <TableHead>Mecanicien</TableHead>}
                                         <TableHead className="text-center">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -149,6 +150,7 @@ const [searchTerm, setSearchTerm] = useState('');
                         </div>
                     </div>
                 )}
+                </div>
             </AppLayout>
         </>
     );

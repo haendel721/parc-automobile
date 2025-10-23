@@ -44,8 +44,9 @@ export default function Create() {
         cout: '',
         dateDebut: '',
         dateFin: '',
+        statut: 'assure',
     });
-
+    console.log(data)
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('assurances.store'));
@@ -131,7 +132,7 @@ export default function Create() {
                             onChange={(e) => setData('dateFin', e.target.value)}
                         />
                     </div>
-
+                    
                     <Button disabled={processing} type="submit">Valider</Button>
                 </form>
             </div>

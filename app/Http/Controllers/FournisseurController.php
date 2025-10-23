@@ -32,7 +32,7 @@ class FournisseurController extends Controller
             'email' => 'required|email|unique:fournisseurs,email',
             'siteWeb' => 'nullable|string|max:255',
         ]);
-
+// dd($validated);
         Fournisseur::create($validated);
 
         return redirect()->route('fournisseurs.index')

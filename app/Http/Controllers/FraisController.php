@@ -35,7 +35,7 @@ class FraisController extends Controller
             'montant' => 'required|numeric|min:0',
             'description' => 'nullable|string',
         ]);
-
+        dd($validated);
         $validated['user_id'] = Auth::id();
 
         Frais::create($validated);

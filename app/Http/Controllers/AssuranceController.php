@@ -35,9 +35,13 @@ class AssuranceController extends Controller
             $today = Carbon::today();
             // dd($dateFin , $today);
             //calcul de la duré du jour restant
-            $assurance->jour_restant = $today->greaterThanOrEqualTo($dateFin)
-                ? 0
-                : $today->diffInDays($dateFin);
+            $assurance->jour_restant =
+                $today->greaterThan($dateFin)
+                ? -1
+                : ($today->equalTo($dateFin)
+                    ? 0
+                    : $today->diffInDays($dateFin));
+
             // Calcul de la durée en jours
             $assurance->duree_jours = $dateDebut->diffInDays($dateFin);
 
@@ -90,8 +94,9 @@ class AssuranceController extends Controller
             'cout' => 'required|numeric',
             'dateDebut' => 'required|date',
             'dateFin' => 'required|date|after:dateDebut',
+            'statut' =>'required|string'
         ]);
-
+        
         Assurance::create(array_merge($validated, [
             'user_id' => auth::id(),
         ]));

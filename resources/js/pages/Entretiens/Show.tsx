@@ -1,13 +1,14 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { clsx } from 'clsx';
-import { CalendarCog, CircleAlert, Wrench } from 'lucide-react';
+import { AlertCircle, CalendarCog, CalendarDays, Car, CheckCircle2, CircleAlert, FileText, User, Wrench } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { route } from 'ziggy-js';
 interface entretien {
@@ -47,7 +48,6 @@ interface entretienValidated {
     entretien_id: number;
     vehicule_id: number;
     mecanicien_id: number;
-
 }
 type PropsShow = {
     entretien: entretien;
@@ -60,23 +60,23 @@ type PropsShow = {
 };
 
 export default function Index() {
-    const { entretien, fournisseur, vehicule, user, pieces, userConnecter, intervention , entretienValidated } = usePage<PropsShow>().props;
+    const { entretien, fournisseur, vehicule, user, pieces, userConnecter, intervention, entretienValidated } = usePage<PropsShow>().props;
     // console.log('user : ' + user.map((e) => e.role));
     const nom = user.find((u) => u.id === entretien.user_id);
     const immatricule = vehicule.find((v) => v.id === entretien.vehicule_id);
-    console.log('entretienValidated : ' + entretienValidated.map(e=>e.date_prevue))
+    console.log('entretienValidated : ' + entretienValidated.map((e) => e.date_prevue));
     const formatDatetimeLocal = (dateStr: string) => {
         if (!dateStr) return '';
         const dt = new Date(dateStr);
         const year = dt.getFullYear();
         const month = String(dt.getMonth() + 1).padStart(2, '0');
         const day = String(dt.getDate()).padStart(2, '0');
-        const hours = String(dt.getHours()-3).padStart(2 , '0');
+        const hours = String(dt.getHours() - 3).padStart(2, '0');
         const minutes = String(dt.getMinutes()).padStart(2, '0');
-        
+
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
-    
+
     const [piece, setPiece] = useState('');
     const [existe, setExiste] = useState<boolean | null>(null);
     const [loading, setLoading] = useState(false);
@@ -147,14 +147,14 @@ export default function Index() {
         // console.log(data);
     };
 
-    const Voir = () => {
-        fetch(route('entretiens.checkDate', entretien.id))
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Statut de l'entretien :", data.statut);
-            })
-            .catch((err) => console.error(err));
-    };
+    // const Voir = () => {
+    //     fetch(route('entretiens.checkDate', entretien.id))
+    //         .then((response) => response.json())
+    //         .then((data) => {
+    //             console.log("Statut de l'entretien :", data.statut);
+    //         })
+    //         .catch((err) => console.error(err));
+    // };
 
     const isValide = entretien.statut === 'Validé';
 
@@ -166,61 +166,93 @@ export default function Index() {
                 {/* <button onClick={Voir} className="rounded bg-green-500 px-4 py-2 text-white">
                     Voir statut (console)
                 </button> */}
-                <div className="m-10">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>id</TableHead>
-                                <TableHead>Utilisateur</TableHead>
-                                <TableHead>Immatriculation</TableHead>
-                                <TableHead>Probleme</TableHead>
-                                <TableHead>Description</TableHead>
-                                <TableHead>Statut</TableHead>
-                                <TableHead>Mecanicien</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Date Prévue</TableHead>
-                                {userConnecter === 'admin' ? <TableHead>Action</TableHead> : ''}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>{entretien.id}</TableCell>
-                                <TableCell>{nom ? nom.name : nom}</TableCell>
-                                <TableCell>{immatricule ? immatricule.immatriculation : immatricule}</TableCell>
-                                <TableCell>{entretien.probleme}</TableCell>
-                                <TableCell>{entretien.description}</TableCell>
-                                <TableCell className={clsx(isValide ? 'text-green-500' : 'text-yellow-500')}>{entretien.statut}</TableCell>
-                                <TableCell>{user.filter((u) => u.id === entretien.mecanicien_id).map((u) => u.name)}</TableCell>
-                                <TableCell>{entretien.type}</TableCell>
-                                <TableCell>{entretien.prochaine_visite}</TableCell>
-                                {userConnecter === 'admin' ? (
-                                    <TableCell>
-                                        <Button onClick={() => setIsOpen(true)} className="px-4 py-2">
-                                            <CalendarCog className="mr-2 inline-block h-4 w-4" />
-                                            Validation
-                                        </Button>
-                                    </TableCell>
-                                ) : (
-                                    ''
+                <div className="flex min-h-screen w-full items-center justify-center bg-gray-50">
+                    <div className="w-full max-w-4xl px-6">
+                        <Card className="w-full rounded-2xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:shadow-2xl">
+                            <CardHeader className="flex items-center justify-between border-b pb-3">
+                                <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+                                    <Car className="h-5 w-5 text-blue-600" />
+                                    {immatricule ? immatricule.immatriculation : '—'}
+                                </CardTitle>
+                                <span
+                                    className={clsx(
+                                        'rounded-full px-3 py-1 text-sm font-medium',
+                                        isValide ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700',
+                                    )}
+                                >
+                                    {entretien.statut}
+                                </span>
+                            </CardHeader>
+
+                            <CardContent className="space-y-4 pt-6 text-gray-700">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div className="flex items-center gap-2">
+                                        <User className="h-4 w-4 text-gray-500" />
+                                        <span className="font-medium">Utilisateur :</span>
+                                        <span>{nom ? nom.name : '—'}</span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                                        <span className="font-medium">Problème :</span>
+                                        <span>{entretien.probleme}</span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <FileText className="h-4 w-4 text-gray-500" />
+                                        <span className="font-medium">Type :</span>
+                                        <span>{entretien.type}</span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <CalendarDays className="h-4 w-4 text-gray-500" />
+                                        <span className="font-medium">Date :</span>
+                                        <span>{entretien.prochaine_visite}</span>
+                                    </div>
+
+                                    <div className="flex items-start gap-2 md:col-span-2">
+                                        <FileText className="mt-1 h-4 w-4 text-gray-500" />
+                                        <div>
+                                            <span className="font-medium">Description :</span>
+                                            <p className="text-sm text-gray-600">{entretien.description}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <CheckCircle2 className="h-4 w-4 text-gray-500" />
+                                        <span className="font-medium">Mécanicien :</span>
+                                        <span>{user.filter((u) => u.id === entretien.mecanicien_id).map((u) => u.name)}</span>
+                                    </div>
+                                </div>
+
+                                {(userConnecter === 'admin' || userConnecter === 'mecanicien') && (
+                                    <div className="flex justify-end gap-3 pt-6">
+                                        {userConnecter === 'admin' && (
+                                            <Button onClick={() => setIsOpen(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+                                                <CalendarCog className="h-4 w-4" />
+                                                Validation
+                                            </Button>
+                                        )}
+                                        {userConnecter === 'mecanicien' && (
+                                            <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700">
+                                                <a
+                                                    href={route('pieces.create', {
+                                                        entretien_id: entretien.id,
+                                                        vehicule_id: entretien.vehicule_id,
+                                                    })}
+                                                >
+                                                    <Wrench className="h-4 w-4" />
+                                                    Intervention
+                                                </a>
+                                            </Button>
+                                        )}
+                                    </div>
                                 )}
-                                {userConnecter === 'mecanicien' ? (
-                                    <TableCell>
-                                        {/*onClick={() => setIsOpen(true)}*/}
-                                        <Button className="px-4 py-2">
-                                             
-                                            <a href={route('pieces.create', { entretien_id: entretien.id, vehicule_id: entretien.vehicule_id })}>
-                                                <Wrench className="mr-2 inline-block h-4 w-4" /> Intervention
-                                            </a>
-                                        </Button>
-                                    </TableCell>
-                                ) : (
-                                    ''
-                                )}
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
-                
+
                 {userConnecter === 'admin' ? (
                     <>
                         {isOpen && (
@@ -247,7 +279,7 @@ export default function Index() {
                                             X
                                         </Button>
 
-                                        <h2 className="mb-4 text-xl text-white font-semibold">Validation</h2>
+                                        <h2 className="mb-4 text-xl font-semibold text-white">Validation</h2>
 
                                         <div className="mb-3 text-white">
                                             <Label>Type d'entretien</Label>

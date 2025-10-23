@@ -112,10 +112,13 @@ const AssuranceAdmin: React.FC<AssuranceProps> = ({ assurances }) => {
                                                 <TableCell>
                                                     <span
                                                         className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                                                            assurance.jour_restant < 8 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                                                            assurance.jour_restant === 0 ?'bg-red-100 text-red-800'
+                                                                                : assurance.jour_restant < 8
+                                                                                  ? 'bg-yellow-100 text-yellow-800'
+                                                                                  : 'bg-green-100 text-green-800'
                                                         }`}
                                                     >
-                                                        {assurance.jour_restant} jours
+                                                        {assurance.jour_restant === -1 ? "Expiré" : (assurance.jour_restant === 0 ? 0 : assurance.jour_restant + " Jour(s)")} 
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="text-center">

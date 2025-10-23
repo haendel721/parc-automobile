@@ -22,15 +22,29 @@ type Piece = {
     quantite: number;
     fournisseur?: { nom: string };
 };
+type fournisseurs = {
+    nom: string;
+    type: string;
+    addresse: string;
+    phone: number;
+    email: string;
+    sitWeb: string;
+};
 type PieceProps = {
-    fournisseurs: [];
+    fournisseurs: fournisseurs[];
     entretien_id: number;
     vehicule_id: number;
     pieces: Piece[];
 };
 export default function Create() {
     const { fournisseurs = [], entretien_id, vehicule_id, pieces = [] } = usePage<PieceProps>().props; // données envoyées depuis Laravel
-    const { data, setData, post, processing, errors } = useForm({
+    const {
+        data,
+        setData,
+        post: posetePiece,
+        processing: processingPiece,
+        errors: errorsPiece,
+    } = useForm({
         nom: '',
         prix: '',
         quantite: '',
@@ -44,13 +58,27 @@ export default function Create() {
         description: '',
         statut: 'En cours',
     });
+    const {
+        data: fournisseurData,
+        setData: setFournisseurData,
+        post: postFournisseur,
+        processing: processingFournisseur,
+        errors: errorsFournisseur,
+    } = useForm({
+        nom: '',
+        type: '',
+        addresse: '',
+        phone: '',
+        email: '',
+        siteWeb: '',
+    });
     const [showInterventionForm, setShowInterventionForm] = useState(false);
     // const [piece, setPiece] = useState('');
     // console.log("entretien : " + entretien_id);
     // console.log("vehicule : " + vehicule_id);
     const handleSubmitPiece = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('pieces.store'));
+        posetePiece(route('pieces.store'));
         data.nom = '';
         data.prix = '';
         data.quantite = '';
@@ -60,27 +88,36 @@ export default function Create() {
     // --- Soumission du formulaire intervention ---
     const handleIntervention = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('interventions.store'));
+        posetePiece(route('interventions.store'));
         console.log('Intervention enregistrée : ', data);
         // tu peux ajouter un `post(route('interventions.store'), data)` ici
+    };
+    const [showModal, setShowModal] = useState(false);
+    const handleAddFournisseur = () => {
+        setShowModal(true); // si tu utilises un modal
+    };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        postFournisseur(route('fournisseurs.store'));
+        // console.log('fournisseurData' + fournisseurData);
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Créer un nouveaux piece" />
-            <div className="w-8/12 p-4 flex justify-center gap-10 m-5">
+            <div className="m-5 flex w-8/12 justify-center gap-10 p-4">
                 {!showInterventionForm ? (
                     <>
                         {/* -------- FORMULAIRE AJOUT PIECE -------- */}
                         <form onSubmit={handleSubmitPiece} className="relative rounded-xl p-6 shadow-lg" encType="multipart/form-data">
                             {/* display errors */}
 
-                            {Object.keys(errors).length > 0 && (
+                            {Object.keys(errorsPiece).length > 0 && (
                                 <Alert>
                                     <CircleAlert />
-                                    <AlertTitle>Errors !</AlertTitle>
+                                    <AlertTitle>Erreur !</AlertTitle>
                                     <AlertDescription>
                                         <ul>
-                                            {Object.entries(errors).map(([key, message]) => (
+                                            {Object.entries(errorsPiece).map(([key, message]) => (
                                                 <li key={key}>{message as string}</li>
                                             ))}
                                         </ul>
@@ -94,18 +131,29 @@ export default function Create() {
                             </div>
                             <div className="gap-1.5">
                                 <Label htmlFor="fournisseur">Fournisseur</Label>
-                                <select
-                                    value={data.fournisseur_id}
-                                    onChange={(e) => setData('fournisseur_id', e.target.value)}
-                                    className="w-full rounded border border-gray-300 px-3 py-2"
-                                >
-                                    <option value="">--Choisir un fournisseur--</option>
-                                    {fournisseurs.map((f: any) => (
-                                        <option key={f.id} value={f.id} className="bg-white text-black">
-                                            {f.nom}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="flex items-center gap-2">
+                                    <select
+                                        value={data.fournisseur_id}
+                                        onChange={(e) => setData('fournisseur_id', e.target.value)}
+                                        className="flex-1 rounded border border-gray-300 px-3 py-2"
+                                    >
+                                        <option value="">--Choisir un fournisseur--</option>
+                                        {fournisseurs.map((f: any) => (
+                                            <option key={f.id} value={f.id} className="bg-white text-black">
+                                                {f.nom}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    {/* Bouton pour ajouter un fournisseur */}
+                                    <button
+                                        type="button"
+                                        onClick={() => handleAddFournisseur()} // fonction à définir
+                                        className="rounded bg-blue-500 px-3 py-2 text-white transition hover:bg-blue-600"
+                                    >
+                                        +
+                                    </button>
+                                </div>
                             </div>
                             <div className="gap-1.5">
                                 <Label htmlFor="piece prix ">Prix</Label>
@@ -118,7 +166,7 @@ export default function Create() {
                             <Input value={data.entretien_id} onChange={(e) => setData('entretien_id', e.target.value)} hidden={true} />
                             <Input value={data.vehicule_id} onChange={(e) => setData('vehicule_id', e.target.value)} hidden={true} />
                             <div className="m-4 flex justify-center gap-10">
-                                <Button disabled={processing} className="w-50" type="submit">
+                                <Button disabled={processingPiece} className="w-50" type="submit">
                                     Ajouter
                                 </Button>
                                 <Button type="button" className="w-50" onClick={() => setShowInterventionForm(true)}>
@@ -126,18 +174,139 @@ export default function Create() {
                                 </Button>
                             </div>
                         </form>
+                        {showModal && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                <div className="animate-fadeIn w-full max-w-lg rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl">
+                                    <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">🏭 Ajouter un nouveau fournisseur</h2>
+
+                                    {/* Formulaire */}
+                                    <form onSubmit={handleSubmit} className="flex flex-col space-y-4" encType="multipart/form-data">
+                                        {/* Affichage des erreurs */}
+                                        {Object.keys(errorsFournisseur).length > 0 && (
+                                            <Alert className="mb-4">
+                                                <CircleAlert className="text-red-600" />
+                                                <AlertTitle className="font-semibold text-red-600">Erreurs détectées</AlertTitle>
+                                                <AlertDescription>
+                                                    <ul className="ml-5 list-disc text-sm text-gray-700">
+                                                        {Object.entries(errorsFournisseur).map(([key, message]) => (
+                                                            <li key={key}>{message as string}</li>
+                                                        ))}
+                                                    </ul>
+                                                </AlertDescription>
+                                            </Alert>
+                                        )}
+                                        <div className="flex flex-col gap-1.5">
+                                            <Label htmlFor="nom" className="font-medium text-gray-700">
+                                                Nom du fournisseur
+                                            </Label>
+                                            <Input
+                                                type="text"
+                                                placeholder="Ex : Garage MécaPro"
+                                                value={fournisseurData.nom}
+                                                onChange={(e) => setFournisseurData('nom', e.target.value)}
+                                                className="focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <Label htmlFor="type" className="font-medium text-gray-700">
+                                                Type
+                                            </Label>
+                                            <Input
+                                                type="text"
+                                                placeholder="Ex : Garage"
+                                                value={fournisseurData.type}
+                                                onChange={(e) => setFournisseurData('type', e.target.value)}
+                                                className="focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <Label htmlFor="adresse" className="font-medium text-gray-700">
+                                                Adresse
+                                            </Label>
+                                            <Input
+                                                type="text"
+                                                placeholder="Ex : Manjakaray, Antananarivo"
+                                                value={fournisseurData.addresse}
+                                                onChange={(e) => setFournisseurData('addresse', e.target.value)}
+                                                className="focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <Label htmlFor="phone" className="font-medium text-gray-700">
+                                                Numéro de téléphone
+                                            </Label>
+                                            <Input
+                                                type="tel"
+                                                placeholder="+261 34 00 000 00"
+                                                value={fournisseurData.phone}
+                                                onChange={(e) => setFournisseurData('phone', e.target.value)}
+                                                className="focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <Label htmlFor="email" className="font-medium text-gray-700">
+                                                Adresse e-mail
+                                            </Label>
+                                            <Input
+                                                type="email"
+                                                placeholder="exemple@fournisseur.mg"
+                                                value={fournisseurData.email}
+                                                onChange={(e) => setFournisseurData('email', e.target.value)}
+                                                className="focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1.5">
+                                            <Label htmlFor="siteWeb" className="font-medium text-gray-700">
+                                                Site web
+                                            </Label>
+                                            <Input
+                                                type="text"
+                                                placeholder="www.fournisseur.mg"
+                                                value={fournisseurData.siteWeb}
+                                                onChange={(e) => setFournisseurData('siteWeb', e.target.value)}
+                                                className="focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
+                                            />
+                                        </div>
+
+                                        <div className="mt-6 flex justify-end gap-3">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="border-gray-400 text-gray-600 hover:bg-gray-100"
+                                                onClick={() => setShowModal(false)}
+                                            >
+                                                Annuler
+                                            </Button>
+
+                                            <Button
+                                                disabled={processingFournisseur}
+                                                type="submit"
+                                                className="bg-blue-600 text-white shadow-md transition-all hover:bg-blue-700"
+                                            >
+                                                Ajouter le fournisseur
+                                            </Button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <>
                         {/* -------- FORMULAIRE INTERVENTION -------- */}
                         <form onSubmit={handleIntervention} className="relative rounded-xl p-6 shadow-lg">
-                            {Object.keys(errors).length > 0 && (
+                            {Object.keys(errorsPiece).length > 0 && (
                                 <Alert>
                                     <CircleAlert />
                                     <AlertTitle>Erreur !</AlertTitle>
                                     <AlertDescription>
                                         <ul>
-                                            {Object.entries(errors).map(([key, message]) => (
+                                            {Object.entries(errorsPiece).map(([key, message]) => (
                                                 <li key={key}>{message as string}</li>
                                             ))}
                                         </ul>
@@ -189,7 +358,7 @@ export default function Create() {
                                 <Button type="button" className="w-50" onClick={() => setShowInterventionForm(false)}>
                                     retour
                                 </Button>
-                                <Button className="w-50 bg-green-900 text-white hover:bg-green-950" disabled={processing} type="submit">
+                                <Button className="w-50 bg-green-900 text-white hover:bg-green-950" disabled={processingPiece} type="submit">
                                     Valider
                                 </Button>
                             </div>

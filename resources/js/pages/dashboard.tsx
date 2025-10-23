@@ -141,20 +141,11 @@ export default function Dashboard() {
             }
         });
     }, []);
-    const COLORS = [
-        '#4f46e5',
-        '#16a34a',
-        '#f59e0b',
-        '#ef4444',
-        '#0ea5e9',
-        '#8b5cf6',
-        '#f472b6',
-        '#facc15',
-        '#22d3ee',
-        '#f97316',
-        '#3b82f6',
-        '#10b981',
-    ];
+    const COLORS = {
+        'Sans assurance': '#ff0004ff', // rouge
+        Expirées: '#FFD700', // jaune
+        Assurées: '#14882bff', // vert
+    };
     const [dataAssurance, setDataAssurance] = useState<{ statut: string; count: number }[]>([]);
     // console.log(
     //     vehicules.map((v) => v.id),
@@ -185,7 +176,7 @@ export default function Dashboard() {
                         {/* Graphe - 2/3 */}
                         <div className="rounded-2xl bg-white p-6 shadow-md md:col-span-2 dark:bg-gray-800">
                             <h2 className="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                Dépenses mensuelles des véhicules (2025)
+                                Dépenses mensuelles des véhicules (sans assurance)
                             </h2>
 
                             <div style={{ width: '100%', height: 500 }}>
@@ -215,7 +206,9 @@ export default function Dashboard() {
                         </div>
 
                         {/* Placeholder ou info - 1/3 */}
-                        <div className="flex items-center justify-center rounded-2xl bg-white p-6 shadow-md md:col-span-1 dark:bg-gray-800">
+                        <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-6 shadow-md md:col-span-1 dark:bg-gray-800">
+                            {/* Titre du graphique */}
+                            <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">Statistiques des Assurances</h2>{' '}
                             {/* <PlaceholderPattern className="h-full w-full stroke-neutral-300 dark:stroke-neutral-500" /> */}
                             <div style={{ width: '100%', height: 400 }}>
                                 {dataAssurance.length > 0 ? (
@@ -227,20 +220,27 @@ export default function Dashboard() {
                                                 nameKey="statut"
                                                 cx="50%"
                                                 cy="50%"
-                                                outerRadius={120}
-                                                innerRadius={60}
-                                                paddingAngle={3}
-                                                label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
+                                                outerRadius={140}
+                                                innerRadius={70}
+                                                paddingAngle={2}
+                                                label={({ percent }) => ` ${percent ? (percent * 100).toFixed(0) : 0}%`}
                                             >
                                                 {dataAssurance.map((entry, index) => (
-                                                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                                    <Cell key={index} fill={COLORS[entry.statut]} />
                                                 ))}
                                             </Pie>
                                             <Tooltip
                                                 contentStyle={{ backgroundColor: '#f9fafb', borderRadius: '8px', border: 'none' }}
                                                 formatter={(value: number, name: string) => [`${value} assurances`, name]}
                                             />
-                                            <Legend verticalAlign="bottom" height={36} />
+                                            <Legend
+                                                verticalAlign="bottom"
+                                                height={36}
+                                                formatter={(value: string) => {
+                                                    const item = dataAssurance.find((d) => d.statut === value);
+                                                    return `${value}: ${item?.count ?? 0}`; 
+                                                }}
+                                            />
                                         </PieChart>
                                     </ResponsiveContainer>
                                 ) : (
@@ -320,7 +320,7 @@ export default function Dashboard() {
                                                                                   : 'bg-green-100 text-green-800'
                                                                         }`}
                                                                     >
-                                                                        {assuranceV.jour_restant} jours
+                                                                        {assuranceV.jour_restant === -1 ? "Expiré" : (assuranceV.jour_restant === 0 ? 0 : assuranceV.jour_restant + " Jour(s)")}
                                                                     </span>
                                                                 );
                                                             })()}
@@ -421,69 +421,36 @@ export default function Dashboard() {
                     <div className="max-w-10xl mx-auto grid grid-cols-1 gap-1 md:grid-cols-2">
                         {/* -------------------- Tableau Véhicules & Assurances -------------------- */}
                         <div className="rounded-xl bg-white p-6 shadow-lg">
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Véhicule
-                                            </th>
-                                            <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Immatriculation
-                                            </th>
-                                            <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Kilométrage
-                                            </th>
-                                            <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Coût Assurance
-                                            </th>
-                                            <th className="px-4 py-2 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Jours restants
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
-                                        {vehiculeConnecter.map((vehicule) => {
-                                            const assurance = assuranceConnecter.find((a) => a.vehicule_id === vehicule.id);
+                            <div className="rounded-2xl bg-white p-6 shadow-md md:col-span-2 dark:bg-gray-800">
+                            <h2 className="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                Dépenses mensuelles des véhicules (sans assurance) 
+                            </h2>
 
-                                            // Calcul jours restants assurance
-                                            const today = new Date();
-                                            let diffDays = 0;
-                                            if (assurance) {
-                                                const dateFin = new Date(assurance.dateFin);
-                                                diffDays = Math.ceil((dateFin.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-                                            }
+                            <div style={{ width: '100%', height: 500 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                                        <XAxis dataKey="mois" tick={{ fill: '#6b7280', fontSize: 14 }} />
+                                        <YAxis
+                                            label={{ value: 'Coût (Ar)', angle: -90, position: 'insideLeft', fill: '#6b7280', fontSize: 14 }}
+                                            tick={{ fill: '#6b7280', fontSize: 12 }}
+                                        />
+                                        <Tooltip contentStyle={{ backgroundColor: '#f9fafb', borderRadius: '8px', border: 'none' }} />
+                                        <Legend verticalAlign="top" height={36} />
 
-                                            return (
-                                                <tr key={vehicule.id} className="transition-colors duration-200 hover:bg-gray-50">
-                                                    {/* Véhicule avec image */}
-                                                    <td className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700">
-                                                        <div className="h-10 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200">
-                                                            <img
-                                                                src={vehicule.photo ? `/storage/${vehicule.photo}` : '/images/default-car.png'}
-                                                                alt={vehicule.immatriculation}
-                                                                className="h-full w-full object-cover"
-                                                            />
-                                                        </div>
-                                                    </td>
-
-                                                    <td className="px-4 py-2 text-sm text-gray-700">{vehicule.immatriculation}</td>
-                                                    <td className="px-4 py-2 text-sm text-gray-700">{vehicule.kilometrique || '-'}</td>
-                                                    <td className="px-4 py-2 text-sm text-gray-700">{assurance?.cout || '-'}</td>
-                                                    <td className="group relative cursor-pointer px-4 py-2 text-sm text-gray-700">
-                                                        {diffDays} jour{diffDays > 1 ? 's' : ''}
-                                                        {assurance && (
-                                                            <span className="absolute bottom-full left-1/2 z-10 mb-1 w-max -translate-x-1/2 rounded bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                                                Expiration : {assurance.dateFin}
-                                                            </span>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                        {vehiculeKeys.map((vehicule, index) => (
+                                            <Bar
+                                                key={vehicule}
+                                                dataKey={vehicule}
+                                                fill={['#4f46e5', '#16a34a', '#f59e0b', '#ef4444', '#0ea5e9'][index % 5]}
+                                                name={vehicule}
+                                                radius={[4, 4, 0, 0]}
+                                            />
+                                        ))}
+                                    </BarChart>
+                                </ResponsiveContainer>
                             </div>
+                        </div>
                         </div>
 
                         {/* -------------------- Cartes Entretiens -------------------- */}

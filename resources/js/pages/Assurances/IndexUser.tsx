@@ -15,6 +15,7 @@ type assurances = {
     dateDebut: string;
     dateFin: string;
     duree_jours: number;
+    jour_restant: number;
 };
 type vehicule = {
     id: number;
@@ -104,7 +105,7 @@ const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
 
                         {/* Badge durée restante */}
                         <div className="absolute top-6 right-4 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white backdrop-blur-md">
-                            ⏳ {assurance.duree_jours} jours restants
+                            ⏳ {assurance.jour_restant === -1 ? "Expiré" : (assurance.jour_restant === 0 ? 0 : assurance.jour_restant + " Jour(s)")}
                         </div>
                         <div className="mt-6 flex justify-center space-x-3">
                             {/* Bouton Modifier */}

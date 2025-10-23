@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\UpdateAssuranceStatus;
 use App\Models\TypeVehicule;
 use Illuminate\Http\Request;
 use App\Models\Entretien;
@@ -17,8 +18,11 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(UpdateAssuranceStatus $command , EntretienController $dernierVisite )
     {
+         // ✅ Exécute la logique de la commande à chaque chargement de la page
+        $command->handle();
+        $dernierVisite->checkDate();
         $userConnecter = Auth::user();
         $assurances = $userConnecter->role === 'admin'
             ? Assurance::with('vehicule')->get() // toutes les assurances pour admin
@@ -29,9 +33,12 @@ class DashboardController extends Controller
             $today = Carbon::today();
             // dd($dateFin , $today);
             //calcul de la duré du jour restant
-            $assurance->jour_restant = $today->greaterThanOrEqualTo($dateFin)
-                ? 0
-                : $today->diffInDays($dateFin);
+            $assurance->jour_restant =
+                $today->greaterThan($dateFin)
+                ? -1
+                : ($today->equalTo($dateFin)
+                    ? 0
+                    : $today->diffInDays($dateFin));
 
             return $assurance;
         });
@@ -48,70 +55,95 @@ class DashboardController extends Controller
     }
 
     public function depensesMensuelles()
-    {
-        $annee = 2025; // tu peux rendre ça dynamique plus tard
+{
+    $annee = 2025; // tu pourras rendre ça dynamique plus tard
+    $user = auth()->user(); // utilisateur connecté
 
-        // Liste des mois
-        $moisListe = [
-            1 => 'Janvier',
-            2 => 'Février',
-            3 => 'Mars',
-            4 => 'Avril',
-            5 => 'Mai',
-            6 => 'Juin',
-            7 => 'Juillet',
-            8 => 'Août',
-            9 => 'Septembre',
-            10 => 'Octobre',
-            11 => 'Novembre',
-            12 => 'Décembre'
-        ];
+    // Liste des mois
+    $moisListe = [
+        1 => 'Janvier',
+        2 => 'Février',
+        3 => 'Mars',
+        4 => 'Avril',
+        5 => 'Mai',
+        6 => 'Juin',
+        7 => 'Juillet',
+        8 => 'Août',
+        9 => 'Septembre',
+        10 => 'Octobre',
+        11 => 'Novembre',
+        12 => 'Décembre'
+    ];
 
-        // Récupérer toutes les dépenses par véhicule et par mois
-        $depenses = DB::table('vehicules')
-            ->leftJoin('frais', function ($join) use ($annee) {
-                $join->on('vehicules.id', '=', 'frais.vehicule_id')
-                    ->whereYear('frais.created_at', $annee);
-            })
-            ->select(
-                'vehicules.immatriculation as vehicule',
-                DB::raw('MONTH(frais.created_at) as mois'),
-                DB::raw('SUM(frais.montant) as total')
-            )
-            ->groupBy('vehicule', 'mois')
-            ->get();
+    // 🔹 Si c’est un admin : il voit toutes les dépenses
+    // 🔹 Sinon : uniquement ses propres véhicules
+    $vehiculesQuery = DB::table('vehicules');
+    if ($user->role !== 'admin') {
+        $vehiculesQuery->where('user_id', $user->id);
+    }
 
-        // Récupérer la liste complète des véhicules
-        $vehicules = DB::table('vehicules')->pluck('immatriculation');
+    $vehicules = $vehiculesQuery->pluck('immatriculation', 'id');
 
-        $data = [];
+    // Récupérer les dépenses par véhicule et par mois
+    $depenses = DB::table('frais')
+        ->join('vehicules', 'frais.vehicule_id', '=', 'vehicules.id')
+        ->when($user->role !== 'admin', function ($query) use ($user) {
+            $query->where('vehicules.user_id', $user->id);
+        })
+        ->whereYear('frais.created_at', $annee)
+        ->select(
+            'vehicules.immatriculation as vehicule',
+            DB::raw('MONTH(frais.created_at) as mois'),
+            DB::raw('SUM(frais.montant) as total')
+        )
+        ->groupBy('vehicule', 'mois')
+        ->get();
 
-        // Construire la structure finale
-        foreach ($moisListe as $numMois => $nomMois) {
-            $ligne = ['mois' => $nomMois]; // clé du mois
+    $data = [];
 
-            foreach ($vehicules as $vehicule) {
-                $depenseTrouvee = $depenses->first(function ($item) use ($vehicule, $numMois) {
-                    return $item->vehicule === $vehicule && $item->mois == $numMois;
-                });
+    // Construire le tableau final
+    foreach ($moisListe as $numMois => $nomMois) {
+        $ligne = ['mois' => $nomMois];
 
-                $ligne[$vehicule] = $depenseTrouvee ? $depenseTrouvee->total : 0;
-            }
+        foreach ($vehicules as $vehicule) {
+            $depenseTrouvee = $depenses->first(function ($item) use ($vehicule, $numMois) {
+                return $item->vehicule === $vehicule && $item->mois == $numMois;
+            });
 
-            $data[] = $ligne;
+            $ligne[$vehicule] = $depenseTrouvee ? $depenseTrouvee->total : 0;
         }
 
-        return response()->json($data);
+        $data[] = $ligne;
     }
+
+    return response()->json($data);
+}
+
     public function getAssurancesStatut()
     {
-        $total = DB::table('assurances')->count();
-        $expirees = DB::table('assurances')->where('dateFin', '<', now())->count();
-        $valide = $total - $expirees;
+        $today = Carbon::today();
 
+        // 1️⃣ Nombre total de véhicules
+        $totalVehicules = DB::table('vehicules')->count();
+
+        // 2️⃣ Véhicules avec assurance expirée
+        $expirees = DB::table('assurances')
+            ->where('dateFin', '<', $today)
+            ->count();
+
+        // 3️⃣ Véhicules avec assurance valide
+        $valide = DB::table('assurances')
+            ->where('dateFin', '>=', $today)
+            ->count();
+
+        // 4️⃣ Véhicules sans assurance
+        $sansAssurance = $totalVehicules - ($expirees + $valide);
+
+        // 5️⃣ Préparer le résultat pour le diagramme
         $result = [
             ['statut' => 'Expirées', 'count' => $expirees],
             ['statut' => 'Assurées', 'count' => $valide],
+            ['statut' => 'Sans assurance', 'count' => $sansAssurance],
         ];
 
         return response()->json($result);

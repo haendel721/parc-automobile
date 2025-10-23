@@ -110,9 +110,9 @@ class EntretienController extends Controller
             'prochaine_visite' => 'nullable|date',
             'mecanicien_id' => 'nullable|exists:users,id',
         ]);
-
+        
         $validated['user_id'] = Auth::id();
-
+// dd($validated);
         $entretien = Entretien::create($validated);
 
         // notifier tous les admins
@@ -189,20 +189,23 @@ class EntretienController extends Controller
 
         // dd($entretien->user_id,$entretienValidated->user_id);
         // Vérifier si ce n’est PAS le même utilisateur que celui qui a fait la demande initiale
-        if ($entretien->id !== $entretienValidated->entretien_id) {
+        if ($entretienValidated !== null && $entretienValidated->entretien_id !== null) {
+            if ($entretien->id !== $entretienValidated->entretien_id) {
 
-            // Vérification si le mécanicien a déjà un entretien dans cet intervalle
-            $exists = Entretien::where('mecanicien_id', $data['mecanicien_id'])
-                ->whereBetween('prochaine_visite', [$start, $end])
-                ->where('id', '!=', $entretien->id) // exclut l’entretien actuel
-                ->exists();
+                $exists = Entretien::where('mecanicien_id', $data['mecanicien_id'])
+                    ->whereBetween('prochaine_visite', [$start, $end])
+                    ->where('id', '!=', $entretien->id)
+                    ->exists();
 
-            if ($exists) {
-                return back()->withErrors([
-                    'mecanicien_id' => 'Ce mécanicien a déjà un entretien prévu dans les 2 heures autour de cette date.'
-                ]);
+                if ($exists) {
+                    return back()->withErrors([
+                        'mecanicien_id' => 'Ce mécanicien a déjà un entretien prévu dans les 2 heures autour de cette date.'
+                    ]);
+                }
             }
         }
+
+
 
         // ✅ Mise à jour de l’entretien
         $entretien->update($data);
@@ -283,29 +286,65 @@ class EntretienController extends Controller
         $entretien->delete();
         return redirect()->route('entretiens.index')->with('success', 'Entretien supprimé avec succès.');
     }
-    public function checkDate(Entretien $entretien, Request $request)
+    public function checkDate()
     {
-        $now = now(); // date + heure actuelle
+        $now = now(); // Date + heure actuelles
 
-        if ($entretien->prochaine_visite->isBefore($now)) {
-            $derniere_visite = $entretien->prochaine_visite->format('d/m/Y H:i');
-            $entretien['dernier_visite'] = $derniere_visite;
-            //  dd($entretien);
-            $entretien->update();
-            $statut = "En retard";
-        } elseif ($entretien->prochaine_visite->isSameDay($now)) {
-            $statut = "Aujourd'hui";
-        } else {
-            $statut = "À venir";
+        // ✅ Récupère tous les entretiens
+        $entretiens = Entretien::all();
+
+        // ✅ Tableau pour stocker les résultats
+        $resultats = [];
+
+        foreach ($entretiens as $entretien) {
+            // Ignorer si pas de date
+            if (!$entretien->prochaine_visite) {
+                $resultats[] = [
+                    'entretien_id' => $entretien->id,
+                    'statut' => 'Non défini',
+                    'date' => null,
+                ];
+                continue;
+            }
+
+            try {
+                // ✅ Convertit la date selon ton format (d/m/Y H:i ou Y-m-d H:i:s)
+                $prochaineVisite = Carbon::parse($entretien->prochaine_visite);
+            } catch (\Exception $e) {
+                // En cas de format incorrect
+                $resultats[] = [
+                    'entretien_id' => $entretien->id,
+                    'statut' => 'Format de date invalide',
+                    'date' => $entretien->prochaine_visite,
+                ];
+                continue;
+            }
+
+            // ✅ Détermine le statut
+            if ($prochaineVisite->isBefore($now)) {
+                if ($entretien->statut === "Terminé") {
+                    // Déjà terminé → on met juste la date de dernière visite
+                    $entretien->dernier_visite = $prochaineVisite->format('Y-m-d H:i:s');
+                    $entretien->save();
+                    $statut = "Terminé";
+                }
+            }
+
+            // ✅ Ajoute au tableau de retour
+            $resultats[] = [
+                'entretien_id' => $entretien->id,
+                'statut' => $entretien->statut,
+                'date' => $prochaineVisite->format('d/m/Y H:i'),
+            ];
         }
 
+        // ✅ Retourne tous les résultats
         return response()->json([
-            'dernier_visite' => $entretien->prochaine_visite->format('d/m/Y H:i'),
-            'entretien_id' => $entretien->id,
-            'statut' => $statut,
-            'date' => $entretien->prochaine_visite->format('d/m/Y H:i'),
+            'message' => 'Vérification des dates terminée.',
+            'resultats' => $resultats
         ]);
     }
+
     public function getEntretiensValides()
     {
         // Récupère uniquement les entretiens validés
@@ -329,7 +368,7 @@ class EntretienController extends Controller
 
         // Récupérer toutes les marques (pour enrichir les véhicules)
         $marques = Marque::all();
-            
+
         // Construire les données pour le graphe
         $stats = $vehicules->map(function ($v) use ($entretiens) {
             return [
