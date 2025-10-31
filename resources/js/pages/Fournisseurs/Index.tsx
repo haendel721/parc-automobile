@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, Search, SquarePen, Trash2 } from 'lucide-react';
+import { BellDot, CirclePlus, SquarePen, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -41,22 +41,26 @@ export default function Index() {
         }
     };
     const [searchTerm, setSearchTerm] = useState('');
-
+    const [searchField, setSearchField] = useState<'nom' | 'type' | 'addresse'>('nom');
     // 🔍 Filtrage dynamique
-    const filteredFournisseurs = fournisseurs.filter(
-        (v) => v.nom.toLowerCase().includes(searchTerm.toLowerCase()) || v.type.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    const filteredFournisseurs = fournisseurs.filter((f) => {
+        const search = searchTerm.toLowerCase().trim();
+        let matchesSearch = true;
+        if (searchField === 'nom') {
+            matchesSearch = f.nom.toLowerCase().includes(search);
+        } else if (searchField === 'type') {
+            matchesSearch = f.type.toLowerCase().includes(search);
+        } else if (searchField === 'addresse') {
+            matchesSearch = f.addresse.toLowerCase().includes(search);
+        }
+
+        return matchesSearch;
+    });
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="fournisseurs" />
-
-                <div className="m-4">
-                    <Link href={route('fournisseurs.create')}>
-                        <Button>Créer un nouvelle fournisseur</Button>
-                    </Link>
-                </div>
-                <div className="m-4">
+                <div className="p-2">
                     <div>
                         {flash.message && (
                             <Alert>
@@ -67,22 +71,110 @@ export default function Index() {
                         )}
                     </div>
                 </div>
-                <div className="m-4">
+                <div className="p-2">
                     {fournisseurs.length > 0 && (
-                        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-xl">
+                        <div className="">
                             {/* HEADER + BARRE DE RECHERCHE */}
-                            <div className="mb-6 flex items-center justify-between">
-                                <h2 className="text-xl font-semibold text-gray-800">Liste des fournisseurs</h2>
-                                <div className="relative w-64">
-                                    <Search className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="par nom , type..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full rounded-xl border border-gray-300 py-2 pr-4 pl-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                    />
+                            <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                    {/* Titre */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="rounded-lg bg-blue-50 p-2">
+                                            <Link href={route('fournisseurs.create')}>
+                                                <Button className="bg-blue-500 hover:bg-blue-600">
+                                                    <CirclePlus className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                        <div>
+                                            <h2 className="text-xl font-bold text-gray-900">Liste des fournisseurs</h2>
+                                            <p className="text-sm text-gray-500">Gérez et consultez les fournisseurs</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Contrôles de recherche */}
+                                    <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                                        {/* Sélecteur de champ */}
+                                        <div className="relative min-w-[160px]">
+                                            <select
+                                                value={searchField}
+                                                onChange={(e) => setSearchField(e.target.value as any)}
+                                                className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            >
+                                                <option value="nom">Nom</option>
+                                                <option value="type">Type</option>
+                                                <option value="addresse">Addresse</option>
+                                                {/* <option value="date">Date</option> */}
+                                            </select>
+                                            <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
+                                                <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        {/* Champ de recherche dynamique */}
+                                        <div className="min-w-[280px] flex-1">
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    placeholder={`Rechercher par ${searchField}...`}
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                />
+                                                <div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
+                                                    <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Bouton d'action supplémentaire */}
+                                        <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium whitespace-nowrap text-white transition-all duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                                                />
+                                            </svg>
+                                            Filtrer
+                                        </button>
+                                    </div>
                                 </div>
+                                {/* Indicateur de filtre actif */}
+                                {searchTerm && (
+                                    <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
+                                        <div className="flex items-center gap-2 text-sm text-blue-700">
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                                                />
+                                            </svg>
+                                            Filtre actif : Recherche par {searchField} - "{searchTerm}"
+                                        </div>
+                                        <button
+                                            onClick={() => setSearchTerm('')}
+                                            className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
+                                        >
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            Effacer
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="overflow-x-auto rounded-lg">

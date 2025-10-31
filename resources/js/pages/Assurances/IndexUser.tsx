@@ -1,7 +1,9 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Link, usePage } from '@inertiajs/react';
-import { BellDot, CalendarDays, DollarSign, ShieldCheck, SquarePen } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, BellDot, CalendarDays, Car, CirclePlus, Clock, DollarSign, ShieldCheck, SquarePen } from 'lucide-react';
 import React from 'react';
 import { route } from 'ziggy-js';
 
@@ -17,10 +19,12 @@ type assurances = {
     duree_jours: number;
     jour_restant: number;
 };
+
 type vehicule = {
     id: number;
     immatriculation: string;
 };
+
 type AssuranceProps = {
     assurances: assurances[];
     flash: { message?: string };
@@ -29,95 +33,197 @@ type AssuranceProps = {
 
 const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
     const { flash, vehicule } = usePage<AssuranceProps>().props;
+
+    const getStatusColor = (joursRestants: number) => {
+        if (joursRestants === -1) return 'destructive';
+        if (joursRestants <= 7) return 'warning';
+        if (joursRestants <= 30) return 'secondary';
+        return 'success';
+    };
+
+    const getStatusIcon = (joursRestants: number) => {
+        if (joursRestants === -1) return <AlertTriangle className="h-3 w-3" />;
+        if (joursRestants <= 7) return <Clock className="h-3 w-3" />;
+        return <ShieldCheck className="h-3 w-3" />;
+    };
+
+    const getStatusText = (joursRestants: number) => {
+        if (joursRestants === -1) return 'Expiré';
+        if (joursRestants === 0) return 'Dernier jour';
+        if (joursRestants === 1) return '1 jour restant';
+        return `${joursRestants} jours restants`;
+    };
+
     return (
-        <div className="mx-auto max-w-6xl px-4 py-8">
-            {/* 🔔 Notification */}
-            {flash?.message && (
-                <div className="mb-6">
-                    <Alert className="border-l-4 border-blue-500 bg-blue-50">
-                        <BellDot className="text-blue-500" />
-                        <AlertTitle className="font-semibold text-blue-800">Notification</AlertTitle>
-                        <AlertDescription className="text-gray-700">{flash.message}</AlertDescription>
-                    </Alert>
-                </div>
-            )}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-8">
+            <div className="mx-auto max-w-7xl">
+                {/* 🔔 Notification */}
+                {flash?.message && (
+                    <div className="mb-8">
+                        <Alert className="border-blue-200 bg-blue-50/80 backdrop-blur-sm">
+                            <BellDot className="h-5 w-5 text-blue-600" />
+                            <AlertTitle className="font-semibold text-blue-800">Notification</AlertTitle>
+                            <AlertDescription className="text-blue-700">{flash.message}</AlertDescription>
+                        </Alert>
+                    </div>
+                )}
 
-            {/* 🧾 Liste des assurances */}
-
-            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
-                {assurances?.map((assurance, index) => (
-                    <div
-                        key={assurance.id}
-                        className="group relative overflow-hidden rounded-2xl bg-gray-500 from-slate-900 via-slate-800 to-slate-700 p-6 text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-                    >
-                        {/* Bandeau supérieur */}
-                        <div className="mb-4 flex items-center justify-between border-b border-slate-600 pb-3">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-full bg-blue-600/20 p-2">
-                                    <ShieldCheck className="h-6 w-6 text-blue-400" />
+                {/* Statistiques rapides */}
+                {assurances?.length > 0 && (
+                    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <Card className="bg-white/80 backdrop-blur-sm">
+                            <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-lg bg-green-100 p-2">
+                                        <ShieldCheck className="h-5 w-5 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-600">Total des assurances</p>
+                                        <p className="text-2xl font-bold text-slate-800">{assurances.length}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <p>
-                                            <span className="font-semibold text-gray-200">Assurance de </span>
-                                            {vehicule.find((v) => v.id === assurance.vehicule_id)?.immatriculation || 'Inconnu'}
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-white/80 backdrop-blur-sm">
+                            <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-lg bg-blue-100 p-2">
+                                        <Car className="h-5 w-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-600">Véhicules assurés</p>
+                                        <p className="text-2xl font-bold text-slate-800">{new Set(assurances.map((a) => a.vehicule_id)).size}</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-white/80 backdrop-blur-sm">
+                            <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-lg bg-amber-100 p-2">
+                                        <Clock className="h-5 w-5 text-amber-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-600">Bientôt expirés</p>
+                                        <p className="text-2xl font-bold text-slate-800">
+                                            {assurances.filter((a) => a.jour_restant <= 14 && a.jour_restant > 0).length}
                                         </p>
                                     </div>
-                                    <p className="text-sm text-gray-400">Contrat : {assurance.NumContrat}</p>
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Détails principaux */}
-                        <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-                            <div className="flex items-center gap-2">
-                                <ShieldCheck className="h-4 w-4 text-blue-400" />
-                                <p>
-                                    <span className="font-semibold text-gray-200">Compagnie : </span>
-                                    {assurance.NomCompagnie}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <DollarSign className="h-4 w-4 text-green-400" />
-                                <p>
-                                    <span className="font-semibold text-gray-200">Coût : </span>
-                                    {assurance.cout.toLocaleString()} MGA
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <CalendarDays className="h-4 w-4 text-yellow-400" />
-                                <p>
-                                    <span className="font-semibold text-gray-200">Début : </span>
-                                    {assurance.dateDebut}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <CalendarDays className="h-4 w-4 text-red-400" />
-                                <p>
-                                    <span className="font-semibold text-gray-200">Fin : </span>
-                                    {assurance.dateFin}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Badge durée restante */}
-                        <div className="absolute top-6 right-4 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white backdrop-blur-md">
-                            ⏳ {assurance.jour_restant === -1 ? "Expiré" : (assurance.jour_restant === 0 ? 0 : assurance.jour_restant + " Jour(s)")}
-                        </div>
-                        <div className="mt-6 flex justify-center space-x-3">
-                            {/* Bouton Modifier */}
-                            <Link href={route('assurances.edit', assurance.id)}>
-                                <Button className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1.5 text-white transition hover:bg-blue-700">
-                                    <SquarePen className="h-4 w-4" />
-                                    <span className="text-sm">Modifier</span>
-                                </Button>
-                            </Link>
-                        </div>
+                            </CardContent>
+                        </Card>
                     </div>
-                ))}
+                )}
+
+                {/* 🧾 Liste des assurances */}
+                <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+                    {assurances?.length > 0 ? (
+                        assurances.map((assurance) => {
+                            const vehiculeInfo = vehicule.find((v) => v.id === assurance.vehicule_id);
+                            return (
+                                <Card
+                                    key={assurance.id}
+                                    className="group relative overflow-hidden border-slate-200 bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50"
+                                >
+                                    <CardHeader className="pb-4">
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="rounded-xl bg-blue-50 p-2">
+                                                    <ShieldCheck className="h-6 w-6 text-blue-600" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-semibold text-slate-800">
+                                                        {vehiculeInfo?.immatriculation || 'Véhicule inconnu'}
+                                                    </h3>
+                                                    <p className="text-sm text-slate-500">Contrat: {assurance.NumContrat}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Badge statut */}
+                                            <Badge variant={getStatusColor(assurance.jour_restant)} className="flex items-center gap-1">
+                                                {getStatusIcon(assurance.jour_restant)}
+                                                {getStatusText(assurance.jour_restant)}
+                                            </Badge>
+                                        </div>
+                                    </CardHeader>
+
+                                    <CardContent className="space-y-4">
+                                        {/* Informations principales */}
+                                        <div className="grid grid-cols-1 gap-3">
+                                            <div className="flex items-center gap-3 rounded-lg bg-slate-50/80 p-3">
+                                                <div className="rounded-lg bg-purple-100 p-1.5">
+                                                    <ShieldCheck className="h-4 w-4 text-purple-600" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-xs font-medium text-slate-500">Compagnie</p>
+                                                    <p className="font-medium text-slate-800">{assurance.NomCompagnie}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-3 rounded-lg bg-slate-50/80 p-3">
+                                                <div className="rounded-lg bg-green-100 p-1.5">
+                                                    <DollarSign className="h-4 w-4 text-green-600" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-xs font-medium text-slate-500">Coût</p>
+                                                    <p className="font-medium text-slate-800">{assurance.cout.toLocaleString()} MGA</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="flex items-center gap-3 rounded-lg bg-slate-50/80 p-3">
+                                                    <div className="rounded-lg bg-blue-100 p-1.5">
+                                                        <CalendarDays className="h-4 w-4 text-blue-600" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-medium text-slate-500">Début</p>
+                                                        <p className="text-sm font-medium text-slate-800">{assurance.dateDebut}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-3 rounded-lg bg-slate-50/80 p-3">
+                                                    <div className="rounded-lg bg-red-100 p-1.5">
+                                                        <CalendarDays className="h-4 w-4 text-red-600" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-medium text-slate-500">Fin</p>
+                                                        <p className="text-sm font-medium text-slate-800">{assurance.dateFin}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex justify-end pt-2">
+                                            <Link href={route('assurances.edit', assurance.id)}>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="flex items-center gap-2 border-slate-300 hover:bg-slate-50"
+                                                >
+                                                    <SquarePen className="h-4 w-4" />
+                                                    Modifier
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })
+                    ) : (
+                        <div className="col-span-full">
+                            <Card className="border-dashed border-slate-300 bg-white/50">
+                                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                                    <ShieldCheck className="mb-4 h-12 w-12 text-slate-400" />
+                                    <h3 className="mb-2 text-lg font-semibold text-slate-600">Aucune assurance trouvée</h3>
+                                    <p className="text-slate-500">Commencez par ajouter votre première police d'assurance.</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

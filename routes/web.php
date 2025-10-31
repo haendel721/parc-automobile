@@ -10,6 +10,7 @@ use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\FraisController;
 use App\http\controllers\DashboardController;
 use App\Http\Controllers\PieceController;
+use App\Http\Controllers\PleinCarburantController;
 use App\Http\Controllers\Admin\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -34,7 +35,7 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('dashboard');
     Route::get('/depenses-vehicules', [DashboardController::class, 'depensesMensuelles'])
         ->name('dashboard.depensesMensuelles');
-    Route::get('/assurance-expirer', [DashboardController::class, 'getAssurancesStatut'])
+    Route::get('/assurances/statut', [DashboardController::class, 'getAssurancesStatut'])
         ->name('dashboard.getAssurancesStatut');
     // Route::get('/dashboard',[DashboardController::class , 'index'])
     //     ->name('dashboard.index');
@@ -93,7 +94,6 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
     Route::post('/interventions', [InterventionController::class, 'store'])
         ->name('interventions.store');
 
-
     // Crud entretien
     // Route::resource('entretiens', EntretienController::class);
     Route::get('/entretiens', [EntretienController::class, 'index'])
@@ -110,20 +110,31 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('entretiens.edit');
     Route::post('/entretiens/{entretien}', [EntretienController::class, 'update'])
         ->name('entretiens.update');
+    // Notification
     Route::delete('/admin/notifications/{entretien}', [NotificationController::class, 'destroy'])
         ->name('admin.notifications.destroy');
     Route::post('/admin/notifications/mark-read', [NotificationController::class, 'markAsRead'])
         ->name('admin.notifications.markread');
     Route::get('/admin/notifications', [NotificationController::class, 'index'])
         ->name('admin.notifications.index');
+    // Entretien
     Route::get('/entretiens-valides', [EntretienController::class, 'getEntretiensValides'])
         ->name('entretiens.valides');
 
     // Crud frais
     Route::post('/frais', [FraisController::class, 'store'])
         ->name('frais.store');
-});
+    // Plein Carburants 
+    Route::get('/pleinCarburants', [PleinCarburantController::class, 'index'])
+        ->name('pleinCarburant.index');
+    Route::get('/pleinCarburants/create', [PleinCarburantController::class, 'create'])
+        ->name('pleinCarburant.create');
+    Route::post('/pleinCarburants', [PleinCarburantController::class, 'store'])
+        ->name('pleinCarburant.store');
 
+    
+});
+Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);
 Route::middleware(['auth', 'verified', 'role:admin|mecanicien'])->group(function () {
     // Crud Fournisseur
     Route::get('/fournisseurs', [FournisseurController::class, 'index'])

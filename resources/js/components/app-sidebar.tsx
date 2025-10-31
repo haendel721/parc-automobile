@@ -1,12 +1,11 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import NotificationsDrawer from '@/components/NotificationsDrawer';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookLock, BookOpen, Car, Cog, FileSliders, Folder, Hammer, LayoutGrid, PackagePlus, UsersRound, Wrench } from 'lucide-react';
+import { BookLock, BookOpen, Car, FileSliders, Folder, Fuel, Hammer, LayoutGrid, PackagePlus, UsersRound, Wrench } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItemsAdmin: NavItem[] = [
@@ -46,6 +45,11 @@ const mainNavItemsAdmin: NavItem[] = [
         icon: Wrench,
     },
     {
+        title: 'Plein Carburants',
+        href: '/pleinCarburants',
+        icon: Fuel,
+    },
+    {
         title: 'Entretien et Réparations',
         href: '/entretiens',
         icon: Hammer,
@@ -63,7 +67,12 @@ const mainNavItemsUtilisateur: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
-      {
+    {
+        title: 'Plein Carburants',
+        href: '/pleinCarburants',
+        icon: Fuel,
+    },
+    {
         title: 'Entretien et Réparations',
         href: '/entretiens',
         icon: Hammer,
@@ -84,6 +93,11 @@ const mainNavItemsMecanicien: NavItem[] = [
         title: 'Assurances',
         href: '/assurances',
         icon: BookLock,
+    },
+    {
+        title: 'Plein Carburants',
+        href: '/pleinCarburants',
+        icon: Fuel,
     },
     {
         title: 'Entretien et Réparations',

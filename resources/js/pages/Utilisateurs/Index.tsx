@@ -1,10 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent} from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, Search, SquarePen, Trash2 } from 'lucide-react';
+import { BellDot, Calendar, Car, SquarePen, Trash2, Users, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -42,20 +43,28 @@ export default function Index() {
         }
     };
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchField, setSearchField] = useState<'nom' | 'prenom' | 'statut' | 'fonction' | 'role'>('nom');
 
     // 🔍 Filtrage des utilisateurs
-    const filteredUtilisateurs = utilisateurs.filter((u) =>
-        `${u.name} ${u.prenom} ${u.email} ${u.role}`.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    const filteredUtilisateurs = utilisateurs.filter((u) => {
+        const search = searchTerm.toLowerCase().trim();
+        if (searchField === 'nom') {
+            return u.name.toLowerCase().includes(search);
+        } else if (searchField === 'prenom') {
+            return u.prenom.toLowerCase().includes(search);
+        } else if (searchField === 'statut') {
+            return u.statut.toLowerCase().includes(search);
+        } else if (searchField === 'fonction') {
+            return u.fonction.toLowerCase().includes(search);
+        } else if (searchField === 'role') {
+            return u.role.toLowerCase().includes(search);
+        }
+        return true;
+    });
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={[{ title: 'Gestion des utilisateurs', href: '/utilisateurs' }]}>
             <Head title="utilisateurs" />
-            {/*<div className="m-4">
-                 <Link href={route('utilisateurs.create')}>
-                    <Button>Créer un nouveau utilisateur</Button>
-                </Link> 
-            </div>*/}
-            <div className="m-4">
+            <div className="p-2">
                 <div>
                     {flash.message && (
                         <Alert>
@@ -67,21 +76,113 @@ export default function Index() {
                 </div>
             </div>
             {utilisateurs.length > 0 && (
-                <div className='m-4'>
-                    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-xl">
+                <div className="p-2">
                         {/* HEADER + BARRE DE RECHERCHE */}
-                        <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-                            <h2 className="text-xl font-semibold text-gray-800">Liste des utilisateurs</h2>
-                            <div className="relative w-full sm:w-72">
-                                <Search className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="par nom, prénom, e-mail, rôle..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full rounded-xl border border-gray-300 py-2 pr-4 pl-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                />
+                        <div className="mb-5 rounded-2xl  bg-white p-6 ">
+                            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                {/* Titre */}
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-lg bg-blue-50 p-2">
+                                        <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-gray-900">Liste des utilisateurs</h2>
+                                        <p className="text-sm text-gray-500">Consultez et gerer les utilisateurs</p>
+                                    </div>
+                                </div>
+
+                                {/* Contrôles de recherche */}
+                                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                                    {/* Sélecteur de champ */}
+                                    <div className="relative min-w-[160px]">
+                                        <select
+                                            value={searchField}
+                                            onChange={(e) => setSearchField(e.target.value as any)}
+                                            className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        >
+                                            <option value="nom">Nom</option>
+                                            <option value="prenom">Prenom</option>
+                                            <option value="role">Role</option>
+                                            <option value="statut">Statut</option>
+                                            <option value="fonction">Fonction</option>
+                                        </select>
+                                        <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
+                                            <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    {/* Champ de recherche */}
+                                    <div className="min-w-[280px] flex-1">
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                placeholder={`Rechercher par ${searchField}...`}
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            />
+                                            <div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
+                                                <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Bouton d'action supplémentaire */}
+                                    <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium whitespace-nowrap text-white transition-all duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                                            />
+                                        </svg>
+                                        Filtrer
+                                    </button>
+                                </div>
                             </div>
+
+                            {/* Indicateur de filtre actif */}
+                            {searchTerm && (
+                                <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
+                                    <div className="flex items-center gap-2 text-sm text-blue-700">
+                                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                                            />
+                                        </svg>
+                                        Filtre actif : Recherche par {searchField} - "{searchTerm}"
+                                    </div>
+                                    <button
+                                        onClick={() => setSearchTerm('')}
+                                        className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
+                                    >
+                                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Effacer
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* TABLEAU */}
@@ -149,7 +250,6 @@ export default function Index() {
                                 </TableBody>
                             </Table>
                         </div>
-                    </div>
                 </div>
             )}
         </AppLayout>

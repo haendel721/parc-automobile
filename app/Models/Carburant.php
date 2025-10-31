@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Carburant extends Model
 {
-    protected $fillable = ['type'];
+    protected $fillable = [
+        'type',
+        'prix'
+    ];
 }

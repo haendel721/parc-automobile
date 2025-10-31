@@ -44,13 +44,7 @@ export default function Index() {
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Assurance" />
-
-                <div className="m-4">
-                    <Link href={route('assurances.create')}>
-                        <Button>Nouvel assurance</Button>
-                    </Link>
-                </div>
-                {roleUser.role === 'admin' ? <IndexAdmin assurances={assurances} /> : <IndexUser assurances={assurances} />}
+                {roleUser.role === 'admin' ? <IndexAdmin assurances={assurances} vehicules={vehicule} /> : <IndexUser assurances={assurances} />}
             </AppLayout>
         </>
     );
