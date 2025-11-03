@@ -22,6 +22,7 @@ class DashboardController extends Controller
     {
         // ✅ Exécute la logique de la commande à chaque chargement de la page
         $command->handle();
+        
         $dernierVisite->checkDate();
         $userConnecter = Auth::user();
         $assurances = $userConnecter->role === 'admin'

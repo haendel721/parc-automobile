@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, CirclePlus, SquarePen, Trash2 } from 'lucide-react';
+import { BellDot, CirclePlus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -67,7 +67,12 @@ export default function Index() {
     });
     return (
         <>
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppLayout
+                breadcrumbs={[
+                    { title: 'Accueil', href: '/dashboard' },
+                    { title: 'piece', href: '/pieces' },
+                ]}
+            >
                 <Head title="pieces" />
                 <div className="p-2">
                     <div>
@@ -147,7 +152,7 @@ export default function Index() {
                                                 <div className="relative">
                                                     <input
                                                         type="text"
-                                                        placeholder={`Rechercher par ${searchField}...`}
+                                                        placeholder={`${searchField}...`}
                                                         value={searchTerm}
                                                         onChange={(e) => setSearchTerm(e.target.value)}
                                                         className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -217,8 +222,8 @@ export default function Index() {
                                             <TableHead>Prix</TableHead>
                                             <TableHead>Quantité</TableHead>
                                             <TableHead>Fournisseur</TableHead>
-                                            {user.role === 'admin' && <TableHead>Mecanicien</TableHead>}
-                                            <TableHead className="text-center">Actions</TableHead>
+                                            {user.role === 'admin' && <TableHead>Mécanicien</TableHead>}
+                                            <TableHead className="text-center">Action</TableHead>
                                         </TableRow>
                                     </TableHeader>
 

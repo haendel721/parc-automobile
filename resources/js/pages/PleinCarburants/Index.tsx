@@ -4,11 +4,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, CirclePlus, SquarePen, Trash2 } from 'lucide-react';
+import { BellDot, CirclePlus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Accueil',
+        href: '/dashboard',
+    },
     {
         title: 'Plein Carburant',
         href: '/pleinCarburants',
@@ -63,7 +67,8 @@ export default function Index() {
     const { processing, delete: destroy } = useForm();
     const handleDelete = (id: number) => {
         if (confirm(`Êtes-vous sûr de vouloir le supprimer ?`)) {
-            destroy(route('pieces.destroy', id));
+            console.log('id ', id);
+            destroy(route('pleinCarburant.destroy', id));
         }
     };
     // État pour la recherche
@@ -129,7 +134,7 @@ export default function Index() {
 
     // recherche dans le tableau top
     const filteredVehicules = vehicules.filter((v) => {
-        const search = searchTermTotal.toLowerCase().trim();
+        // const search = searchTermTotal.toLowerCase().trim();
         if (searchFieldTotal === 'immatriculation') {
             return v.immatriculation.toLowerCase().includes(searchTermTotal.toLowerCase());
         }
@@ -194,7 +199,7 @@ export default function Index() {
                                         <div className="relative">
                                             <input
                                                 type="text"
-                                                placeholder={`Rechercher par ${searchFieldTotal}...`}
+                                                placeholder={`${searchFieldTotal}...`}
                                                 value={searchTermTotal}
                                                 onChange={(e) => setSearchTermTotal(e.target.value)}
                                                 className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -312,25 +317,6 @@ export default function Index() {
                                                 Montant total
                                             </div>
                                         </TableHead>
-                                        <TableHead className="text-center">
-                                            <div className="flex items-center justify-center gap-2">
-                                                <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                                                    />
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                                    />
-                                                </svg>
-                                                Actions
-                                            </div>
-                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
 
@@ -350,22 +336,6 @@ export default function Index() {
                                                     )}
                                                     <TableCell>{itemQ ? itemQ.Quantite : '0'} L</TableCell>
                                                     <TableCell>{item ? item.totalMontant.toLocaleString('fr-FR') : '0'} Ar</TableCell>
-                                                    <TableCell className="text-center">
-                                                        <div className="flex justify-center gap-2">
-                                                            <Link href={route('pieces.edit', v.id)}>
-                                                                <Button className="rounded-full bg-blue-600 p-2 text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-md">
-                                                                    <SquarePen size={16} />
-                                                                </Button>
-                                                            </Link>
-                                                            <Button
-                                                                disabled={processing}
-                                                                onClick={() => handleDelete(v.id)}
-                                                                className="rounded-full bg-red-500 p-2 text-white transition-all duration-200 hover:bg-red-600 hover:shadow-md"
-                                                            >
-                                                                <Trash2 size={16} />
-                                                            </Button>
-                                                        </div>
-                                                    </TableCell>
                                                 </TableRow>
                                             );
                                         })
@@ -410,7 +380,7 @@ export default function Index() {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-gray-900">Historique de plein carburants</h2>
+                                        <h2 className="text-xl font-bold text-gray-900">Historique de pleins carburants</h2>
                                         <p className="text-sm text-gray-500">Gérez et consultez les données de consommation</p>
                                     </div>
                                 </div>
@@ -499,7 +469,7 @@ export default function Index() {
                                             <div className="relative">
                                                 <input
                                                     type="text"
-                                                    placeholder={`Rechercher par ${searchField}...`}
+                                                    placeholder={` ${searchField}...`}
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
                                                     className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -667,7 +637,7 @@ export default function Index() {
                                                 Station
                                             </div>
                                         </TableHead>
-                                        <TableHead className="text-center">Actions</TableHead>
+                                        <TableHead className="text-center">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>
 
@@ -690,11 +660,6 @@ export default function Index() {
 
                                                 <TableCell className="text-center">
                                                     <div className="flex justify-center gap-2">
-                                                        <Link href={route('pieces.edit', pc.id)}>
-                                                            <Button className="rounded-full bg-blue-600 p-2 text-white hover:bg-blue-700">
-                                                                <SquarePen size={16} />
-                                                            </Button>
-                                                        </Link>
                                                         <Button
                                                             disabled={processing}
                                                             onClick={() => handleDelete(pc.id)}

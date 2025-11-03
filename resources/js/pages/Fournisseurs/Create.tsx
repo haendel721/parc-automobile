@@ -48,8 +48,14 @@ export default function Index() {
     ];
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Créer un nouveau fournisseur" />
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'fournisseur', href: '/fournisseurs' },
+                { title: 'Ajouter un fournisseur', href: '/fournisseur/create' },
+            ]}
+        >
+            <Head title="Fournisseur" />
 
             <div className="max-w-10xl container mx-auto px-4 py-6">
                 {/* En-tête */}

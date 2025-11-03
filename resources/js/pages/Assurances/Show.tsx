@@ -85,7 +85,7 @@ export default function Show() {
                             <div className="flex items-center gap-3">
                                 <CalendarDays className="h-5 w-5 text-red-500" />
                                 <div>
-                                    <p className="text-sm text-gray-500">Date de fin</p>
+                                    <p className="text-sm text-gray-500">Date d'expiration</p>
                                     <p className="font-medium text-gray-800">{assurance.dateFin}</p>
                                 </div>
                             </div>

@@ -1,12 +1,12 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { CircleAlert, Building, MapPin, Phone, Mail, Globe, Briefcase, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Briefcase, Building, CircleAlert, Globe, Mail, MapPin, Phone } from 'lucide-react';
 import { route } from 'ziggy-js';
 
 interface Fournisseur {
@@ -53,10 +53,16 @@ export default function Edit({ fournisseur }: Props) {
     ];
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Modifier un fournisseur', href: `/fournisseurs/${fournisseur.id}/edit` }]}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'fournisseur', href: '/fournisseurs' },
+                { title: 'Modifier un fournisseur', href: `/fournisseurs/${fournisseur.id}/edit` },
+            ]}
+        >
             <Head title="Mise à jour d'un fournisseur" />
-            
-            <div className="container max-w-10xl mx-auto p-6">
+
+            <div className="max-w-10xl container mx-auto p-6">
                 {/* En-tête */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
@@ -78,17 +84,15 @@ export default function Edit({ fournisseur }: Props) {
                     </div>
                 </div>
 
-                <Card className="shadow-lg border-0">
-                    <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
+                <Card className="border-0 shadow-lg">
+                    <CardHeader className="border-b bg-gradient-to-r from-green-50 to-emerald-50">
                         <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-green-100 rounded-lg">
+                            <div className="rounded-lg bg-green-100 p-2">
                                 <Building className="h-6 w-6 text-green-600" />
                             </div>
                             <div>
                                 <CardTitle className="text-xl text-gray-900">Informations du fournisseur</CardTitle>
-                                <CardDescription className="text-gray-600">
-                                    ID: {fournisseur.id}
-                                </CardDescription>
+                                <CardDescription className="text-gray-600">ID: {fournisseur.id}</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
@@ -101,7 +105,7 @@ export default function Edit({ fournisseur }: Props) {
                                     <CircleAlert className="h-5 w-5" />
                                     <AlertTitle className="text-red-800">Erreurs de validation</AlertTitle>
                                     <AlertDescription>
-                                        <ul className="list-disc list-inside space-y-1 text-red-700">
+                                        <ul className="list-inside list-disc space-y-1 text-red-700">
                                             {Object.entries(errors).map(([key, message]) => (
                                                 <li key={key}>{message as string}</li>
                                             ))}
@@ -111,7 +115,7 @@ export default function Edit({ fournisseur }: Props) {
                             )}
 
                             {/* Grid principal */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 {/* Nom du fournisseur */}
                                 <div className="space-y-2">
                                     <Label htmlFor="nom" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
@@ -134,11 +138,8 @@ export default function Edit({ fournisseur }: Props) {
                                         <Briefcase className="h-4 w-4 text-gray-500" />
                                         <span>Type de fournisseur *</span>
                                     </Label>
-                                    <Select 
-                                        value={data.type} 
-                                        onValueChange={(value) => setData('type', value)}
-                                    >
-                                        <SelectTrigger className="w-full h-11">
+                                    <Select value={data.type} onValueChange={(value) => setData('type', value)}>
+                                        <SelectTrigger className="h-11 w-full">
                                             <SelectValue placeholder="Sélectionner un type" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -187,7 +188,7 @@ export default function Edit({ fournisseur }: Props) {
                                 <div className="space-y-2">
                                     <Label htmlFor="email" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
                                         <Mail className="h-4 w-4 text-gray-500" />
-                                        <span>Email *</span>
+                                        <span>E-mail</span>
                                     </Label>
                                     <Input
                                         id="email"
@@ -216,29 +217,19 @@ export default function Edit({ fournisseur }: Props) {
                                 </div>
                             </div>
 
-                            {/* Note sur les champs obligatoires */}
-                            <div className="text-sm text-gray-500 border-t pt-4">
-                                <p>* Champs obligatoires</p>
-                            </div>
-
                             {/* Actions */}
-                            <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => window.history.back()}
-                                    className="px-6 order-2 sm:order-1"
-                                >
+                            <div className="flex flex-col justify-end space-y-3 border-t pt-6 sm:flex-row sm:space-y-0 sm:space-x-4">
+                                <Button type="button" variant="outline" onClick={() => window.history.back()} className="order-2 px-6 sm:order-1">
                                     Annuler
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing}
-                                    className="px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 order-1 sm:order-2"
+                                    className="order-1 bg-gradient-to-r from-green-600 to-emerald-600 px-6 hover:from-green-700 hover:to-emerald-700 sm:order-2"
                                 >
                                     {processing ? (
                                         <div className="flex items-center space-x-2">
-                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                             <span>Mise à jour...</span>
                                         </div>
                                     ) : (

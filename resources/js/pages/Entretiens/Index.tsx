@@ -12,9 +12,19 @@ import { BellDot, Calendar, Car, Eye, Filter, Plus, Search, SquarePen, Users, Wr
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Entretien', href: '/entretiens' }];
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Accueil',
+        href: '/dashboard',
+    },
+    {
+        title: 'entretien',
+        href: '/entretiens',
+    },
+];
 
 interface vehicule {
+    id: string;
     immatriculation: string;
 }
 interface fournisseur {
@@ -97,27 +107,25 @@ export default function Index() {
 
     // 🔍 Filtrage avancé
     const filteredEntretiens = entretiensFiltres.filter((e) => {
-        const matchesSearch = e.statut.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            e.vehicule?.immatriculation.toLowerCase().includes(searchTerm.toLowerCase())
-        
+        const matchesSearch =
+            e.statut.toLowerCase().includes(searchTerm.toLowerCase()) || e.vehicule?.immatriculation.toLowerCase().includes(searchTerm.toLowerCase());
+
         const matchesStatus = statusFilter === 'all' || e.statut === statusFilter;
-        
+
         return matchesSearch && matchesStatus;
     });
 
     // Calcul du coût total pour un entretien
     const getTotalCost = (entretienId: number) => {
-        return frais
-            .filter((f) => f.entretien_id === entretienId)
-            .reduce((total, f) => total + f.montant, 0);
+        return frais.filter((f) => f.entretien_id === entretienId).reduce((total, f) => total + f.montant, 0);
     };
 
     // Stats pour le header
     const stats = {
         total: entretiens.length,
-        enAttente: entretiens.filter(e => e.statut === 'En attente').length,
-        valide: entretiens.filter(e => e.statut === 'Validé').length,
-        termine: entretiens.filter(e => e.statut === 'Terminé').length,
+        enAttente: entretiens.filter((e) => e.statut === 'En attente').length,
+        valide: entretiens.filter((e) => e.statut === 'Validé').length,
+        termine: entretiens.filter((e) => e.statut === 'Terminé').length,
     };
 
     return (
@@ -131,7 +139,7 @@ export default function Index() {
                         <h1 className="text-3xl font-bold text-gray-900">Gestion des Entretiens</h1>
                         <p className="mt-2 text-gray-600">Suivez et gérez tous les entretiens de votre flotte automobile</p>
                     </div>
-                    
+
                     <div className="flex items-center gap-3">
                         <Link href={route('entretiens.create')}>
                             <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700">
@@ -216,11 +224,9 @@ export default function Index() {
                         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
                             <div>
                                 <CardTitle className="text-xl">Liste des Entretiens</CardTitle>
-                                <CardDescription>
-                                    {filteredEntretiens.length} entretien(s) trouvé(s)
-                                </CardDescription>
+                                <CardDescription>{filteredEntretiens.length} entretien(s) trouvé(s)</CardDescription>
                             </div>
-                            
+
                             <div className="flex flex-col gap-3 sm:flex-row">
                                 {/* Sélecteur de vue */}
                                 {user.role === 'admin' && (
@@ -228,9 +234,7 @@ export default function Index() {
                                         <button
                                             onClick={() => setViewMode('table')}
                                             className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all ${
-                                                viewMode === 'table' 
-                                                    ? 'bg-blue-600 text-white' 
-                                                    : 'text-gray-600 hover:text-gray-900'
+                                                viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
                                             }`}
                                         >
                                             Tableau
@@ -238,9 +242,7 @@ export default function Index() {
                                         <button
                                             onClick={() => setViewMode('grid')}
                                             className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all ${
-                                                viewMode === 'grid' 
-                                                    ? 'bg-blue-600 text-white' 
-                                                    : 'text-gray-600 hover:text-gray-900'
+                                                viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
                                             }`}
                                         >
                                             Grille
@@ -264,10 +266,10 @@ export default function Index() {
 
                                 {/* Barre de recherche */}
                                 <div className="relative w-full sm:w-64">
-                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                                     <Input
                                         type="text"
-                                        placeholder="Rechercher par immatriculation"
+                                        placeholder="immatriculation"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10"
@@ -284,6 +286,7 @@ export default function Index() {
                                 <Table>
                                     <TableHeader className="bg-gradient-to-r from-blue-50 to-blue-100">
                                         <TableRow>
+                                            <TableHead className="font-semibold text-blue-900">#Id</TableHead>
                                             <TableHead className="font-semibold text-blue-900">Véhicule</TableHead>
                                             <TableHead className="font-semibold text-blue-900">Conducteur</TableHead>
                                             <TableHead className="font-semibold text-blue-900">Mécanicien</TableHead>
@@ -296,11 +299,14 @@ export default function Index() {
                                     </TableHeader>
                                     <TableBody>
                                         {filteredEntretiens.length > 0 ? (
-                                            filteredEntretiens.map((e, i) => (
-                                                <TableRow 
-                                                    key={e.id} 
-                                                    className="group transition-all hover:bg-blue-50"
-                                                >
+                                            filteredEntretiens.map((e) => (
+                                                <TableRow key={e.id} className="group transition-all hover:bg-blue-50">
+                                                    <TableCell className="font-medium">
+                                                        <div className="flex items-center gap-2">
+                                                            <Car className="h-4 w-4 text-gray-400" />
+                                                            {e.vehicule?.id ?? '-'}
+                                                        </div>
+                                                    </TableCell>
                                                     <TableCell className="font-medium">
                                                         <div className="flex items-center gap-2">
                                                             <Car className="h-4 w-4 text-gray-400" />
@@ -327,20 +333,22 @@ export default function Index() {
                                                             '-'
                                                         )}
                                                     </TableCell>
-                                                    <TableCell className="font-semibold">
-                                                        {getTotalCost(e.id).toLocaleString('fr-FR')} MGA
-                                                    </TableCell>
+                                                    <TableCell className="font-semibold">{getTotalCost(e.id).toLocaleString('fr-FR')} MGA</TableCell>
                                                     <TableCell>
                                                         <Badge
                                                             variant={
-                                                                e.statut === 'Validé' ? 'default' :
-                                                                e.statut === 'En attente' ? 'secondary' :
-                                                                'outline'
+                                                                e.statut === 'Validé'
+                                                                    ? 'default'
+                                                                    : e.statut === 'En attente'
+                                                                      ? 'secondary'
+                                                                      : 'outline'
                                                             }
                                                             className={
-                                                                e.statut === 'Validé' ? 'bg-green-100 text-green-800 hover:bg-green-100' :
-                                                                e.statut === 'En attente' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' :
-                                                                'bg-blue-100 text-blue-800 hover:bg-blue-100'
+                                                                e.statut === 'Validé'
+                                                                    ? 'bg-green-100 text-green-800 hover:bg-green-100'
+                                                                    : e.statut === 'En attente'
+                                                                      ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
+                                                                      : 'bg-blue-100 text-blue-800 hover:bg-blue-100'
                                                             }
                                                         >
                                                             {e.statut}
@@ -349,8 +357,8 @@ export default function Index() {
                                                     <TableCell>
                                                         <div className="flex justify-center gap-2">
                                                             <Link href={route('entretiens.show', e.id)}>
-                                                                <Button 
-                                                                    variant="outline" 
+                                                                <Button
+                                                                    variant="outline"
                                                                     size="sm"
                                                                     className="border-blue-200 text-blue-700 hover:bg-blue-50"
                                                                 >
@@ -359,8 +367,8 @@ export default function Index() {
                                                             </Link>
                                                             {e.statut === 'En attente' && (
                                                                 <Link href={route('entretiens.edit', e.id)}>
-                                                                    <Button 
-                                                                        variant="outline" 
+                                                                    <Button
+                                                                        variant="outline"
                                                                         size="sm"
                                                                         className="border-green-200 text-green-700 hover:bg-green-50"
                                                                     >
@@ -410,27 +418,31 @@ export default function Index() {
                                                             </div>
                                                             <Badge
                                                                 variant={
-                                                                    e.statut === 'Validé' ? 'default' :
-                                                                    e.statut === 'En attente' ? 'secondary' :
-                                                                    'outline'
+                                                                    e.statut === 'Validé'
+                                                                        ? 'default'
+                                                                        : e.statut === 'En attente'
+                                                                          ? 'secondary'
+                                                                          : 'outline'
                                                                 }
                                                                 className={
-                                                                    e.statut === 'Validé' ? 'bg-green-100 text-green-800' :
-                                                                    e.statut === 'En attente' ? 'bg-yellow-100 text-yellow-800' :
-                                                                    'bg-blue-100 text-blue-800'
+                                                                    e.statut === 'Validé'
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : e.statut === 'En attente'
+                                                                          ? 'bg-yellow-100 text-yellow-800'
+                                                                          : 'bg-blue-100 text-blue-800'
                                                                 }
                                                             >
                                                                 {e.statut}
                                                             </Badge>
                                                         </div>
                                                     </CardHeader>
-                                                    
+
                                                     <CardContent className="space-y-4">
                                                         <div>
                                                             <h4 className="font-medium text-gray-900">Problème</h4>
-                                                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{e.probleme}</p>
+                                                            <p className="mt-1 line-clamp-2 text-sm text-gray-600">{e.probleme}</p>
                                                         </div>
-                                                        
+
                                                         {e.prochaine_visite && (
                                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                                 <Calendar className="h-4 w-4" />
@@ -445,11 +457,11 @@ export default function Index() {
                                                                     {totalCout.toLocaleString('fr-FR')} MGA
                                                                 </p>
                                                             </div>
-                                                            
+
                                                             {(user.role === 'admin' || user.role === 'mecanicien') && (
                                                                 <Link href={route('entretiens.show', e.id)}>
-                                                                    <Button 
-                                                                        variant="outline" 
+                                                                    <Button
+                                                                        variant="outline"
                                                                         size="sm"
                                                                         className="border-blue-200 text-blue-700 hover:bg-blue-50"
                                                                     >
@@ -467,9 +479,7 @@ export default function Index() {
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
                                         <Wrench className="h-16 w-16 text-gray-300" />
                                         <h3 className="mt-4 text-lg font-medium text-gray-900">Aucun entretien trouvé</h3>
-                                        <p className="mt-2 text-gray-500">
-                                            Aucun entretien ne correspond à vos critères de recherche.
-                                        </p>
+                                        <p className="mt-2 text-gray-500">Aucun entretien ne correspond à vos critères de recherche.</p>
                                     </div>
                                 )}
                             </div>

@@ -56,10 +56,16 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Modifier un véhicule', href: `/vehicules/${Vehicule.id}/edit` }]}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'Véhicules', href: '/vehicules' },
+                { title: `Modifier le véhicule   ${Vehicule.immatriculation}`, href: `/vehicules/${Vehicule.id}/edit` },
+            ]}
+        >
             <Head title="Mise à jour d'un véhicule" />
 
-            <div className="container mx-auto max-w-10xl px-4 py-6">
+            <div className="max-w-10xl container mx-auto px-4 py-6">
                 {/* En-tête */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">

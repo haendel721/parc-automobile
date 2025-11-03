@@ -6,12 +6,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { BreadcrumbItem } from '@/types';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { AlertCircle, CalendarCog, CalendarDays, Car, CheckCircle2, CircleAlert, FileText, User, Wrench, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { route } from 'ziggy-js';
-
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Accueil',
+        href: '/dashboard',
+    },
+    {
+        title: 'entretien',
+        href: '/entretiens',
+    },
+    {
+        title: 'affichage d\'un entretien spécifié',
+        href: '/entretiens/show',
+    },
+];
 interface entretien {
     id: number;
     user_id: number;
@@ -78,7 +92,7 @@ export default function Index() {
         const year = dt.getFullYear();
         const month = String(dt.getMonth() + 1).padStart(2, '0');
         const day = String(dt.getDate()).padStart(2, '0');
-        const hours = String(dt.getHours()).padStart(2, '0');
+        const hours = String(dt.getHours() - 3).padStart(2, '00');
         const minutes = String(dt.getMinutes()).padStart(2, '0');
 
         return `${year}-${month}-${day}T${hours}:${minutes}`;
@@ -86,7 +100,13 @@ export default function Index() {
 
     const formatDate = (dateStr: string) => {
         if (!dateStr) return '—';
-        return new Date(dateStr).toLocaleDateString('fr-FR', {
+
+        const date = new Date(dateStr);
+
+        // 🕒 Soustraire 3 heures
+        date.setHours(date.getHours() - 3);
+
+        return date.toLocaleDateString('fr-FR', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -133,7 +153,7 @@ export default function Index() {
         duree_immobilisation: '',
         entretien_id: entretien.id,
     });
-
+    // const queryParams = {  entretien_id: entretien.id, vehicule_id: entretien.vehicule_id  };
     const handleValide = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('entretiens.validate', entretien.id), {
@@ -195,7 +215,7 @@ export default function Index() {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Entretien - ${immatricule?.immatriculation || 'Véhicule'}`} />
 
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
@@ -205,7 +225,7 @@ export default function Index() {
                         <h1 className="text-3xl font-bold text-slate-800 mb-2">Détails de l'Entretien</h1>
                         <p className="text-slate-600">Gestion et suivi des interventions véhicule</p>
                     </div> */}
-                    
+
                     <div className="grid grid-cols-1 gap-8">
                         {/* Main Card */}
                         <div className="lg:col-span-2">
@@ -290,7 +310,11 @@ export default function Index() {
                                     {(userConnecter === 'admin' || userConnecter === 'mecanicien') && (
                                         <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row">
                                             {userConnecter === 'admin' && (
-                                                <Button
+                                                entretien.statut === "Validé" 
+                                                ? '' 
+                                                : entretien.statut === "Terminé" 
+                                                ? ''
+                                                :<Button
                                                     onClick={() => openModal('validation')}
                                                     className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-white shadow-lg transition-all duration-200 hover:bg-blue-700 hover:shadow-xl"
                                                 >
@@ -299,13 +323,12 @@ export default function Index() {
                                                 </Button>
                                             )}
                                             {userConnecter === 'mecanicien' && (
-                                                <Button
-                                                    onClick={() => openModal('intervention')}
-                                                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-white shadow-lg transition-all duration-200 hover:bg-emerald-700 hover:shadow-xl"
-                                                >
-                                                    <Wrench className="h-4 w-4" />
-                                                    Intervenir
-                                                </Button>
+                                                <Link href={route('pieces.create' , {entretien_id: entretien.id, vehicule_id: entretien.vehicule_id })}>
+                                                    <Button className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-white shadow-lg transition-all duration-200 hover:bg-emerald-700 hover:shadow-xl">
+                                                        <Wrench className="h-4 w-4" />
+                                                        Intervenir
+                                                    </Button>
+                                                </Link>
                                             )}
                                         </div>
                                     )}

@@ -68,6 +68,16 @@ const mainNavItemsUtilisateur: NavItem[] = [
         icon: LayoutGrid,
     },
     {
+        title: 'Vehicules',
+        href: '/vehicules',
+        icon: Car,
+    },
+    {
+        title: 'Assurances',
+        href: '/assurances',
+        icon: BookLock,
+    },
+    {
         title: 'Plein Carburants',
         href: '/pleinCarburants',
         icon: Fuel,
@@ -149,7 +159,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

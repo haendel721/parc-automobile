@@ -49,8 +49,9 @@ export default function Show() {
     return (
         <AppLayout
             breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
                 { title: 'Véhicules', href: '/vehicules' },
-                { title: vehicule.modele, href: '#' },
+                { title: ` ${vehicule.immatriculation}`, href: `/vehicules/${vehicule.id}/edit`},
             ]}
         >
             <Head title={`Véhicule ${vehicule.modele}`} />

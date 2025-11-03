@@ -69,24 +69,13 @@ export default function Index() {
         }
     };
     const [searchTerm, setSearchTerm] = useState('');
-    const getSearchFieldLabel = (field: string) => {
-        const labels: { [key: string]: string } = {
-            immatriculation: 'immatriculation',
-            modele: 'modèle',
-            proprietaire: 'propriétaire',
-            marque: 'marque',
-            carburant: 'carburant',
-        };
-        return labels[field] || field;
-    };
 
     // États supplémentaires nécessaires
-    // const [searchField, setSearchField] = useState('immatriculation');
-    // Ajoutez ces états en haut de votre composant
     const [selectedTypeVehicule, setSelectedTypeVehicule] = useState('');
     const [selectedCarburant, setSelectedCarburant] = useState('');
     const [selectedMarque, setSelectedMarque] = useState('');
     const [showFilters, setShowFilters] = useState(false);
+
     const filteredVehicules = vehicules.filter((v) => {
         // Filtre par recherche texte
         if (searchTerm.trim()) {
@@ -119,23 +108,25 @@ export default function Index() {
         return true;
     });
 
-    console.log('📊 Résultats:', filteredVehicules.length, 'véhicules trouvés');
-    // console.log('Km ' + filteredVehicules.map((v) => v.modele));
-    // console.log("intervention " + intervention.map(e=>e.entretien_id))
     return (
         <>
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppLayout
+                breadcrumbs={[
+                    { title: 'Accueil', href: '/dashboard' },
+                    { title: 'Véhicules', href: '/vehicules' },
+                ]}
+            >
                 <Head title="Véhicules" />
 
                 {/* Header avec recherche et bouton */}
-                <div className="p-2 mb-8 rounded-2xl border border-gray-100 bg-white shadow-sm sm:m-5 sm:p-6">
+                <div className="mb-8 rounded-2xl border border-gray-100 bg-white p-2 shadow-sm sm:m-5 sm:p-6">
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         {/* Titre et informations - Maintenant en premier sur mobile */}
                         <div className="flex items-center gap-4">
-                            <div className="rounded-xl bg-blue-50 p-3 flex items-center gap-4">
+                            <div className="flex items-center gap-4 rounded-xl bg-blue-50 p-3">
                                 {/* Bouton créer véhicule */}
                                 <Link href={route('vehicules.create')}>
-                                    <Button className="bg-blue-500 hover:bg-blue-600" >
+                                    <Button className="bg-blue-500 hover:bg-blue-600">
                                         <CirclePlus className="h-4 w-4" />
                                     </Button>
                                 </Link>
@@ -160,7 +151,7 @@ export default function Index() {
                                         <div className="min-w-0 flex-1">
                                             <input
                                                 type="text"
-                                                placeholder="Rechercher par immatriculation, modèle, propriétaire"
+                                                placeholder="immatriculation, modèle, propriétaire"
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
                                                 className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
@@ -348,9 +339,8 @@ export default function Index() {
                         {filteredVehicules.length > 0 ? (
                             <div className="px-4 pb-8 sm:px-6">
                                 {/* Grille des véhicules */}
-                                <div className="grid grid-cols-1 gap-4  sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                                     {filteredVehicules.map((vehicule) => {
-                                        console.log('vehicule ' + vehicule);
                                         const marque = marques.find((m) => m.id === vehicule.marque_id);
                                         const carburant = carburants.find((c) => c.id === vehicule.carburant_id);
                                         const typeVehicule = typeVehicules.find((t) => t.id === vehicule.typeVehicule_id);
@@ -457,16 +447,30 @@ export default function Index() {
                         )}
                     </>
                 ) : (
-                    /* Vue utilisateur */
+                    /* Vue utilisateur avec filtres */
                     <>
                         {roleUser.role !== 'admin' && (
                             <VehiculeUser
-                                vehicules={vehicules}
+                                vehicules={filteredVehicules} // Passer les véhicules filtrés
                                 marques={marques}
                                 carburants={carburants}
                                 typeVehicules={typeVehicules}
                                 intervention={intervention}
                                 entretien={entretien}
+                                searchTerm={searchTerm}
+                                selectedMarque={selectedMarque}
+                                selectedCarburant={selectedCarburant}
+                                selectedTypeVehicule={selectedTypeVehicule}
+                                onSearchChange={setSearchTerm}
+                                onMarqueChange={setSelectedMarque}
+                                onCarburantChange={setSelectedCarburant}
+                                onTypeVehiculeChange={setSelectedTypeVehicule}
+                                onClearFilters={() => {
+                                    setSearchTerm('');
+                                    setSelectedCarburant('');
+                                    setSelectedMarque('');
+                                    setSelectedTypeVehicule('');
+                                }}
                             />
                         )}
                     </>

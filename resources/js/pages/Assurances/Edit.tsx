@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Building, Calendar, Car, CircleAlert, DollarSign, FileEdit, FileText, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Building, Calendar, Car, CircleAlert, DollarSign, FileText, ShieldCheck } from 'lucide-react';
 import { route } from 'ziggy-js';
 
 interface Vehicule {
@@ -58,10 +58,16 @@ export default function Edit({ assurance, Vehicule }: Props) {
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: 'Modifier une assurance', href: `/assurances/${assurance.id}/edit` }]}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'Assurances', href: '/assurances' },
+                { title: 'Modifier une assurance', href: `/assurances/${assurance.id}/edit` },
+            ]}
+        >
             <Head title="Mise à jour d'une Assurance" />
 
-            <div className="container mx-auto max-w-10xl p-6">
+            <div className="max-w-10xl container mx-auto p-6">
                 {/* En-tête */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
@@ -199,7 +205,7 @@ export default function Edit({ assurance, Vehicule }: Props) {
                                 <div className="space-y-2">
                                     <Label htmlFor="dateFin" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
                                         <Calendar className="h-4 w-4 text-gray-500" />
-                                        <span>Date de fin</span>
+                                        <span>Date d'expiration</span>
                                     </Label>
                                     <Input
                                         id="dateFin"

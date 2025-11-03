@@ -70,10 +70,16 @@ export default function Create() {
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'Assurances', href: '/assurances' },
+                { title: 'Ajouter une assurance', href: '/assurances/create' },
+            ]}
+        >
             <Head title="Nouvelle Assurance" />
 
-            <div className="container mx-auto max-w-10xl px-4 py-8">
+            <div className="max-w-10xl container mx-auto px-4 py-8">
                 {/* En-tête */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
@@ -95,7 +101,7 @@ export default function Create() {
                     </div>
                 </div>
 
-                <Card className="border-0 shadow-lg ">
+                <Card className="border-0 shadow-lg">
                     <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
                         <CardTitle className="flex items-center gap-2 text-xl">
                             <CircleAlert className="h-6 w-6 text-blue-600" />

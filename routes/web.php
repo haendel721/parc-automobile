@@ -131,7 +131,8 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('pleinCarburant.create');
     Route::post('/pleinCarburants', [PleinCarburantController::class, 'store'])
         ->name('pleinCarburant.store');
-
+    Route::delete('/pleinCarburants/{pleinCarburant}', [PleinCarburantController::class, 'destroy'])
+        ->name('pleinCarburant.destroy');
     
 });
 Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);

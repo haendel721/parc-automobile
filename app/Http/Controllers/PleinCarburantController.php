@@ -73,7 +73,14 @@ class PleinCarburantController extends Controller
 
         return redirect()->route('pleinCarburant.index')->with('success', 'Plein carburant ajouté avec succès.');
     }
-
+    public function destroy(pleinCarburant $pleinCarburant)
+    {
+        // dd($pleinCarburant);
+        $pleinCarburant->delete();
+        
+        return redirect()->route('pleinCarburant.index')
+            ->with('message', 'plein supprimée avec succès.');
+    }
     public function grapheVariationPleinCarburantParVehicule()
     {
         // 🔐 Récupérer l'utilisateur connecté

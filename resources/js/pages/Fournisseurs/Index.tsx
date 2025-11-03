@@ -58,7 +58,12 @@ export default function Index() {
     });
     return (
         <>
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppLayout
+                breadcrumbs={[
+                    { title: 'Accueil', href: '/dashboard' },
+                    { title: 'fournisseur', href: '/fournisseurs' },
+                ]}
+            >
                 <Head title="fournisseurs" />
                 <div className="p-2">
                     <div>
@@ -103,7 +108,7 @@ export default function Index() {
                                             >
                                                 <option value="nom">Nom</option>
                                                 <option value="type">Type</option>
-                                                <option value="addresse">Addresse</option>
+                                                <option value="addresse">Adresse</option>
                                                 {/* <option value="date">Date</option> */}
                                             </select>
                                             <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
@@ -118,7 +123,7 @@ export default function Index() {
                                             <div className="relative">
                                                 <input
                                                     type="text"
-                                                    placeholder={`Rechercher par ${searchField}...`}
+                                                    placeholder={`${searchField}...`}
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
                                                     className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"

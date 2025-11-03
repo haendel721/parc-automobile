@@ -214,10 +214,10 @@ function GrapheParVehicule() {
     <div className="m mb-8 w-full bg-white">
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="m-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Évolution des coûts carburant</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Évolution des coûts du carburants</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Coût mensuel par véhicule
-            {lastUpdated && <span className="ml-2 text-xs text-gray-500">(Mis à jour: {lastUpdated.toLocaleTimeString('fr-FR')})</span>}
+            Coûts mensuels par véhicule
+            {lastUpdated && <span className="ml-2 text-xs text-gray-500">(Mise à jour: {lastUpdated.toLocaleTimeString('fr-FR')})</span>}
           </p>
         </div>
         <button onClick={() => fetchData()} disabled={loading} className="m-4 flex items-center gap-2 rounded-lg bg-blue-200 px-4 py-2 text-sm font-medium text-gray-700">
@@ -238,7 +238,7 @@ function GrapheParVehicule() {
             </div>
             <span>{chartData.datasets.length} véhicule(s) suivi(s)</span>
           </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">Données en Ariary (Ar) - Source: Pleins carburant</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Données en Ariary (Ar)</div>
         </div>
       </div>
     </div>

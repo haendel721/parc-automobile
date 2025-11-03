@@ -106,7 +106,7 @@ const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
                                         <Clock className="h-5 w-5 text-amber-600" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-slate-600">Bientôt expirés</p>
+                                        <p className="text-sm font-medium text-slate-600">Bientôt expirées</p>
                                         <p className="text-2xl font-bold text-slate-800">
                                             {assurances.filter((a) => a.jour_restant <= 14 && a.jour_restant > 0).length}
                                         </p>

@@ -6,14 +6,13 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { AlertTriangle, AlertTriangleIcon, Car, ChevronLeft, ChevronRight, Eye, Fuel, Search, Settings, Shield, ShieldOff, ShieldOffIcon, SquarePen, Trash2, X } from 'lucide-react';
+import { AlertTriangleIcon, Car, ChevronLeft, ChevronRight, Eye, Search, Settings, Shield, ShieldOffIcon, SquarePen, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { route } from 'ziggy-js';
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Tableau de bord',
         href: dashboard().url,
     },
 ];
@@ -191,8 +190,8 @@ export default function Dashboard() {
                 : entretiensConnecter.filter((e) => e.statut === 'en cours').length,
         assuranceExpires:
             userConnecter.role === 'admin'
-                ? assurances.filter((a) => a.jour_restant === -1 ).length
-                : assuranceConnecter.filter((a) => a.jour_restant === -1 ).length
+                ? assurances.filter((a) => a.jour_restant === -1).length
+                : assuranceConnecter.filter((a) => a.jour_restant === -1).length,
     };
 
     // console.log(stats.totalVehicules);
@@ -218,7 +217,7 @@ export default function Dashboard() {
                         <div className="rounded-2xl bg-gradient-to-r from-green-500 to-green-600 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-green-100">Assurances Actives</p>
+                                    <p className="text-white">Assurances Actives</p>
                                     <p className="text-3xl font-bold">{stats.assurancesActives}</p>
                                 </div>
                                 <Shield className="h-8 w-8 opacity-80" />
@@ -228,7 +227,7 @@ export default function Dashboard() {
                         <div className="rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-amber-100">Entretiens en Cours</p>
+                                    <p className="text-white">Entretiens en Cours</p>
                                     <p className="text-3xl font-bold">{stats.entretiensEnCours}</p>
                                 </div>
                                 <Settings className="h-8 w-8 opacity-80" />
@@ -238,7 +237,7 @@ export default function Dashboard() {
                         <div className="rounded-2xl bg-gradient-to-r from-yellow-500 to-yellow-600 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-purple-100">Véhicules avec Assurance expiré</p>
+                                    <p className="text-purple-100">Véhicules avec Assurance expirée</p>
                                     <p className="text-3xl font-bold">{stats.assuranceExpires}</p>
                                 </div>
                                 <AlertTriangleIcon className="h-8 w-8 opacity-80" />
@@ -259,7 +258,9 @@ export default function Dashboard() {
                     {/* Graphiques */}
                     <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
                         <div className="rounded-2xl bg-white p-6 shadow-lg lg:col-span-2 dark:bg-gray-800">
-                            <h3 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">Dépenses mensuelles des véhicules</h3>
+                            <h3 className="mb-6 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                Dépenses mensuelles des véhicules en entretiens
+                            </h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -525,31 +526,31 @@ export default function Dashboard() {
 
                     {/* Cartes de statistiques utilisateur */}
                     <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <div className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white shadow-lg p-6">
+                        <div className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-white ">Mes véhicules</p>
-                                    <p className="text-2xl font-bold text-white ">{stats.totalVehicules}</p>
+                                    <p className="text-sm font-medium text-white">Mes véhicules</p>
+                                    <p className="text-2xl font-bold text-white">{stats.totalVehicules}</p>
                                 </div>
                                 <Car className="h-8 w-8 text-white" />
                             </div>
                         </div>
 
-                        <div className="rounded-xl bg-gradient-to-r from-green-500 to-green-600 p-6 text-white ">
+                        <div className="rounded-xl bg-gradient-to-r from-green-500 to-green-600 p-6 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Assurances actives</p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.assurancesActives}</p>
+                                    <p className="text-sm font-medium text-white dark:text-gray-400">Assurances actives</p>
+                                    <p className="text-2xl font-bold text-white">{stats.assurancesActives}</p>
                                 </div>
                                 <Shield className="h-8 w-8 text-white" />
                             </div>
                         </div>
 
-                        <div className="rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 p-6 text-white shadow-lg p-6">
+                        <div className="rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Entretiens en cours</p>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.entretiensEnCours}</p>
+                                    <p className="text-sm font-medium text-white dark:text-gray-400">Entretiens en cours</p>
+                                    <p className="text-2xl font-bold text-white">{stats.entretiensEnCours}</p>
                                 </div>
                                 <Settings className="h-8 w-8 text-white" />
                             </div>

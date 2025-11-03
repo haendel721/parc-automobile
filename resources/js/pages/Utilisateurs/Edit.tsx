@@ -44,7 +44,8 @@ export default function Edit({ user }: Props) {
     return (
         <AppLayout
             breadcrumbs={[
-                { title: 'Gestion des utilisateurs', href: '/utilisateurs' },
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'Utilisateurs', href: '/utilisateurs' },
                 { title: `Modifier ${user.prenom} ${user.name}`, href: `/utilisateurs/${user.id}/edit` },
             ]}
         >
@@ -105,21 +106,8 @@ export default function Edit({ user }: Props) {
 
                                     {/* Section Identité */}
                                     <div className="space-y-4">
-                                        <h3 className="border-l-4 border-blue-500 pl-3 text-lg font-medium text-gray-900">Identité</h3>
+                                        <h3 className="border-l-4 border-blue-500 pl-3 text-lg font-medium text-gray-900">Identités</h3>
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="prenom" className="text-sm font-medium text-gray-700">
-                                                    Prénom *
-                                                </Label>
-                                                <Input
-                                                    id="prenom"
-                                                    type="text"
-                                                    value={data.prenom}
-                                                    onChange={(e) => setData('prenom', e.target.value)}
-                                                    className="w-full transition-colors focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                                    placeholder="Entrez le prénom"
-                                                />
-                                            </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="name" className="text-sm font-medium text-gray-700">
                                                     Nom *
@@ -133,16 +121,29 @@ export default function Edit({ user }: Props) {
                                                     placeholder="Entrez le nom"
                                                 />
                                             </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="prenom" className="text-sm font-medium text-gray-700">
+                                                    Prénom
+                                                </Label>
+                                                <Input
+                                                    id="prenom"
+                                                    type="text"
+                                                    value={data.prenom}
+                                                    onChange={(e) => setData('prenom', e.target.value)}
+                                                    className="w-full transition-colors focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="Entrez le prénom"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Section Contact */}
                                     <div className="space-y-4">
-                                        <h3 className="border-l-4 border-blue-500 pl-3 text-lg font-medium text-gray-900">Contact</h3>
+                                        <h3 className="border-l-4 border-blue-500 pl-3 text-lg font-medium text-gray-900">Contacts</h3>
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                                                    Email *
+                                                    Email
                                                 </Label>
                                                 <Input
                                                     id="email"
@@ -219,10 +220,10 @@ export default function Edit({ user }: Props) {
                                                     <SelectItem value="admin" className="flex items-center space-x-2">
                                                         <span>👑 Administrateur</span>
                                                     </SelectItem>
-                                                    <SelectItem value="direction" className="flex items-center space-x-2">
-                                                        <span>💼 Direction</span>
+                                                    <SelectItem value="mecanicien" className="flex items-center space-x-2">
+                                                        <span>💼 Mécanicien</span>
                                                     </SelectItem>
-                                                    <SelectItem value="user" className="flex items-center space-x-2">
+                                                    <SelectItem value="utilisateur" className="flex items-center space-x-2">
                                                         <span>👤 Utilisateur</span>
                                                     </SelectItem>
                                                 </SelectContent>

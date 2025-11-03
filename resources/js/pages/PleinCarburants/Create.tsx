@@ -9,7 +9,10 @@ import { CalendarClock, CarFront, CircleAlert, CreditCard, Fuel, MapPin } from '
 import { useCallback, useEffect } from 'react';
 import { route } from 'ziggy-js';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Enregistrer un plein carburant', href: '/pleinCarburants/create' }];
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Accueil', href: '/dashboard' },
+    { title: 'Enregistrer un plein carburant', href: '/pleinCarburants/create' },
+];
 
 interface Vehicule {
     id: number;
@@ -172,7 +175,7 @@ export default function Index() {
                             type="submit"
                             className="mt-4 w-full transform bg-blue-600 transition-all duration-300 hover:scale-[1.02] hover:bg-blue-700"
                         >
-                            Enregistrer le plein
+                            Sauvegarder
                         </Button>
                     </form>
                 </div>

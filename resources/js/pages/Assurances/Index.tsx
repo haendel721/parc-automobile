@@ -1,8 +1,6 @@
-import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { route } from 'ziggy-js';
+import { Head, usePage } from '@inertiajs/react';
 import IndexAdmin from '../Assurances/IndexAdmin';
 import IndexUser from '../Assurances/IndexUser';
 
@@ -24,7 +22,7 @@ type assurances = {
 type vehicule = {
     id: number;
     immatriculation: string;
-}
+};
 interface roleUser {
     role: string;
 }
@@ -34,15 +32,20 @@ type PageProps = {
     flash: {
         message?: string;
     };
-    vehicule: vehicule [];
+    vehicule: vehicule[];
 };
 
 export default function Index() {
-    const { roleUser, assurances , vehicule } = usePage<PageProps>().props;
+    const { roleUser, assurances, vehicule } = usePage<PageProps>().props;
     // console.log('roleUser', roleUser.role , '\nAssurance : ' + assurances , '\nVehicule :' + vehicule);
     return (
         <>
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppLayout
+                breadcrumbs={[
+                    { title: 'Accueil', href: '/dashboard' },
+                    { title: 'Assurances', href: '/assurances' },
+                ]}
+            >
                 <Head title="Assurance" />
                 {roleUser.role === 'admin' ? <IndexAdmin assurances={assurances} vehicules={vehicule} /> : <IndexUser assurances={assurances} />}
             </AppLayout>

@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { CircleAlert, Plus, ArrowLeft, ArrowRight, Wrench, Package } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CircleAlert, Package, Plus, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -42,7 +42,7 @@ type PieceProps = {
 
 export default function Create() {
     const { fournisseurs = [], entretien_id, vehicule_id, pieces = [] } = usePage<PieceProps>().props;
-    
+
     const {
         data,
         setData,
@@ -101,39 +101,47 @@ export default function Create() {
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Accueil', href: '/dashboard' },
+                { title: 'piece', href: '/pieces' },
+                { title: 'ajouter des pièces et faire une intervention', href: '/pieces/create' },
+            ]}
+        >
             <Head title="Créer une nouvelle pièce" />
-            
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 py-8 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
+
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 px-4 py-8 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl">
                     {/* Header */}
-                    <div className="text-center mb-12">
-                        <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl mb-3">
-                            Gestion d'Intervention
-                        </h1>
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    <div className="mb-12 text-center">
+                        <h1 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">Intervention</h1>
+                        <p className="mx-auto max-w-2xl text-lg text-gray-600">
                             Ajoutez les pièces nécessaires et complétez les informations d'intervention
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
                         {/* Main Content - Forms */}
-                        <div className="lg:col-span-8 space-y-8">
+                        <div className="space-y-8 lg:col-span-8">
                             {/* Progress Steps */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
                                 <div className="flex items-center justify-center">
                                     <div className={`flex items-center ${showInterventionForm ? 'text-blue-600' : 'text-gray-900'}`}>
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${showInterventionForm ? 'border-blue-600' : 'border-blue-600 bg-blue-600 text-white'}`}>
-                                            <Package className="w-5 h-5" />
+                                        <div
+                                            className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${showInterventionForm ? 'border-blue-600' : 'border-blue-600 bg-blue-600 text-white'}`}
+                                        >
+                                            <Package className="h-5 w-5" />
                                         </div>
                                         <span className="ml-3 font-medium">Pièces</span>
                                     </div>
-                                    
-                                    <div className="w-24 h-0.5 bg-gray-300 mx-4"></div>
-                                    
+
+                                    <div className="mx-4 h-0.5 w-24 bg-gray-300"></div>
+
                                     <div className={`flex items-center ${showInterventionForm ? 'text-blue-600' : 'text-gray-500'}`}>
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${showInterventionForm ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300'}`}>
-                                            <Wrench className="w-5 h-5" />
+                                        <div
+                                            className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${showInterventionForm ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300'}`}
+                                        >
+                                            <Wrench className="h-5 w-5" />
                                         </div>
                                         <span className="ml-3 font-medium">Intervention</span>
                                     </div>
@@ -141,7 +149,7 @@ export default function Create() {
                             </div>
 
                             {/* Forms Container */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                                 {!showInterventionForm ? (
                                     /* -------- FORMULAIRE AJOUT PIECE -------- */
                                     <form onSubmit={handleSubmitPiece} className="p-8">
@@ -150,7 +158,7 @@ export default function Create() {
                                                 <CircleAlert className="text-red-600" />
                                                 <AlertTitle className="text-red-800">Erreur !</AlertTitle>
                                                 <AlertDescription className="text-red-700">
-                                                    <ul className="list-disc list-inside">
+                                                    <ul className="list-inside list-disc">
                                                         {Object.entries(errorsPiece).map(([key, message]) => (
                                                             <li key={key}>{message as string}</li>
                                                         ))}
@@ -160,14 +168,14 @@ export default function Create() {
                                         )}
 
                                         <div className="mb-8">
-                                            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                                                <Package className="w-7 h-7 text-blue-600" />
+                                            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+                                                <Package className="h-7 w-7 text-blue-600" />
                                                 Ajouter une pièce
                                             </h2>
-                                            <p className="text-gray-600 mt-2">Renseignez les détails de la pièce à ajouter</p>
+                                            <p className="mt-2 text-gray-600">Renseignez les détails de la pièce à ajouter</p>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label htmlFor="nom" className="text-sm font-medium text-gray-700">
                                                     Nom de la pièce
@@ -176,7 +184,7 @@ export default function Create() {
                                                     type="text"
                                                     value={data.nom}
                                                     onChange={(e) => setData('nom', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                                                     placeholder="Ex : Filtre à huile"
                                                 />
                                             </div>
@@ -189,7 +197,7 @@ export default function Create() {
                                                     <select
                                                         value={data.fournisseur_id}
                                                         onChange={(e) => setData('fournisseur_id', e.target.value)}
-                                                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                                                     >
                                                         <option value="">-- Choisir un fournisseur --</option>
                                                         {fournisseurs.map((f: any) => (
@@ -201,9 +209,9 @@ export default function Create() {
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowModal(true)}
-                                                        className="inline-flex items-center justify-center w-12 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                        className="inline-flex w-12 items-center justify-center rounded-lg bg-blue-600 text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                                     >
-                                                        <Plus className="w-5 h-5" />
+                                                        <Plus className="h-5 w-5" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -216,20 +224,20 @@ export default function Create() {
                                                     type="text"
                                                     value={data.prix}
                                                     onChange={(e) => setData('prix', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                                                     placeholder="0.00"
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="quantite" className="text-sm font-medium text-gray-700">
-                                                    Quantité
+                                                    Quantitée(s)
                                                 </Label>
                                                 <Input
                                                     type="text"
                                                     value={data.quantite}
                                                     onChange={(e) => setData('quantite', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className="w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                                                     placeholder="1"
                                                 />
                                             </div>
@@ -238,22 +246,22 @@ export default function Create() {
                                         <Input value={data.entretien_id} onChange={(e) => setData('entretien_id', e.target.value)} hidden />
                                         <Input value={data.vehicule_id} onChange={(e) => setData('vehicule_id', e.target.value)} hidden />
 
-                                        <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8 pt-6 border-t border-gray-200">
+                                        <div className="mt-8 flex flex-col justify-end gap-4 border-t border-gray-200 pt-6 sm:flex-row">
                                             <Button
                                                 type="submit"
                                                 disabled={processingPiece}
-                                                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                             >
-                                                <Plus className="w-4 h-4" />
+                                                <Plus className="h-4 w-4" />
                                                 Ajouter la pièce
                                             </Button>
                                             <Button
                                                 type="button"
                                                 onClick={() => setShowInterventionForm(true)}
-                                                className="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg transition-colors focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                                className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-white transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                             >
                                                 Continuer
-                                                <ArrowRight className="w-4 h-4" />
+                                                <ArrowRight className="h-4 w-4" />
                                             </Button>
                                         </div>
                                     </form>
@@ -265,7 +273,7 @@ export default function Create() {
                                                 <CircleAlert className="text-red-600" />
                                                 <AlertTitle className="text-red-800">Erreur !</AlertTitle>
                                                 <AlertDescription className="text-red-700">
-                                                    <ul className="list-disc list-inside">
+                                                    <ul className="list-inside list-disc">
                                                         {Object.entries(errorsPiece).map(([key, message]) => (
                                                             <li key={key}>{message as string}</li>
                                                         ))}
@@ -275,78 +283,70 @@ export default function Create() {
                                         )}
 
                                         <div className="mb-8">
-                                            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                                                <Wrench className="w-7 h-7 text-green-600" />
+                                            <h2 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+                                                <Wrench className="h-7 w-7 text-green-600" />
                                                 Détails de l'intervention
                                             </h2>
-                                            <p className="text-gray-600 mt-2">Complétez les informations de l'intervention</p>
+                                            <p className="mt-2 text-gray-600">Complétez les informations de l'intervention</p>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                             <div className="space-y-2">
-                                                <Label className="text-sm font-medium text-gray-700">
-                                                    Main d'œuvre (prix)
-                                                </Label>
+                                                <Label className="text-sm font-medium text-gray-700">Main d'œuvre (prix)</Label>
                                                 <Input
                                                     value={data.main_oeuvre}
                                                     onChange={(e) => setData('main_oeuvre', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                    className="w-full focus:border-green-500 focus:ring-2 focus:ring-green-500"
                                                     placeholder="0.00"
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label className="text-sm font-medium text-gray-700">
-                                                    Kilométrage
-                                                </Label>
+                                                <Label className="text-sm font-medium text-gray-700">Kilométrage</Label>
                                                 <Input
                                                     value={data.kilometrage}
                                                     onChange={(e) => setData('kilometrage', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                    className="w-full focus:border-green-500 focus:ring-2 focus:ring-green-500"
                                                     placeholder="0"
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label className="text-sm font-medium text-gray-700">
-                                                    Durée d'immobilisation (heures)
-                                                </Label>
+                                                <Label className="text-sm font-medium text-gray-700">Durée d'immobilisation (heures)</Label>
                                                 <Input
                                                     type="number"
                                                     value={data.duree_immobilisation}
                                                     onChange={(e) => setData('duree_immobilisation', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                    className="w-full focus:border-green-500 focus:ring-2 focus:ring-green-500"
                                                     placeholder="0"
                                                 />
                                             </div>
 
-                                            <div className="md:col-span-2 space-y-2">
-                                                <Label className="text-sm font-medium text-gray-700">
-                                                    Description
-                                                </Label>
+                                            <div className="space-y-2 md:col-span-2">
+                                                <Label className="text-sm font-medium text-gray-700">Description</Label>
                                                 <Input
                                                     type="text"
                                                     value={data.description}
                                                     onChange={(e) => setData('description', e.target.value)}
-                                                    className="w-full focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                    className="w-full focus:border-green-500 focus:ring-2 focus:ring-green-500"
                                                     placeholder="Description de l'intervention..."
                                                 />
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col sm:flex-row gap-4 justify-between mt-8 pt-6 border-t border-gray-200">
+                                        <div className="mt-8 flex flex-col justify-between gap-4 border-t border-gray-200 pt-6 sm:flex-row">
                                             <Button
                                                 type="button"
                                                 onClick={() => setShowInterventionForm(false)}
-                                                className="inline-flex items-center gap-2 border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg transition-colors focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                                className="inline-flex items-center gap-2 rounded-lg border border-blue-300 px-6 py-3 text-gray-700 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                             >
-                                                <ArrowLeft className="w-4 h-4" />
+                                                <ArrowLeft className="h-4 w-4" />
                                                 Retour
                                             </Button>
                                             <Button
                                                 type="submit"
                                                 disabled={processingPiece}
-                                                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                                                className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-white transition-colors hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                             >
                                                 Valider l'intervention
                                             </Button>
@@ -358,43 +358,44 @@ export default function Create() {
 
                         {/* Sidebar - Liste des pièces */}
                         <div className="lg:col-span-4">
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-8">
+                            <div className="sticky top-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
                                 <div className="mb-6">
-                                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                        <Package className="w-5 h-5 text-blue-600" />
+                                    <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
+                                        <Package className="h-5 w-5 text-blue-600" />
                                         Pièces ajoutées
-                                        <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full ml-2">
+                                        <span className="ml-2 rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
                                             {pieces.length}
                                         </span>
                                     </h2>
-                                    <p className="text-gray-600 text-sm mt-1">Liste des pièces sélectionnées pour cette intervention</p>
+                                    <p className="mt-1 text-sm text-gray-600">Liste des pièces sélectionnées pour cette intervention</p>
                                 </div>
 
                                 {pieces.length === 0 ? (
-                                    <div className="text-center py-8">
-                                        <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                        <p className="text-gray-500 text-sm">Aucune pièce ajoutée pour le moment</p>
-                                        <p className="text-gray-400 text-xs mt-1">Les pièces ajoutées apparaîtront ici</p>
+                                    <div className="py-8 text-center">
+                                        <Package className="mx-auto mb-3 h-12 w-12 text-gray-300" />
+                                        <p className="text-sm text-gray-500">Aucune pièce ajoutée pour le moment</p>
+                                        <p className="mt-1 text-xs text-gray-400">Les pièces ajoutées apparaîtront ici</p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                                    <div className="max-h-96 space-y-4 overflow-y-auto">
                                         {pieces.map((p) => (
-                                            <div key={p.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:border-blue-300 transition-colors group">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+                                            <div
+                                                key={p.id}
+                                                className="group rounded-xl border border-gray-200 bg-gray-50 p-4 transition-colors hover:border-blue-300"
+                                            >
+                                                <div className="mb-2 flex items-start justify-between">
+                                                    <h3 className="font-semibold text-gray-900 transition-colors group-hover:text-blue-700">
                                                         {p.nom}
                                                     </h3>
-                                                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                                                    <span className="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
                                                         {p.prix} Ar
                                                     </span>
                                                 </div>
                                                 <div className="space-y-1 text-sm text-gray-600">
-                                                    <p>Quantité : <span className="font-medium">{p.quantite}</span></p>
-                                                    {p.fournisseur && (
-                                                        <p className="text-xs text-gray-500">
-                                                            Fournisseur : {p.fournisseur.nom}
-                                                        </p>
-                                                    )}
+                                                    <p>
+                                                        Quantitée(s) : <span className="font-medium">{p.quantite}</span>
+                                                    </p>
+                                                    {p.fournisseur && <p className="text-xs text-gray-500">Fournisseur : {p.fournisseur.nom}</p>}
                                                 </div>
                                             </div>
                                         ))}
@@ -409,21 +410,21 @@ export default function Create() {
             {/* Modal Fournisseur */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
-                    <div className="animate-scaleIn w-full max-w-lg mx-4">
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-2xl">
-                            <div className="p-6 border-b border-gray-200">
+                    <div className="animate-scaleIn mx-4 w-full max-w-lg">
+                        <div className="rounded-2xl border border-gray-100 bg-white shadow-2xl">
+                            <div className="border-b border-gray-200 p-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <Plus className="w-5 h-5 text-blue-600" />
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                                        <Plus className="h-5 w-5 text-blue-600" />
                                     </div>
                                     <div>
                                         <h2 className="text-xl font-bold text-gray-800">Nouveau fournisseur</h2>
-                                        <p className="text-gray-600 text-sm">Ajoutez les informations du fournisseur</p>
+                                        <p className="text-sm text-gray-600">Ajoutez les informations du fournisseur</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                            <form onSubmit={handleSubmit} className="space-y-4 p-6">
                                 {Object.keys(errorsFournisseur).length > 0 && (
                                     <Alert className="border-red-200 bg-red-50">
                                         <CircleAlert className="text-red-600" />
@@ -438,7 +439,7 @@ export default function Create() {
                                     </Alert>
                                 )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label className="text-sm font-medium text-gray-700">Nom</Label>
                                         <Input
@@ -461,7 +462,7 @@ export default function Create() {
                                         />
                                     </div>
 
-                                    <div className="md:col-span-2 space-y-2">
+                                    <div className="space-y-2 md:col-span-2">
                                         <Label className="text-sm font-medium text-gray-700">Adresse</Label>
                                         <Input
                                             type="text"
@@ -494,7 +495,7 @@ export default function Create() {
                                         />
                                     </div>
 
-                                    <div className="md:col-span-2 space-y-2">
+                                    <div className="space-y-2 md:col-span-2">
                                         <Label className="text-sm font-medium text-gray-700">Site web</Label>
                                         <Input
                                             type="text"
