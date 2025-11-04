@@ -61,7 +61,7 @@
 
 :root {
     --background: #eaebed;
-    --foreground: #006989;
+    --foreground: #dde7ea;
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
@@ -85,7 +85,7 @@
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
     --radius: 0.625rem;
-    --sidebar: #006989;
+    --sidebar: #1f2d4b; /*0a3341*/
     --sidebar-foreground: #eaebed;
     --sidebar-primary: oklch(0.205 0 0);
     --sidebar-primary-foreground: oklch(0.985 0 0);

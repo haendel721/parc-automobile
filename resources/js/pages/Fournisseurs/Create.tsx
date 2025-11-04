@@ -63,20 +63,20 @@ export default function Index() {
                     <div className="mb-8 flex items-center justify-between">
                         <div className="mb-6">
                             <Link href={route('fournisseurs.index')}>
-                                <Button variant="outline" className="flex items-center gap-2">
+                                <Button variant="outline" className="flex items-center gap-2 border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white">
                                     <ArrowLeft className="h-4 w-4" /> Retour à la liste
                                 </Button>
                             </Link>
                         </div>
                         <div className="flex items-center space-x-4">
                             <div>
-                                <h1 className="mb-2 text-3xl font-bold text-gray-900">Nouveau fournisseur</h1>
-                                {/* <p className="text-gray-600">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
+                                <h1 className="mb-2 text-3xl font-bold text-white">Nouveau fournisseur</h1>
+                                {/* <p className="text-gray-400">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
                             </div>
                         </div>
-                        <div className="flex items-center space-x-2 rounded-lg bg-blue-50 px-4 py-3">
-                            <Building2 className="h-8 w-8 text-blue-600" />
-                            {/* <span className="text-sm font-medium text-blue-800">ID: {user.id}</span> */}
+                        <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 px-4 py-3 border border-blue-800/50">
+                            <Building2 className="h-8 w-8 text-blue-400" />
+                            {/* <span className="text-sm font-medium text-blue-300">ID: {user.id}</span> */}
                         </div>
                     </div>
                 </div>
@@ -84,10 +84,10 @@ export default function Index() {
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Formulaire principal */}
                     <div className="lg:col-span-3">
-                        <Card className="border-0 shadow-lg">
-                            <CardHeader className="border-b pb-4">
-                                <CardTitle className="text-xl font-semibold text-gray-900">Informations du fournisseur</CardTitle>
-                                <CardDescription className="text-gray-600">
+                        <Card className="border-gray-700 bg-gray-800 shadow-xl">
+                            <CardHeader className="border-b border-gray-700 pb-4">
+                                <CardTitle className="text-xl font-semibold text-white">Informations du fournisseur</CardTitle>
+                                <CardDescription className="text-gray-400">
                                     Renseignez les coordonnées et informations du nouveau fournisseur
                                 </CardDescription>
                             </CardHeader>
@@ -95,9 +95,9 @@ export default function Index() {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {/* Affichage des erreurs */}
                                     {Object.keys(errors).length > 0 && (
-                                        <Alert variant="destructive" className="mb-6">
+                                        <Alert variant="destructive" className="mb-6 border-red-800 bg-red-900/20 text-red-200">
                                             <CircleAlert className="h-4 w-4" />
-                                            <AlertTitle>Erreurs de validation</AlertTitle>
+                                            <AlertTitle className="text-red-100">Erreurs de validation</AlertTitle>
                                             <AlertDescription>
                                                 <ul className="list-inside list-disc space-y-1">
                                                     {Object.entries(errors).map(([key, message]) => (
@@ -114,8 +114,8 @@ export default function Index() {
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         {/* Nom du fournisseur */}
                                         <div className="space-y-2 md:col-span-2">
-                                            <Label htmlFor="nom" className="flex items-center gap-2 text-sm font-medium">
-                                                <User className="h-4 w-4 text-gray-500" />
+                                            <Label htmlFor="nom" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                                <User className="h-4 w-4 text-gray-400" />
                                                 Nom du fournisseur *
                                             </Label>
                                             <Input
@@ -123,24 +123,24 @@ export default function Index() {
                                                 type="text"
                                                 value={data.nom}
                                                 onChange={(e) => setData('nom', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                                 placeholder="Entrez le nom complet du fournisseur"
                                             />
                                         </div>
 
                                         {/* Type de fournisseur */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="type" className="flex items-center gap-2 text-sm font-medium">
-                                                <Building2 className="h-4 w-4 text-gray-500" />
+                                            <Label htmlFor="type" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                                <Building2 className="h-4 w-4 text-gray-400" />
                                                 Type *
                                             </Label>
                                             <Select value={data.type} onValueChange={(value) => setData('type', value)}>
-                                                <SelectTrigger id="type" className="w-full">
+                                                <SelectTrigger id="type" className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400">
                                                     <SelectValue placeholder="Sélectionnez un type" />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="border-gray-600 bg-gray-700 text-white">
                                                     {typesFournisseurs.map((type) => (
-                                                        <SelectItem key={type.value} value={type.value}>
+                                                        <SelectItem key={type.value} value={type.value} className="focus:bg-gray-600">
                                                             {type.label}
                                                         </SelectItem>
                                                     ))}
@@ -150,8 +150,8 @@ export default function Index() {
 
                                         {/* Téléphone */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="phone" className="flex items-center gap-2 text-sm font-medium">
-                                                <Phone className="h-4 w-4 text-gray-500" />
+                                            <Label htmlFor="phone" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                                <Phone className="h-4 w-4 text-gray-400" />
                                                 Téléphone
                                             </Label>
                                             <Input
@@ -159,15 +159,15 @@ export default function Index() {
                                                 type="tel"
                                                 value={data.phone}
                                                 onChange={(e) => setData('phone', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                                 placeholder="+261 34 12 345 67"
                                             />
                                         </div>
 
                                         {/* Email */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium">
-                                                <Mail className="h-4 w-4 text-gray-500" />
+                                            <Label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                                <Mail className="h-4 w-4 text-gray-400" />
                                                 E-mail
                                             </Label>
                                             <Input
@@ -175,15 +175,15 @@ export default function Index() {
                                                 type="email"
                                                 value={data.email}
                                                 onChange={(e) => setData('email', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                                 placeholder="contact@fournisseur.mg"
                                             />
                                         </div>
 
                                         {/* Site web */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="siteWeb" className="flex items-center gap-2 text-sm font-medium">
-                                                <Globe className="h-4 w-4 text-gray-500" />
+                                            <Label htmlFor="siteWeb" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                                <Globe className="h-4 w-4 text-gray-400" />
                                                 Site web
                                             </Label>
                                             <Input
@@ -191,15 +191,15 @@ export default function Index() {
                                                 type="text"
                                                 value={data.siteWeb}
                                                 onChange={(e) => setData('siteWeb', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                                 placeholder="https://www.example.com"
                                             />
                                         </div>
 
                                         {/* Adresse */}
                                         <div className="space-y-2 md:col-span-2">
-                                            <Label htmlFor="addresse" className="flex items-center gap-2 text-sm font-medium">
-                                                <MapPin className="h-4 w-4 text-gray-500" />
+                                            <Label htmlFor="addresse" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                                <MapPin className="h-4 w-4 text-gray-400" />
                                                 Adresse
                                             </Label>
                                             <Input
@@ -207,31 +207,34 @@ export default function Index() {
                                                 type="text"
                                                 value={data.addresse}
                                                 onChange={(e) => setData('addresse', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                                 placeholder="Adresse complète du fournisseur"
                                             />
                                         </div>
                                     </div>
 
                                     {/* Boutons d'action */}
-                                    <div className="flex flex-col justify-end gap-3 border-t pt-6 sm:flex-row">
+                                    <div className="flex flex-col justify-end gap-3 border-t border-gray-700 pt-6 sm:flex-row">
                                         <Button
                                             type="button"
                                             variant="outline"
+                                            className="border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
                                             onClick={() => window.history.back()}
-                                            disabled={processing}
-                                            className="order-2 sm:order-1"
                                         >
                                             Annuler
                                         </Button>
-                                        <Button type="submit" disabled={processing} className="order-1 min-w-32 sm:order-2">
+                                        <Button 
+                                            type="submit" 
+                                            disabled={processing} 
+                                            className="order-1 min-w-32 bg-blue-600 hover:bg-blue-700 sm:order-2"
+                                        >
                                             {processing ? (
                                                 <div className="flex items-center gap-2">
                                                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                                    Création...
+                                                    en cours d'enregistrement...
                                                 </div>
                                             ) : (
-                                                'Créer le fournisseur'
+                                                'Enregistrer le fournisseur'
                                             )}
                                         </Button>
                                     </div>
@@ -242,29 +245,29 @@ export default function Index() {
 
                     {/* Sidebar - Informations complémentaires */}
                     {/* <div className="space-y-6">
-                        <Card className="shadow-lg border-0 bg-blue-50 border-blue-100">
+                        <Card className="border-0 border-blue-800 bg-blue-900/20 shadow-lg">
                             <CardHeader className="pb-3">
-                                <CardTitle className="text-lg font-semibold text-blue-900 flex items-center gap-2">
+                                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-blue-200">
                                     <CircleAlert className="h-5 w-5" />
                                     Conseils
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-start gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-sm text-blue-700">
+                                    <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-400"></div>
+                                    <p className="text-sm text-blue-300">
                                         Les champs marqués d'un * sont obligatoires.
                                     </p>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-sm text-blue-700">
+                                    <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-400"></div>
+                                    <p className="text-sm text-blue-300">
                                         Vérifiez l'exactitude des coordonnées avant validation.
                                     </p>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-sm text-blue-700">
+                                    <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-400"></div>
+                                    <p className="text-sm text-blue-300">
                                         Un email valide facilite la communication future.
                                     </p>
                                 </div>
@@ -272,18 +275,18 @@ export default function Index() {
                         </Card> */}
 
                     {/* Carte statut */}
-                    {/* <Card className="shadow-lg border-0">
+                    {/* <Card className="border-0 shadow-lg border-gray-700 bg-gray-800">
                             <CardHeader className="pb-3">
-                                <CardTitle className="text-lg font-semibold">
+                                <CardTitle className="text-lg font-semibold text-white">
                                     Statut
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
-                                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span className="text-sm font-medium text-green-800">Prêt à créer</span>
+                                <div className="flex items-center gap-2 rounded-lg border border-green-800 bg-green-900/20 p-3">
+                                    <div className="h-3 w-3 animate-pulse rounded-full bg-green-400"></div>
+                                    <span className="text-sm font-medium text-green-300">Prêt à créer</span>
                                 </div>
-                                <p className="text-xs text-gray-600 mt-2">
+                                <p className="mt-2 text-xs text-gray-400">
                                     Tous les champs requis sont remplis. Vous pouvez créer ce fournisseur.
                                 </p>
                             </CardContent>

@@ -12,6 +12,7 @@ import axios from 'axios';
 import { AlertCircle, CalendarCog, CalendarDays, Car, CheckCircle2, CircleAlert, FileText, User, Wrench, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { route } from 'ziggy-js';
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Accueil',
@@ -26,6 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/entretiens/show',
     },
 ];
+
 interface entretien {
     id: number;
     user_id: number;
@@ -102,8 +104,6 @@ export default function Index() {
         if (!dateStr) return '—';
 
         const date = new Date(dateStr);
-
-        // 🕒 Soustraire 3 heures
         date.setHours(date.getHours() - 3);
 
         return date.toLocaleDateString('fr-FR', {
@@ -153,7 +153,7 @@ export default function Index() {
         duree_immobilisation: '',
         entretien_id: entretien.id,
     });
-    // const queryParams = {  entretien_id: entretien.id, vehicule_id: entretien.vehicule_id  };
+
     const handleValide = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('entretiens.validate', entretien.id), {
@@ -204,13 +204,13 @@ export default function Index() {
     const getStatusColor = (statut: string) => {
         switch (statut) {
             case 'Validé':
-                return 'bg-green-100 text-green-800 border-green-200';
+                return 'bg-green-900/40 text-green-300 border-green-800/50';
             case 'En cours':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
+                return 'bg-blue-900/40 text-blue-300 border-blue-800/50';
             case 'En attente':
-                return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+                return 'bg-yellow-900/40 text-yellow-300 border-yellow-800/50';
             default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
+                return 'bg-gray-700 text-gray-300 border-gray-600';
         }
     };
 
@@ -218,26 +218,20 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Entretien - ${immatricule?.immatriculation || 'Véhicule'}`} />
 
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+            <div className="min-h-screen py-8">
                 <div className="container mx-auto p-4">
-                    {/* Header */}
-                    {/* <div className="mb-8 text-center">
-                        <h1 className="text-3xl font-bold text-slate-800 mb-2">Détails de l'Entretien</h1>
-                        <p className="text-slate-600">Gestion et suivi des interventions véhicule</p>
-                    </div> */}
-
                     <div className="grid grid-cols-1 gap-8">
                         {/* Main Card */}
                         <div className="lg:col-span-2">
-                            <Card className="w-full overflow-hidden rounded-2xl border-0 bg-white shadow-xl">
-                                <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-200 pb-6 text-white">
+                            <Card className="w-full overflow-hidden rounded-2xl border border-gray-700 bg-gray-800/90 backdrop-blur-sm shadow-2xl">
+                                <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 pb-6">
                                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                         <div className="flex items-center gap-3">
                                             <div className="rounded-lg bg-white/20 p-2">
-                                                <Car className="h-6 w-6" />
+                                                <Car className="h-6 w-6 text-white" />
                                             </div>
                                             <div>
-                                                <CardTitle className="text-2xl font-bold">{immatricule?.immatriculation || '—'}</CardTitle>
+                                                <CardTitle className="text-2xl font-bold text-white">{immatricule?.immatriculation || '—'}</CardTitle>
                                                 <p className="mt-1 text-sm text-blue-100">Suivi d'entretien véhicule</p>
                                             </div>
                                         </div>
@@ -254,45 +248,45 @@ export default function Index() {
                                     {/* Informations Grid */}
                                     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
                                         <div className="space-y-4">
-                                            <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-                                                <User className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
+                                            <div className="flex items-start gap-3 rounded-xl bg-gray-700/50 p-4 border border-gray-600">
+                                                <User className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-400" />
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-600">Demandeur</p>
-                                                    <p className="font-semibold text-slate-800">{nom?.name || '—'}</p>
+                                                    <p className="text-sm font-medium text-gray-400">Demandeur</p>
+                                                    <p className="font-semibold text-white">{nom?.name || '—'}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-                                                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-orange-600" />
+                                            <div className="flex items-start gap-3 rounded-xl bg-gray-700/50 p-4 border border-gray-600">
+                                                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-orange-400" />
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-600">Problème signalé</p>
-                                                    <p className="font-semibold text-slate-800">{entretien.probleme}</p>
+                                                    <p className="text-sm font-medium text-gray-400">Problème signalé</p>
+                                                    <p className="font-semibold text-white">{entretien.probleme}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-                                                <FileText className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-600" />
+                                            <div className="flex items-start gap-3 rounded-xl bg-gray-700/50 p-4 border border-gray-600">
+                                                <FileText className="mt-0.5 h-5 w-5 flex-shrink-0 text-purple-400" />
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-600">Type d'entretien</p>
-                                                    <p className="font-semibold text-slate-800">{entretien.type || 'Non spécifié'}</p>
+                                                    <p className="text-sm font-medium text-gray-400">Type d'entretien</p>
+                                                    <p className="font-semibold text-white">{entretien.type || 'Non spécifié'}</p>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="space-y-4">
-                                            <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-                                                <CalendarDays className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
+                                            <div className="flex items-start gap-3 rounded-xl bg-gray-700/50 p-4 border border-gray-600">
+                                                <CalendarDays className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-400" />
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-600">Date prévue</p>
-                                                    <p className="font-semibold text-slate-800">{formatDate(entretien.prochaine_visite)}</p>
+                                                    <p className="text-sm font-medium text-gray-400">Date prévue</p>
+                                                    <p className="font-semibold text-white">{formatDate(entretien.prochaine_visite)}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
-                                                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600" />
+                                            <div className="flex items-start gap-3 rounded-xl bg-gray-700/50 p-4 border border-gray-600">
+                                                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-400" />
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-600">Mécanicien assigné</p>
-                                                    <p className="font-semibold text-slate-800">{mecanicien?.name || 'Non assigné'}</p>
+                                                    <p className="text-sm font-medium text-gray-400">Mécanicien assigné</p>
+                                                    <p className="font-semibold text-white">{mecanicien?.name || 'Non assigné'}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -300,15 +294,15 @@ export default function Index() {
 
                                     {/* Description */}
                                     <div className="mb-8">
-                                        <h3 className="mb-3 text-lg font-semibold text-slate-800">Description</h3>
-                                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                            <p className="leading-relaxed text-slate-700">{entretien.description || 'Aucune description fournie.'}</p>
+                                        <h3 className="mb-3 text-lg font-semibold text-white">Description</h3>
+                                        <div className="rounded-xl border border-gray-600 bg-gray-700/50 p-4">
+                                            <p className="leading-relaxed text-gray-300">{entretien.description || 'Aucune description fournie.'}</p>
                                         </div>
                                     </div>
 
                                     {/* Action Buttons */}
                                     {(userConnecter === 'admin' || userConnecter === 'mecanicien') && (
-                                        <div className="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row">
+                                        <div className="flex flex-col gap-3 border-t border-gray-700 pt-4 sm:flex-row">
                                             {userConnecter === 'admin' && (
                                                 entretien.statut === "Validé" 
                                                 ? '' 
@@ -341,13 +335,13 @@ export default function Index() {
 
             {/* Modal */}
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
                     <div className="relative w-full max-w-md animate-in fade-in-90 zoom-in-95">
-                        <div className="overflow-hidden rounded-2xl border-0 bg-white shadow-2xl">
+                        <div className="overflow-hidden rounded-2xl border border-gray-600 bg-gray-800 shadow-2xl">
                             {/* Modal Header */}
-                            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 text-white">
+                            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-xl font-semibold">
+                                    <h3 className="text-xl font-semibold text-white">
                                         {activeModal === 'validation' ? 'Validation Entretien' : 'Nouvelle Intervention'}
                                     </h3>
                                     <Button
@@ -364,9 +358,9 @@ export default function Index() {
                             {/* Modal Content */}
                             <div className="max-h-[70vh] overflow-y-auto p-6">
                                 {Object.keys(errors).length > 0 && (
-                                    <Alert variant="destructive" className="mb-4">
+                                    <Alert variant="destructive" className="mb-4 border-red-800 bg-red-900/20 text-red-200">
                                         <CircleAlert className="h-4 w-4" />
-                                        <AlertTitle>Erreur de validation</AlertTitle>
+                                        <AlertTitle className="text-red-100">Erreur de validation</AlertTitle>
                                         <AlertDescription>
                                             <ul className="list-inside list-disc space-y-1">
                                                 {Object.entries(errors).map(([key, message]) => (
@@ -382,14 +376,14 @@ export default function Index() {
                                 {activeModal === 'validation' ? (
                                     <form onSubmit={handleValide} className="space-y-4">
                                         <div>
-                                            <Label htmlFor="type" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="type" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Type d'entretien
                                             </Label>
                                             <Select value={data.type} onValueChange={(value) => setData('type', value)}>
-                                                <SelectTrigger className="w-full">
+                                                <SelectTrigger className="w-full border-gray-600 bg-gray-700 text-white">
                                                     <SelectValue placeholder="Choisir le type d'entretien" />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="border-gray-600 bg-gray-700 text-white">
                                                     <SelectItem value="Préventif">Préventif</SelectItem>
                                                     <SelectItem value="Correctif">Correctif</SelectItem>
                                                     <SelectItem value="Légal">Légal</SelectItem>
@@ -398,17 +392,17 @@ export default function Index() {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="mecanicien_id" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="mecanicien_id" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Mécanicien
                                             </Label>
                                             <Select
                                                 value={data.mecanicien_id.toString()}
                                                 onValueChange={(value) => setData('mecanicien_id', Number(value))}
                                             >
-                                                <SelectTrigger className="w-full">
+                                                <SelectTrigger className="w-full border-gray-600 bg-gray-700 text-white">
                                                     <SelectValue placeholder="Choisir le mécanicien" />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="border-gray-600 bg-gray-700 text-white">
                                                     {user
                                                         .filter((u) => u.role === 'mecanicien')
                                                         .map((u) => (
@@ -421,7 +415,7 @@ export default function Index() {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="prochaine_visite" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="prochaine_visite" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Date prévue
                                             </Label>
                                             <Input
@@ -429,18 +423,17 @@ export default function Index() {
                                                 value={data.prochaine_visite}
                                                 onChange={(e) => setData('prochaine_visite', e.target.value)}
                                                 type="datetime-local"
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white"
                                             />
                                         </div>
 
-                                        {/* <Input value="Validé" onChange={(e) => setData('statut', e.target.value)} hidden /> */}
                                         <Input value={(data.statut = 'Validé')} onChange={(e) => setData('statut', e.target.value)} hidden={true} />
                                         <div className="flex gap-3 pt-4">
                                             <Button
                                                 type="button"
                                                 variant="outline"
                                                 onClick={closeModal}
-                                                className="flex-1 border-slate-300 text-slate-700 hover:bg-slate-50"
+                                                className="flex-1 border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
                                             >
                                                 Annuler
                                             </Button>
@@ -452,7 +445,7 @@ export default function Index() {
                                 ) : (
                                     <form onSubmit={handleIntervention} className="space-y-4">
                                         <div>
-                                            <Label htmlFor="piece" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="piece" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Pièce remplacée
                                             </Label>
                                             <div className="flex gap-2">
@@ -462,7 +455,7 @@ export default function Index() {
                                                         placeholder="Ex: Filtre à huile"
                                                         value={piece}
                                                         onChange={(e) => setPiece(e.target.value)}
-                                                        className="w-full"
+                                                        className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400"
                                                     />
                                                 </div>
                                                 {existe === false && (
@@ -475,7 +468,7 @@ export default function Index() {
                                                     </Button>
                                                 )}
                                                 {existe === true && (
-                                                    <div className="flex items-center px-3 text-emerald-600">
+                                                    <div className="flex items-center px-3 text-emerald-400">
                                                         <CheckCircle2 className="h-5 w-5" />
                                                     </div>
                                                 )}
@@ -483,7 +476,7 @@ export default function Index() {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="main_oeuvre" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="main_oeuvre" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Main d'œuvre (€)
                                             </Label>
                                             <Input
@@ -492,12 +485,12 @@ export default function Index() {
                                                 placeholder="0.00"
                                                 value={data.main_oeuvre}
                                                 onChange={(e) => setData('main_oeuvre', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400"
                                             />
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="kilometrage" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="kilometrage" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Kilométrage
                                             </Label>
                                             <Input
@@ -506,12 +499,12 @@ export default function Index() {
                                                 placeholder="0"
                                                 value={data.kilometrage}
                                                 onChange={(e) => setData('kilometrage', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400"
                                             />
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="duree_immobilisation" className="mb-2 block text-sm font-medium text-slate-700">
+                                            <Label htmlFor="duree_immobilisation" className="mb-2 block text-sm font-medium text-gray-300">
                                                 Durée d'immobilisation (heures)
                                             </Label>
                                             <Input
@@ -520,18 +513,17 @@ export default function Index() {
                                                 placeholder="0"
                                                 value={data.duree_immobilisation}
                                                 onChange={(e) => setData('duree_immobilisation', e.target.value)}
-                                                className="w-full"
+                                                className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400"
                                             />
                                         </div>
 
-                                        {/* <Input value="En cours" onChange={(e) => setData('statut', e.target.value)} hidden /> */}
                                         <Input value={(data.statut = 'En cours')} onChange={(e) => setData('statut', e.target.value)} hidden={true} />
                                         <div className="flex gap-3 pt-4">
                                             <Button
                                                 type="button"
                                                 variant="outline"
                                                 onClick={closeModal}
-                                                className="flex-1 border-slate-300 text-slate-700 hover:bg-slate-50"
+                                                className="flex-1 border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
                                             >
                                                 Annuler
                                             </Button>

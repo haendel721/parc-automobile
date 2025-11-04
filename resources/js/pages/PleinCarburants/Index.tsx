@@ -134,7 +134,6 @@ export default function Index() {
 
     // recherche dans le tableau top
     const filteredVehicules = vehicules.filter((v) => {
-        // const search = searchTermTotal.toLowerCase().trim();
         if (searchFieldTotal === 'immatriculation') {
             return v.immatriculation.toLowerCase().includes(searchTermTotal.toLowerCase());
         }
@@ -149,9 +148,9 @@ export default function Index() {
                 <div className="p-2">
                     <div>
                         {flash.message && (
-                            <Alert>
-                                <BellDot />
-                                <AlertTitle>Notification !</AlertTitle>
+                            <Alert className="bg-blue-900/20 border-blue-800 text-blue-200">
+                                <BellDot className="text-blue-300" />
+                                <AlertTitle className="text-blue-100">Notification !</AlertTitle>
                                 <AlertDescription>{flash.message}</AlertDescription>
                             </Alert>
                         )}
@@ -160,19 +159,19 @@ export default function Index() {
                 <div className="p-2">
                     <div className="">
                         {/* HEADER + BARRE DE RECHERCHE */}
-                        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                        <div className="mb-4 rounded-2xl border border-gray-700 bg-gray-800 p-6 shadow-sm">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                 {/* Titre */}
                                 <div className="flex items-center gap-3">
                                     <div>
                                         <Link href={route('pleinCarburant.create')}>
-                                            <Button className="bg-blue-500 hover:bg-blue-600">
+                                            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                                                 <CirclePlus className="h-4 w-4" />
                                             </Button>
                                         </Link>
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-gray-900">Liste des véhicules avec dépenses de carburant</h2>
+                                        <h2 className="text-xl font-bold text-white">Liste des véhicules avec dépenses de carburant</h2>
                                     </div>
                                 </div>
 
@@ -183,7 +182,7 @@ export default function Index() {
                                         <select
                                             value={searchFieldTotal}
                                             onChange={(e) => setSearchFieldTotal(e.target.value as any)}
-                                            className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            className="w-full cursor-pointer appearance-none rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pr-10 text-sm text-white transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                         >
                                             <option value="immatriculation">Immatriculation</option>
                                         </select>
@@ -202,7 +201,7 @@ export default function Index() {
                                                 placeholder={`${searchFieldTotal}...`}
                                                 value={searchTermTotal}
                                                 onChange={(e) => setSearchTermTotal(e.target.value)}
-                                                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                className="w-full rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pl-10 text-sm text-white transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                             />
                                             <div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
                                                 <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,8 +233,8 @@ export default function Index() {
 
                             {/* Indicateur de filtre actif */}
                             {searchTermTotal && (
-                                <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
-                                    <div className="flex items-center gap-2 text-sm text-blue-700">
+                                <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-800 bg-blue-900/20 p-3">
+                                    <div className="flex items-center gap-2 text-sm text-blue-300">
                                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 strokeLinecap="round"
@@ -248,7 +247,7 @@ export default function Index() {
                                     </div>
                                     <button
                                         onClick={() => setSearchTermTotal('')}
-                                        className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
+                                        className="flex items-center gap-1 text-sm font-medium text-blue-400 hover:text-blue-300"
                                     >
                                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -260,12 +259,12 @@ export default function Index() {
                         </div>
 
                         <div className="overflow-x-auto rounded-lg">
-                            <Table className="min-w-full rounded-xl border border-gray-200 bg-white">
-                                <TableHeader className="bg-blue-50 text-blue-700">
+                            <Table className="min-w-full rounded-xl border border-gray-700 bg-gray-800">
+                                <TableHeader className="bg-blue-900/20 text-blue-300">
                                     <TableRow>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -279,7 +278,7 @@ export default function Index() {
                                         {user.role === 'admin' && (
                                             <TableHead>
                                                 <div className="flex items-center gap-2">
-                                                    <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="h-4 w-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
@@ -293,7 +292,7 @@ export default function Index() {
                                         )}
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -306,7 +305,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -328,22 +327,22 @@ export default function Index() {
                                             return (
                                                 <TableRow
                                                     key={v.id}
-                                                    className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} transition hover:bg-blue-50`}
+                                                    className={`${i % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700/50'} transition hover:bg-blue-900/20`}
                                                 >
-                                                    <TableCell className="font-medium">{v.immatriculation}</TableCell>
+                                                    <TableCell className="font-medium text-white">{v.immatriculation}</TableCell>
                                                     {user.role === 'admin' && (
-                                                        <TableCell>{T_user.map((Tu) => (Tu.id === v.user_id ? Tu.name : ''))}</TableCell>
+                                                        <TableCell className="text-white">{T_user.map((Tu) => (Tu.id === v.user_id ? Tu.name : ''))}</TableCell>
                                                     )}
-                                                    <TableCell>{itemQ ? itemQ.Quantite : '0'} L</TableCell>
-                                                    <TableCell>{item ? item.totalMontant.toLocaleString('fr-FR') : '0'} Ar</TableCell>
+                                                    <TableCell className="text-white">{itemQ ? itemQ.Quantite : '0'} L</TableCell>
+                                                    <TableCell className="text-white">{item ? item.totalMontant.toLocaleString('fr-FR') : '0'} Ar</TableCell>
                                                 </TableRow>
                                             );
                                         })
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={user.role === 'admin' ? 5 : 4} className="py-8 text-center">
-                                                <div className="flex flex-col items-center justify-center gap-2 text-gray-500">
-                                                    <svg className="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
+                                                    <svg className="h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
@@ -365,12 +364,12 @@ export default function Index() {
                 <div className="p-2">
                     <div className="">
                         {/* HEADER + BARRE DE RECHERCHE */}
-                        <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                        <div className="mb-4 rounded-2xl border border-gray-700 bg-gray-800 p-6 shadow-sm">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                 {/* Titre */}
                                 <div className="flex items-center gap-3">
-                                    <div className="rounded-lg bg-blue-50 p-2">
-                                        <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div className="rounded-lg bg-blue-900/20 p-2">
+                                        <svg className="h-6 w-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
@@ -380,8 +379,8 @@ export default function Index() {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-gray-900">Historique de pleins carburants</h2>
-                                        <p className="text-sm text-gray-500">Gérez et consultez les données de consommation</p>
+                                        <h2 className="text-xl font-bold text-white">Historique de pleins carburants</h2>
+                                        <p className="text-sm text-gray-400">Gérez et consultez les données de consommation</p>
                                     </div>
                                 </div>
 
@@ -392,7 +391,7 @@ export default function Index() {
                                         <select
                                             value={searchField}
                                             onChange={(e) => setSearchField(e.target.value as any)}
-                                            className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                            className="w-full cursor-pointer appearance-none rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pr-10 text-sm text-white transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                         >
                                             <option value="immatriculation">Immatriculation</option>
                                             <option value="utilisateur">Utilisateur</option>
@@ -411,28 +410,28 @@ export default function Index() {
                                     {/* Champ de recherche dynamique */}
                                     <div className="min-w-[280px] flex-1">
                                         {searchField === 'quantite' || searchField === 'montant' ? (
-                                            <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-1">
+                                            <div className="flex items-center gap-2 rounded-xl border border-gray-600 bg-gray-700 p-1">
                                                 <select
                                                     value={quantityOperator}
                                                     onChange={(e) => setQuantityOperator(e.target.value as any)}
-                                                    className="flex-1 cursor-pointer rounded-lg border-0 bg-transparent px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                                    className="flex-1 cursor-pointer rounded-lg border-0 bg-transparent px-3 py-2 text-sm text-white focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                                 >
                                                     <option value=">">Supérieur à</option>
                                                     <option value="<">Inférieur à</option>
                                                 </select>
-                                                <div className="h-6 w-px bg-gray-300"></div>
+                                                <div className="h-6 w-px bg-gray-600"></div>
                                                 <input
                                                     type="number"
                                                     placeholder="Valeur"
                                                     value={quantityValue}
                                                     onChange={(e) => setQuantityValue(Number(e.target.value))}
-                                                    className="flex-1 rounded-lg border-0 bg-transparent px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                                    className="flex-1 rounded-lg border-0 bg-transparent px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                                 />
                                             </div>
                                         ) : searchField === 'date' ? (
-                                            <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                                            <div className="flex items-center gap-3 rounded-xl border border-gray-600 bg-gray-700 p-3">
                                                 <div className="flex flex-1 items-center gap-2">
-                                                    <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
@@ -444,12 +443,12 @@ export default function Index() {
                                                         type="date"
                                                         value={weekStart}
                                                         onChange={(e) => setWeekStart(e.target.value)}
-                                                        className="flex-1 border-0 bg-transparent text-sm focus:ring-0 focus:outline-none"
+                                                        className="flex-1 border-0 bg-transparent text-sm text-white focus:ring-0 focus:outline-none"
                                                     />
                                                 </div>
                                                 <span className="text-sm text-gray-400">à</span>
                                                 <div className="flex flex-1 items-center gap-2">
-                                                    <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
@@ -461,7 +460,7 @@ export default function Index() {
                                                         type="date"
                                                         value={weekEnd}
                                                         onChange={(e) => setWeekEnd(e.target.value)}
-                                                        className="flex-1 border-0 bg-transparent text-sm focus:ring-0 focus:outline-none"
+                                                        className="flex-1 border-0 bg-transparent text-sm text-white focus:ring-0 focus:outline-none"
                                                     />
                                                 </div>
                                             </div>
@@ -472,7 +471,7 @@ export default function Index() {
                                                     placeholder={` ${searchField}...`}
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                    className="w-full rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pl-10 text-sm text-white transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                                 />
                                                 <div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
                                                     <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -505,8 +504,8 @@ export default function Index() {
 
                             {/* Indicateur de filtre actif */}
                             {(searchTerm || quantityValue || weekStart) && (
-                                <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
-                                    <div className="flex items-center gap-2 text-sm text-blue-700">
+                                <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-800 bg-blue-900/20 p-3">
+                                    <div className="flex items-center gap-2 text-sm text-blue-300">
                                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 strokeLinecap="round"
@@ -524,7 +523,7 @@ export default function Index() {
                                             setWeekStart('');
                                             setWeekEnd('');
                                         }}
-                                        className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
+                                        className="flex items-center gap-1 text-sm font-medium text-blue-400 hover:text-blue-300"
                                     >
                                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -536,13 +535,13 @@ export default function Index() {
                         </div>
 
                         <div className="overflow-x-auto rounded-lg">
-                            <Table className="min-w-full rounded-xl border border-gray-200 bg-white">
-                                <TableHeader className="bg-blue-50 text-blue-700">
+                            <Table className="min-w-full rounded-xl border border-gray-700 bg-gray-800">
+                                <TableHeader className="bg-blue-900/20 text-blue-300">
                                     <TableRow>
-                                        <TableHead>id</TableHead>
+                                        <TableHead className="text-blue-200">id</TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -555,7 +554,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -568,7 +567,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -581,7 +580,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -594,7 +593,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -607,7 +606,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -620,7 +619,7 @@ export default function Index() {
                                         </TableHead>
                                         <TableHead>
                                             <div className="flex items-center">
-                                                <svg className="h-4 w-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
@@ -637,7 +636,7 @@ export default function Index() {
                                                 Station
                                             </div>
                                         </TableHead>
-                                        <TableHead className="text-center">Action</TableHead>
+                                        <TableHead className="text-center text-blue-200">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>
 
@@ -646,24 +645,22 @@ export default function Index() {
                                         filteredPleinCarburant.map((pc, i) => (
                                             <TableRow
                                                 key={pc.id}
-                                                className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} transition hover:bg-blue-50`}
+                                                className={`${i % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700/50'} transition hover:bg-blue-900/20`}
                                             >
-                                                <TableCell className="font-medium">{pc.id}</TableCell>
-                                                <TableCell>{vehicules.map((v) => (v.id === pc.vehicule_id ? v.immatriculation : ''))}</TableCell>
-
-                                                <TableCell>{T_user.map((users) => (users.id === pc.user_id ? users.name : ''))}</TableCell>
-                                                <TableCell>{pc.date_plein}</TableCell>
-                                                <TableCell>{pc.quantite}</TableCell>
-                                                <TableCell>{pc.prix_unitaire}</TableCell>
-                                                <TableCell>{pc.montant_total}</TableCell>
-                                                <TableCell>{pc.station}</TableCell>
-
+                                                <TableCell className="font-medium text-white">{pc.id}</TableCell>
+                                                <TableCell className="text-white">{vehicules.map((v) => (v.id === pc.vehicule_id ? v.immatriculation : ''))}</TableCell>
+                                                <TableCell className="text-white">{T_user.map((users) => (users.id === pc.user_id ? users.name : ''))}</TableCell>
+                                                <TableCell className="text-white">{pc.date_plein}</TableCell>
+                                                <TableCell className="text-white">{pc.quantite}</TableCell>
+                                                <TableCell className="text-white">{pc.prix_unitaire}</TableCell>
+                                                <TableCell className="text-white">{pc.montant_total}</TableCell>
+                                                <TableCell className="text-white">{pc.station}</TableCell>
                                                 <TableCell className="text-center">
                                                     <div className="flex justify-center gap-2">
                                                         <Button
                                                             disabled={processing}
                                                             onClick={() => handleDelete(pc.id)}
-                                                            className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+                                                            className="rounded-full bg-red-600 p-2 text-white hover:bg-red-700"
                                                         >
                                                             <Trash2 size={16} />
                                                         </Button>
@@ -674,8 +671,8 @@ export default function Index() {
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={user.role === 'admin' ? 5 : 4} className="flex items-center py-8 text-center">
-                                                <div className="flex flex-col items-center justify-center gap-2 text-gray-500">
-                                                    <svg className="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div className="flex flex-col items-center justify-center gap-2 text-gray-400">
+                                                    <svg className="h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"

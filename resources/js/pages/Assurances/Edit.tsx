@@ -72,31 +72,31 @@ export default function Edit({ assurance, Vehicule }: Props) {
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
                         <Link href={route('assurances.index')}>
-                            <Button variant="outline" className="flex items-center gap-2">
+                            <Button variant="outline" className="flex items-center gap-2 border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white">
                                 <ArrowLeft className="h-4 w-4" /> Retour à la liste
                             </Button>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div>
-                            <h1 className="mb-2 text-3xl font-bold text-gray-900">Gestion des Assurances</h1>
-                            {/* <p className="text-gray-600">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
+                            <h1 className="mb-2 text-3xl font-bold text-white">Gestion des Assurances</h1>
+                            {/* <p className="text-gray-400">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2 rounded-lg bg-blue-50 px-4 py-3">
-                        <ShieldCheck className="h-5 w-5 text-green-600" />
+                    <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 px-4 py-3 border border-blue-800/50">
+                        <ShieldCheck className="h-5 w-5 text-green-400" />
                     </div>
                 </div>
 
-                <Card className="border-0 shadow-lg">
-                    <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+                <Card className="border-gray-700 bg-gray-800 shadow-xl">
+                    <CardHeader className="border-b border-gray-700 bg-gradient-to-r from-blue-900/20 to-indigo-900/20">
                         <div className="flex items-center space-x-3">
-                            <div className="rounded-lg bg-blue-100 p-2">
-                                <FileText className="h-6 w-6 text-blue-600" />
+                            <div className="rounded-lg bg-blue-900/30 p-2">
+                                <FileText className="h-6 w-6 text-blue-400" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl text-gray-900">Informations du contrat</CardTitle>
-                                <CardDescription className="text-gray-600">Contrat n° {assurance.NumContrat}</CardDescription>
+                                <CardTitle className="text-xl text-white">Informations du contrat</CardTitle>
+                                <CardDescription className="text-gray-400">Contrat n° {assurance.NumContrat}</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
@@ -105,11 +105,11 @@ export default function Edit({ assurance, Vehicule }: Props) {
                         <form onSubmit={handleUpdate} className="space-y-6">
                             {/* Section Erreurs */}
                             {Object.keys(errors).length > 0 && (
-                                <Alert variant="destructive" className="border-l-4 border-l-red-500">
+                                <Alert variant="destructive" className="border-l-4 border-l-red-500 border-red-800 bg-red-900/20 text-red-200">
                                     <CircleAlert className="h-5 w-5" />
-                                    <AlertTitle className="text-red-800">Erreurs de validation</AlertTitle>
+                                    <AlertTitle className="text-red-100">Erreurs de validation</AlertTitle>
                                     <AlertDescription>
-                                        <ul className="list-inside list-disc space-y-1 text-red-700">
+                                        <ul className="list-inside list-disc space-y-1">
                                             {Object.entries(errors).map(([key, message]) => (
                                                 <li key={key}>{message as string}</li>
                                             ))}
@@ -122,20 +122,20 @@ export default function Edit({ assurance, Vehicule }: Props) {
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 {/* Véhicule */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="vehicule_id" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Car className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="vehicule_id" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Car className="h-4 w-4 text-gray-400" />
                                         <span>Véhicule assuré</span>
                                     </Label>
                                     <Select value={data.vehicule_id.toString()} onValueChange={(value) => setData('vehicule_id', Number(value))}>
-                                        <SelectTrigger className="h-11 w-full">
+                                        <SelectTrigger className="h-11 w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400">
                                             <SelectValue placeholder="Sélectionner un véhicule" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="border-gray-600 bg-gray-700 text-white">
                                             {Vehicule?.map((vehicule) => (
-                                                <SelectItem key={vehicule.id} value={vehicule.id.toString()}>
+                                                <SelectItem key={vehicule.id} value={vehicule.id.toString()} className="focus:bg-gray-600">
                                                     <div className="flex flex-col">
                                                         <span className="font-medium">{vehicule.immatriculation}</span>
-                                                        <span className="text-sm text-gray-500">
+                                                        <span className="text-sm text-gray-400">
                                                             {vehicule.marque_id} - {vehicule.model}
                                                         </span>
                                                     </div>
@@ -147,8 +147,8 @@ export default function Edit({ assurance, Vehicule }: Props) {
 
                                 {/* Compagnie d'assurance */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="NomCompagnie" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Building className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="NomCompagnie" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Building className="h-4 w-4 text-gray-400" />
                                         <span>Compagnie d'assurance</span>
                                     </Label>
                                     <Input
@@ -157,23 +157,29 @@ export default function Edit({ assurance, Vehicule }: Props) {
                                         value={data.NomCompagnie}
                                         onChange={(e) => setData('NomCompagnie', e.target.value)}
                                         placeholder="Entrez le nom de la compagnie"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Numéro de contrat */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="NumContrat" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <FileText className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="NumContrat" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <FileText className="h-4 w-4 text-gray-400" />
                                         <span>Numéro de contrat</span>
                                     </Label>
-                                    <Input id="NumContrat" type="text" disabled value={data.NumContrat} className="h-11 bg-gray-50 text-gray-600" />
+                                    <Input 
+                                        id="NumContrat" 
+                                        type="text" 
+                                        disabled 
+                                        value={data.NumContrat} 
+                                        className="h-11 border-gray-600 bg-gray-600 text-gray-400" 
+                                    />
                                 </div>
 
                                 {/* Coût */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="cout" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <DollarSign className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="cout" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <DollarSign className="h-4 w-4 text-gray-400" />
                                         <span>Coût de l'assurance</span>
                                     </Label>
                                     <Input
@@ -183,14 +189,14 @@ export default function Edit({ assurance, Vehicule }: Props) {
                                         value={data.cout}
                                         onChange={(e) => setData('cout', Number(e.target.value))}
                                         placeholder="0.00"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Dates */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="dateDebut" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Calendar className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="dateDebut" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Calendar className="h-4 w-4 text-gray-400" />
                                         <span>Date de début</span>
                                     </Label>
                                     <Input
@@ -198,13 +204,13 @@ export default function Edit({ assurance, Vehicule }: Props) {
                                         type="date"
                                         value={data.dateDebut}
                                         onChange={(e) => setData('dateDebut', e.target.value)}
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white focus:border-blue-500"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="dateFin" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Calendar className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="dateFin" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Calendar className="h-4 w-4 text-gray-400" />
                                         <span>Date d'expiration</span>
                                     </Label>
                                     <Input
@@ -212,14 +218,19 @@ export default function Edit({ assurance, Vehicule }: Props) {
                                         type="date"
                                         value={data.dateFin}
                                         onChange={(e) => setData('dateFin', e.target.value)}
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white focus:border-blue-500"
                                     />
                                 </div>
                             </div>
 
                             {/* Actions */}
-                            <div className="flex justify-end space-x-4 border-t pt-6">
-                                <Button type="button" variant="outline" onClick={() => window.history.back()} className="px-6">
+                            <div className="flex justify-end space-x-4 border-t border-gray-700 pt-6">
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white" 
+                                    onClick={() => window.history.back()}
+                                >
                                     Annuler
                                 </Button>
                                 <Button

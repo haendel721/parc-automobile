@@ -67,32 +67,32 @@ export default function Edit({ fournisseur }: Props) {
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
                         <Link href={route('fournisseurs.index')}>
-                            <Button variant="outline" className="flex items-center gap-2">
+                            <Button variant="outline" className="flex items-center gap-2 border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white">
                                 <ArrowLeft className="h-4 w-4" /> Retour à la liste
                             </Button>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div>
-                            <h1 className="mb-2 text-3xl font-bold text-gray-900">Modifier le fournisseur</h1>
-                            {/* <p className="text-gray-600">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
+                            <h1 className="mb-2 text-3xl font-bold text-white">Modifier le fournisseur</h1>
+                            {/* <p className="text-gray-400">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2 rounded-lg bg-blue-50 px-4 py-3">
-                        <Building className="h-8 w-8 text-blue-600" />
-                        {/* <span className="text-sm font-medium text-blue-800">ID: {user.id}</span> */}
+                    <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 px-4 py-3 border border-blue-800/50">
+                        <Building className="h-8 w-8 text-blue-400" />
+                        {/* <span className="text-sm font-medium text-blue-300">ID: {user.id}</span> */}
                     </div>
                 </div>
 
-                <Card className="border-0 shadow-lg">
-                    <CardHeader className="border-b bg-gradient-to-r from-green-50 to-emerald-50">
+                <Card className="border-gray-700 bg-gray-800 shadow-xl">
+                    <CardHeader className="border-b border-gray-700 bg-gradient-to-r from-green-900/20 to-emerald-900/20">
                         <div className="flex items-center space-x-3">
-                            <div className="rounded-lg bg-green-100 p-2">
-                                <Building className="h-6 w-6 text-green-600" />
+                            <div className="rounded-lg bg-green-900/30 p-2">
+                                <Building className="h-6 w-6 text-green-400" />
                             </div>
                             <div>
-                                <CardTitle className="text-xl text-gray-900">Informations du fournisseur</CardTitle>
-                                <CardDescription className="text-gray-600">ID: {fournisseur.id}</CardDescription>
+                                <CardTitle className="text-xl text-white">Informations du fournisseur</CardTitle>
+                                <CardDescription className="text-gray-400">ID: {fournisseur.id}</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
@@ -101,11 +101,11 @@ export default function Edit({ fournisseur }: Props) {
                         <form onSubmit={handleUpdate} className="space-y-6">
                             {/* Section Erreurs */}
                             {Object.keys(errors).length > 0 && (
-                                <Alert variant="destructive" className="border-l-4 border-l-red-500">
+                                <Alert variant="destructive" className="border-l-4 border-l-red-500 border-red-800 bg-red-900/20 text-red-200">
                                     <CircleAlert className="h-5 w-5" />
-                                    <AlertTitle className="text-red-800">Erreurs de validation</AlertTitle>
+                                    <AlertTitle className="text-red-100">Erreurs de validation</AlertTitle>
                                     <AlertDescription>
-                                        <ul className="list-inside list-disc space-y-1 text-red-700">
+                                        <ul className="list-inside list-disc space-y-1">
                                             {Object.entries(errors).map(([key, message]) => (
                                                 <li key={key}>{message as string}</li>
                                             ))}
@@ -118,8 +118,8 @@ export default function Edit({ fournisseur }: Props) {
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 {/* Nom du fournisseur */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="nom" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Building className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="nom" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Building className="h-4 w-4 text-gray-400" />
                                         <span>Nom du fournisseur *</span>
                                     </Label>
                                     <Input
@@ -128,23 +128,23 @@ export default function Edit({ fournisseur }: Props) {
                                         value={data.nom}
                                         onChange={(e) => setData('nom', e.target.value)}
                                         placeholder="Entrez le nom du fournisseur"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Type de fournisseur */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="type" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Briefcase className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="type" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Briefcase className="h-4 w-4 text-gray-400" />
                                         <span>Type de fournisseur *</span>
                                     </Label>
                                     <Select value={data.type} onValueChange={(value) => setData('type', value)}>
-                                        <SelectTrigger className="h-11 w-full">
+                                        <SelectTrigger className="h-11 w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400">
                                             <SelectValue placeholder="Sélectionner un type" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="border-gray-600 bg-gray-700 text-white">
                                             {typesFournisseur.map((type) => (
-                                                <SelectItem key={type.value} value={type.value}>
+                                                <SelectItem key={type.value} value={type.value} className="focus:bg-gray-600">
                                                     {type.label}
                                                 </SelectItem>
                                             ))}
@@ -154,8 +154,8 @@ export default function Edit({ fournisseur }: Props) {
 
                                 {/* Adresse */}
                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="addresse" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <MapPin className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="addresse" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <MapPin className="h-4 w-4 text-gray-400" />
                                         <span>Adresse</span>
                                     </Label>
                                     <Input
@@ -164,14 +164,14 @@ export default function Edit({ fournisseur }: Props) {
                                         value={data.addresse}
                                         onChange={(e) => setData('addresse', e.target.value)}
                                         placeholder="Entrez l'adresse complète"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Téléphone */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="phone" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Phone className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="phone" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Phone className="h-4 w-4 text-gray-400" />
                                         <span>Téléphone *</span>
                                     </Label>
                                     <Input
@@ -180,14 +180,14 @@ export default function Edit({ fournisseur }: Props) {
                                         value={data.phone}
                                         onChange={(e) => setData('phone', e.target.value)}
                                         placeholder="+33 1 23 45 67 89"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Email */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="email" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Mail className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="email" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Mail className="h-4 w-4 text-gray-400" />
                                         <span>E-mail</span>
                                     </Label>
                                     <Input
@@ -196,14 +196,14 @@ export default function Edit({ fournisseur }: Props) {
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
                                         placeholder="contact@fournisseur.com"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Site web */}
                                 <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="siteWeb" className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <Globe className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="siteWeb" className="flex items-center space-x-2 text-sm font-medium text-gray-300">
+                                        <Globe className="h-4 w-4 text-gray-400" />
                                         <span>Site web</span>
                                     </Label>
                                     <Input
@@ -212,20 +212,25 @@ export default function Edit({ fournisseur }: Props) {
                                         value={data.siteWeb}
                                         onChange={(e) => setData('siteWeb', e.target.value)}
                                         placeholder="https://www.example.com"
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
                             </div>
 
                             {/* Actions */}
-                            <div className="flex flex-col justify-end space-y-3 border-t pt-6 sm:flex-row sm:space-y-0 sm:space-x-4">
-                                <Button type="button" variant="outline" onClick={() => window.history.back()} className="order-2 px-6 sm:order-1">
+                            <div className="flex flex-col justify-end space-y-3 border-t border-gray-700 pt-6 sm:flex-row sm:space-x-4 sm:space-y-0">
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white" 
+                                    onClick={() => window.history.back()}
+                                >
                                     Annuler
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing}
-                                    className="order-1 bg-gradient-to-r from-green-600 to-emerald-600 px-6 hover:from-green-700 hover:to-emerald-700 sm:order-2"
+                                    className="order-1 bg-gradient-to-r from-blue-600 to-blue-600 px-6 hover:from-blue-700 hover:to-blue-700 sm:order-2"
                                 >
                                     {processing ? (
                                         <div className="flex items-center space-x-2">

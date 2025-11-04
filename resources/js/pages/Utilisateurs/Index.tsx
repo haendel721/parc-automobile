@@ -1,10 +1,14 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, SquarePen, Trash2 } from 'lucide-react';
+import { BellDot, Filter, Search, SquarePen, Trash2, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -15,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface users {
+interface User {
     id: number;
     name: string;
     prenom: string;
@@ -30,23 +34,27 @@ type PageProps = {
     flash: {
         message?: string;
     };
-    utilisateurs: users[];
+    utilisateurs: User[];
 };
 
 export default function Index() {
     const { utilisateurs, flash } = usePage<PageProps>().props;
     const { processing, delete: destroy } = useForm();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchField, setSearchField] = useState<'nom' | 'prenom' | 'statut' | 'fonction' | 'role'>('nom');
+    const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
     const handleDelete = (id: number, name: string) => {
-        if (confirm(`Êtes-vous sûr de vouloir supprimer cette utilisateur: ${name} ?`)) {
+        if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur : ${name} ?`)) {
             destroy(route('utilisateurs.destroy', id));
         }
     };
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchField, setSearchField] = useState<'nom' | 'prenom' | 'statut' | 'fonction' | 'role'>('nom');
 
     // 🔍 Filtrage des utilisateurs
     const filteredUtilisateurs = utilisateurs.filter((u) => {
         const search = searchTerm.toLowerCase().trim();
+        if (!search) return true;
+
         if (searchField === 'nom') {
             return u.name.toLowerCase().includes(search);
         } else if (searchField === 'prenom') {
@@ -60,6 +68,33 @@ export default function Index() {
         }
         return true;
     });
+
+    const getRoleBadgeVariant = (role: string) => {
+        switch (role.toLowerCase()) {
+            case 'admin':
+                return 'default';
+            case 'moderator':
+                return 'secondary';
+            case 'user':
+                return 'outline';
+            default:
+                return 'default';
+        }
+    };
+
+    const getStatusColor = (statut: string) => {
+        switch (statut.toLowerCase()) {
+            case 'actif':
+                return 'bg-emerald-500';
+            case 'inactif':
+                return 'bg-gray-500';
+            case 'en attente':
+                return 'bg-amber-500';
+            default:
+                return 'bg-blue-500';
+        }
+    };
+
     return (
         <AppLayout
             breadcrumbs={[
@@ -67,195 +102,201 @@ export default function Index() {
                 { title: 'Utilisateurs', href: '/utilisateurs' },
             ]}
         >
-            <Head title="utilisateurs" />
-            <div className="p-2">
-                <div>
-                    {flash.message && (
-                        <Alert>
-                            <BellDot />
-                            <AlertTitle>Notification !</AlertTitle>
-                            <AlertDescription>{flash.message}</AlertDescription>
-                        </Alert>
-                    )}
-                </div>
-            </div>
-            {utilisateurs.length > 0 && (
-                <div className="p-2">
-                    {/* HEADER + BARRE DE RECHERCHE */}
-                    <div className="mb-5 rounded-2xl bg-white p-6">
-                        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                            {/* Titre */}
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-blue-50 p-2">
-                                    <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                                        />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h2 className="text-xl font-bold text-gray-900">Liste des utilisateurs</h2>
-                                    <p className="text-sm text-gray-500">Consultez et gérer les utilisateurs</p>
-                                </div>
-                            </div>
+            <Head title="Gestion des utilisateurs" />
 
-                            {/* Contrôles de recherche */}
-                            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-                                {/* Sélecteur de champ */}
-                                <div className="relative min-w-[160px]">
-                                    <select
-                                        value={searchField}
-                                        onChange={(e) => setSearchField(e.target.value as any)}
-                                        className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                    >
-                                        <option value="nom">Nom</option>
-                                        <option value="prenom">Prénom</option>
-                                        <option value="role">Rôle</option>
-                                        <option value="statut">Statut</option>
-                                        <option value="fonction">Fonction</option>
-                                    </select>
-                                    <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
-                                        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </div>
-                                </div>
+            <div className="min-h-screen p-4 sm:p-6">
+                {/* Notification Flash */}
+                {flash.message && (
+                    <Alert className="mb-6 border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+                        <BellDot className="h-4 w-4" />
+                        <AlertTitle>Succès !</AlertTitle>
+                        <AlertDescription>{flash.message}</AlertDescription>
+                    </Alert>
+                )}
 
-                                {/* Champ de recherche */}
-                                <div className="min-w-[280px] flex-1">
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            placeholder={`${searchField}...`}
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                        />
-                                        <div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
-                                            <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                                />
-                                            </svg>
+                {utilisateurs.length > 0 && (
+                    <div className="space-y-6">
+                        {/* Header Card */}
+                        <Card className="border-gray-700 bg-gray-800/90 backdrop-blur-sm">
+                            <CardHeader className="pb-4">
+                                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="rounded-2xl bg-blue-500/10 p-3">
+                                            <Users className="h-8 w-8 text-blue-400" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-2xl font-bold text-white">Gestion des Utilisateurs</CardTitle>
+                                            <CardDescription className="text-gray-400">
+                                                {utilisateurs.length} utilisateur{utilisateurs.length > 1 ? 's' : ''} au total
+                                            </CardDescription>
                                         </div>
                                     </div>
+                                    {/* Barre de recherche et filtres */}
+                                    <div className="flex flex-col gap-2 sm:flex-row">
+                                        {/* Sélecteur de champ */}
+                                        <div className="flex-1 sm:max-w-xs">
+                                            <Select value={searchField} onValueChange={(value: any) => setSearchField(value)}>
+                                                <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                                                    <SelectValue placeholder="Rechercher par..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="border-gray-600 bg-gray-700">
+                                                    <SelectItem value="nom">Nom</SelectItem>
+                                                    <SelectItem value="prenom">Prénom</SelectItem>
+                                                    <SelectItem value="role">Rôle</SelectItem>
+                                                    <SelectItem value="statut">Statut</SelectItem>
+                                                    <SelectItem value="fonction">Fonction</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* Champ de recherche */}
+                                        <div className="flex-1">
+                                            <div className="relative">
+                                                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                                <Input
+                                                    type="text"
+                                                    placeholder={` ${searchField}...`}
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    className="border-gray-600 bg-gray-700 pl-10 text-white placeholder:text-gray-400 focus:border-blue-500"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Bouton filtre */}
+                                        <Button variant="outline" className="border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600">
+                                            <Filter className="mr-2 h-4 w-4" />
+                                            Filtres
+                                        </Button>
+                                    </div>
                                 </div>
+                            </CardHeader>
 
-                                {/* Bouton d'action supplémentaire */}
-                                <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium whitespace-nowrap text-white transition-all duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                                        />
-                                    </svg>
-                                    Filtrer
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Indicateur de filtre actif */}
-                        {searchTerm && (
-                            <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
-                                <div className="flex items-center gap-2 text-sm text-blue-700">
-                                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                                        />
-                                    </svg>
-                                    Filtre actif : Recherche par {searchField} - "{searchTerm}"
-                                </div>
-                                <button
-                                    onClick={() => setSearchTerm('')}
-                                    className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
-                                >
-                                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Effacer
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* TABLEAU */}
-                    <div className="overflow-x-auto rounded-lg">
-                        <Table className="min-w-full rounded-xl border border-gray-200 bg-white">
-                            <TableHeader className="bg-blue-50 text-blue-700">
-                                <TableRow>
-                                    <TableHead>Id</TableHead>
-                                    <TableHead>Nom</TableHead>
-                                    <TableHead>Prénom</TableHead>
-                                    <TableHead>Téléphone</TableHead>
-                                    <TableHead>Statut</TableHead>
-                                    <TableHead>Fonction</TableHead>
-                                    <TableHead>E-mail</TableHead>
-                                    <TableHead>Rôle</TableHead>
-                                    <TableHead className="text-center">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-
-                            <TableBody>
-                                {filteredUtilisateurs.length > 0 ? (
-                                    filteredUtilisateurs.map((u, i) => (
-                                        <TableRow key={u.id} className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} transition hover:bg-blue-50`}>
-                                            <TableCell className="font-medium">{u.id}</TableCell>
-                                            <TableCell>{u.name}</TableCell>
-                                            <TableCell>{u.prenom}</TableCell>
-                                            <TableCell>0{u.phone}</TableCell>
-                                            <TableCell>{u.statut}</TableCell>
-                                            <TableCell>{u.fonction}</TableCell>
-                                            <TableCell>{u.email}</TableCell>
-                                            <TableCell>
-                                                <span
-                                                    className={`rounded-full px-2 py-1 text-xs font-medium ${
-                                                        u.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                                                    }`}
-                                                >
-                                                    {u.role}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <div className="flex justify-center gap-2">
-                                                    <Link href={route('utilisateurs.edit', u.id)}>
-                                                        <Button className="bg-blue-600 text-white hover:bg-blue-700">
-                                                            <SquarePen size={16} />
-                                                        </Button>
-                                                    </Link>
-                                                    <Button
-                                                        disabled={processing}
-                                                        onClick={() => handleDelete(u.id, u.name)}
-                                                        className="bg-red-500 text-white hover:bg-red-600"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={9} className="py-6 text-center text-gray-500">
-                                            Aucun utilisateur trouvé
-                                        </TableCell>
-                                    </TableRow>
+                            <CardContent>
+                                {/* Indicateur de filtre actif */}
+                                {searchTerm && (
+                                    <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-500/20 bg-blue-500/10 p-3">
+                                        <div className="flex items-center gap-2 text-sm text-blue-400">
+                                            <Filter className="h-4 w-4" />
+                                            Filtre actif : {searchField} contenant "{searchTerm}"
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setSearchTerm('')}
+                                            className="h-8 text-blue-400 hover:text-blue-300"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                 )}
-                            </TableBody>
-                        </Table>
+                            </CardContent>
+                        </Card>
+
+                        {/* Tableau */}
+                        <Card className="border-gray-700 bg-gray-800/90 backdrop-blur-sm">
+                            <CardContent className="p-0">
+                                <div className="overflow-hidden rounded-lg">
+                                    <Table>
+                                        <TableHeader className="border-gray-700 bg-blue-900/20">
+                                            <TableRow className="hover:bg-blue-900/10">
+                                                <TableHead className="font-semibold text-blue-200">ID</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Nom</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Prénom</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Téléphone</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Statut</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Fonction</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Email</TableHead>
+                                                <TableHead className="font-semibold text-blue-200">Rôle</TableHead>
+                                                <TableHead className="text-center font-semibold text-blue-200">Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {filteredUtilisateurs.length > 0 ? (
+                                                filteredUtilisateurs.map((user, index) => (
+                                                    <TableRow
+                                                        key={user.id}
+                                                        className={`border-gray-700 transition-all duration-200 hover:bg-blue-900/20 ${
+                                                            index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700/50'
+                                                        }`}
+                                                    >
+                                                        <TableCell className="font-mono text-sm text-gray-300">#{user.id}</TableCell>
+                                                        <TableCell className="font-medium text-white">{user.name}</TableCell>
+                                                        <TableCell className="text-gray-300">{user.prenom}</TableCell>
+                                                        <TableCell className="text-gray-400">0{user.phone}</TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center gap-2">
+                                                                <div className={`h-2 w-2 rounded-full ${getStatusColor(user.statut)}`} />
+                                                                <span className="text-gray-300 capitalize">{user.statut}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="text-gray-300">{user.fonction}</TableCell>
+                                                        <TableCell className="text-sm text-gray-400">{user.email}</TableCell>
+                                                        <TableCell>
+                                                            <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
+                                                                {user.role}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex justify-center gap-2">
+                                                                {/* Bouton Voir */}
+                                                                {/* <Link href={route('utilisateurs.show', user.id)}>
+                                                                    <Button 
+                                                                        variant="ghost" 
+                                                                        size="sm"
+                                                                        className="h-8 w-8 rounded-lg text-blue-400 hover:bg-blue-500/20 hover:text-blue-300"
+                                                                    >
+                                                                        <Eye className="h-4 w-4" />
+                                                                    </Button>
+                                                                </Link> */}
+
+                                                                {/* Bouton Modifier */}
+                                                                <Link href={route('utilisateurs.edit', user.id)}>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="h-8 w-8 rounded-lg text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300"
+                                                                    >
+                                                                        <SquarePen className="h-4 w-4" />
+                                                                    </Button>
+                                                                </Link>
+
+                                                                {/* Bouton Supprimer */}
+                                                                <Button
+                                                                    disabled={processing}
+                                                                    onClick={() => handleDelete(user.id, user.name)}
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="h-8 w-8 rounded-lg text-red-400 hover:bg-red-500/20 hover:text-red-300"
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={9} className="h-32 text-center">
+                                                        <div className="flex flex-col items-center justify-center text-gray-400">
+                                                            <Users className="mb-2 h-8 w-8" />
+                                                            <p>Aucun utilisateur trouvé</p>
+                                                            <p className="text-sm text-gray-500">Essayez de modifier vos critères de recherche</p>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </CardContent>
+                            <div className="m-2 text-sm text-gray-400">
+                                Affichage de {filteredUtilisateurs.length} sur {utilisateurs.length} utilisateur{utilisateurs.length > 1 ? 's' : ''}
+                            </div>
+                        </Card>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </AppLayout>
     );
 }

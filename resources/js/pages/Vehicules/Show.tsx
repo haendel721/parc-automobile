@@ -68,7 +68,7 @@ export default function Show() {
                 {/* Bouton retour */}
                 <div className="mb-6">
                     <Link href={route('vehicules.index')}>
-                        <Button variant="outline" className="flex items-center gap-2">
+                        <Button variant="outline" className="flex items-center gap-2 bg-gray-500">
                             <ArrowLeft className="h-4 w-4" /> Retour à la liste
                         </Button>
                     </Link>
@@ -76,13 +76,13 @@ export default function Show() {
 
                 {/* Carte principale */}
                 <motion.div
-                    className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg"
+                    className="overflow-hidden rounded-sm bg-gray-900/90 shadow-lg"
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
                     {/* Image du véhicule */}
-                    <div className="relative flex h-60 items-center justify-center bg-gradient-to-r from-gray-100 to-gray-50">
+                    <div className="relative flex h-60 items-center justify-center bg-gray-500">
                         <img
                             src={vehicule.photo ? `/storage/${vehicule.photo}` : `/storage/photos_voitures/automoblie.png`}
                             alt={vehicule.modele}
@@ -97,7 +97,7 @@ export default function Show() {
                             {marques.nom} {vehicule.modele}
                         </h1>
 
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 ">
                             <InfoItem icon={<User className="text-indigo-500" />} label="Propriétaire" value={userName} />
                             <InfoItem icon={<Hash className="text-orange-500" />} label="Immatriculation" value={vehicule.immatriculation} />
                             <InfoItem icon={<Palette className="text-pink-500" />} label="Couleur" value={vehicule.couleur} />

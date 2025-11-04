@@ -84,39 +84,41 @@ export default function Create() {
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
                         <Link href={route('assurances.index')}>
-                            <Button variant="outline" className="flex items-center gap-2">
+                            <Button variant="outline" className="flex items-center gap-2 border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white">
                                 <ArrowLeft className="h-4 w-4" /> Retour à la liste
                             </Button>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div>
-                            <h1 className="mb-2 text-3xl font-bold text-gray-900">Nouvelle Assurance</h1>
-                            {/* <p className="text-gray-600">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
+                            <h1 className="mb-2 text-3xl font-bold text-white">Nouvelle Assurance</h1>
+                            {/* <p className="text-gray-400">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2 rounded-lg bg-blue-50 px-4 py-3">
-                        <FileEdit className="h-8 w-8 text-blue-600" />
-                        {/* <span className="text-sm font-medium text-blue-800">ID: {user.id}</span> */}
+                    <div className="flex items-center space-x-2 rounded-lg bg-blue-900/20 px-4 py-3 border border-blue-800/50">
+                        <FileEdit className="h-8 w-8 text-blue-400" />
+                        {/* <span className="text-sm font-medium text-blue-300">ID: {user.id}</span> */}
                     </div>
                 </div>
 
-                <Card className="border-0 shadow-lg">
-                    <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                            <CircleAlert className="h-6 w-6 text-blue-600" />
+                <Card className="border-gray-700 bg-gray-800 shadow-xl">
+                    <CardHeader className="border-b border-gray-700 bg-gradient-to-r from-blue-900/20 to-indigo-900/20">
+                        <CardTitle className="flex items-center gap-2 text-xl text-white">
+                            <CircleAlert className="h-6 w-6 text-blue-400" />
                             Informations de l'assurance
                         </CardTitle>
-                        <CardDescription>Remplissez tous les champs requis pour créer une nouvelle assurance</CardDescription>
+                        <CardDescription className="text-gray-400">
+                            Remplissez tous les champs requis pour créer une nouvelle assurance
+                        </CardDescription>
                     </CardHeader>
 
                     <CardContent className="p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Alert d'erreurs */}
                             {Object.keys(errors).length > 0 && (
-                                <Alert variant="destructive" className="mb-6">
+                                <Alert variant="destructive" className="mb-6 border-red-800 bg-red-900/20 text-red-200">
                                     <CircleAlert className="h-4 w-4" />
-                                    <AlertTitle>Erreurs de validation</AlertTitle>
+                                    <AlertTitle className="text-red-100">Erreurs de validation</AlertTitle>
                                     <AlertDescription>
                                         <ul className="list-inside list-disc space-y-1">
                                             {Object.entries(errors).map(([key, message]) => (
@@ -133,21 +135,21 @@ export default function Create() {
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 {/* Véhicule */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="vehicule_id" className="flex items-center gap-2 text-sm font-medium">
-                                        <Car className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="vehicule_id" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                        <Car className="h-4 w-4 text-gray-400" />
                                         Véhicule *
                                     </Label>
                                     <Select value={data.vehicule_id} onValueChange={(value) => setData('vehicule_id', value)}>
-                                        <SelectTrigger className="h-11 w-full">
+                                        <SelectTrigger className="h-11 w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400">
                                             <SelectValue placeholder="Sélectionnez un véhicule" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="border-gray-600 bg-gray-700 text-white">
                                             {filteredVehicules.map((v) => (
-                                                <SelectItem key={v.id} value={v.id.toString()}>
+                                                <SelectItem key={v.id} value={v.id.toString()} className="focus:bg-gray-600">
                                                     <div className="flex flex-col">
                                                         <span className="font-medium">{v.immatriculation}</span>
                                                         {v.marque && v.modele && (
-                                                            <span className="text-xs text-gray-500">
+                                                            <span className="text-xs text-gray-400">
                                                                 {v.marque} {v.modele}
                                                             </span>
                                                         )}
@@ -160,8 +162,8 @@ export default function Create() {
 
                                 {/* Nom de l'entreprise */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="NomCompagnie" className="flex items-center gap-2 text-sm font-medium">
-                                        <Building className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="NomCompagnie" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                        <Building className="h-4 w-4 text-gray-400" />
                                         Compagnie d'assurance *
                                     </Label>
                                     <Input
@@ -170,14 +172,14 @@ export default function Create() {
                                         placeholder="Nom de la compagnie"
                                         value={data.NomCompagnie}
                                         onChange={(e) => setData('NomCompagnie', e.target.value)}
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Numéro de contrat */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="NumContrat" className="flex items-center gap-2 text-sm font-medium">
-                                        <FileText className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="NumContrat" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                        <FileText className="h-4 w-4 text-gray-400" />
                                         Numéro de contrat *
                                     </Label>
                                     <Input
@@ -186,14 +188,14 @@ export default function Create() {
                                         placeholder="N° de contrat"
                                         value={data.NumContrat}
                                         onChange={(e) => setData('NumContrat', e.target.value)}
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Coût */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="cout" className="flex items-center gap-2 text-sm font-medium">
-                                        <DollarSign className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="cout" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                        <DollarSign className="h-4 w-4 text-gray-400" />
                                         Coût de l'assurance *
                                     </Label>
                                     <div className="relative">
@@ -203,16 +205,16 @@ export default function Create() {
                                             placeholder="0"
                                             value={data.cout}
                                             onChange={handleCoutChange}
-                                            className="h-11 pl-8"
+                                            className="h-11 border-gray-600 bg-gray-700 pl-8 text-white placeholder:text-gray-400 focus:border-blue-500"
                                         />
-                                        <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-sm text-gray-500">Ar</span>
+                                        <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-sm text-gray-400">Ar</span>
                                     </div>
                                 </div>
 
                                 {/* Date de début */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="dateDebut" className="flex items-center gap-2 text-sm font-medium">
-                                        <Calendar className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="dateDebut" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                        <Calendar className="h-4 w-4 text-gray-400" />
                                         Date de début *
                                     </Label>
                                     <Input
@@ -220,14 +222,14 @@ export default function Create() {
                                         type="date"
                                         value={data.dateDebut}
                                         onChange={(e) => setData('dateDebut', e.target.value)}
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white focus:border-blue-500"
                                     />
                                 </div>
 
                                 {/* Date de fin */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="dateFin" className="flex items-center gap-2 text-sm font-medium">
-                                        <Calendar className="h-4 w-4 text-gray-500" />
+                                    <Label htmlFor="dateFin" className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                        <Calendar className="h-4 w-4 text-gray-400" />
                                         Date de fin *
                                     </Label>
                                     <Input
@@ -235,31 +237,35 @@ export default function Create() {
                                         type="date"
                                         value={data.dateFin}
                                         onChange={(e) => setData('dateFin', e.target.value)}
-                                        className="h-11"
+                                        className="h-11 border-gray-600 bg-gray-700 text-white focus:border-blue-500"
                                     />
                                 </div>
                             </div>
 
                             {/* Bouton de soumission */}
-                            <div className="flex flex-col gap-3 border-t pt-4 sm:flex-row">
+                            <div className="flex flex-col justify-end gap-3 border-t border-gray-700 pt-4 sm:flex-row">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
+                                    onClick={() => window.history.back()}
+                                >
+                                    Annuler
+                                </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing}
-                                    className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700"
+                                    className="transform rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-2.5 font-medium text-white shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl"
                                     size="lg"
                                 >
                                     {processing ? (
                                         <>
                                             <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
-                                            Création en cours...
+                                            en cours d'enregistrement...
                                         </>
                                     ) : (
-                                        "Créer l'assurance"
+                                        "Enregistrer l'assurance"
                                     )}
-                                </Button>
-
-                                <Button type="button" variant="outline" onClick={() => window.history.back()} className="flex-1" size="lg">
-                                    Annuler
                                 </Button>
                             </div>
                         </form>
@@ -267,18 +273,18 @@ export default function Create() {
                 </Card>
 
                 {/* Informations supplémentaires */}
-                {/* <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <CircleAlert className="h-4 w-4 text-blue-500" />
-                        <span>Tous les champs marqués d'un * sont obligatoires</span>
+                {/* <div className="mt-6 grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
+                    <div className="flex items-center gap-2 rounded-lg bg-gray-700 p-3">
+                        <CircleAlert className="h-4 w-4 text-blue-400" />
+                        <span className="text-gray-300">Tous les champs marqués d'un * sont obligatoires</span>
                     </div>
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <Car className="h-4 w-4 text-green-500" />
-                        <span>Véhicules disponibles selon vos permissions</span>
+                    <div className="flex items-center gap-2 rounded-lg bg-gray-700 p-3">
+                        <Car className="h-4 w-4 text-green-400" />
+                        <span className="text-gray-300">Véhicules disponibles selon vos permissions</span>
                     </div>
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <Calendar className="h-4 w-4 text-orange-500" />
-                        <span>Dates au format JJ/MM/AAAA</span>
+                    <div className="flex items-center gap-2 rounded-lg bg-gray-700 p-3">
+                        <Calendar className="h-4 w-4 text-orange-400" />
+                        <span className="text-gray-300">Dates au format JJ/MM/AAAA</span>
                     </div>
                 </div> */}
             </div>

@@ -65,23 +65,23 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
         >
             <Head title="Mise à jour d'un véhicule" />
 
-            <div className="max-w-10xl container mx-auto px-4 py-6">
+            <div className="max-w-10xl container  mx-auto px-4 py-6">
                 {/* En-tête */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
                         <Link href={route('vehicules.index')}>
-                            <Button variant="outline" className="flex items-center gap-2">
+                            <Button variant="outline" className="flex items-center gap-2 bg-gray-500">
                                 <ArrowLeft className="h-4 w-4" /> Retour à la liste
                             </Button>
                         </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div>
-                            <h1 className="mb-2 text-3xl font-bold text-gray-900">Modifier le véhicule</h1>
+                            <h1 className="mb-2 text-3xl font-bold text-gray-200">Modifier le véhicule</h1>
                             {/* <p className="text-gray-600">Renseignez les informations du véhicule à ajouter à votre flotte</p> */}
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2 rounded-lg bg-blue-50 px-4 py-3">
+                    <div className="flex items-center space-x-2 rounded-lg bg-gray-300 px-4 py-3">
                         <Car className="h-8 w-8 text-blue-600" />
                         {/* <span className="text-sm font-medium text-blue-800">ID: {user.id}</span> */}
                     </div>
@@ -89,11 +89,11 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Formulaire principal */}
-                    <div className="lg:col-span-2">
-                        <Card className="border-0 shadow-lg">
+                    <div className="lg:col-span-2 ">
+                        <Card className="border-0 shadow-lg bg-gray-900/90">
                             <CardHeader className="border-b pb-4">
-                                <CardTitle className="text-xl font-semibold text-gray-900">Informations générales</CardTitle>
-                                <CardDescription className="text-gray-600">Modifiez les détails principaux du véhicule</CardDescription>
+                                <CardTitle className="text-xl font-semibold text-gray-200">Informations générales</CardTitle>
+                                <CardDescription className="text-gray-300">Modifiez les détails principaux du véhicule</CardDescription>
                             </CardHeader>
                             <CardContent className="pt-6">
                                 <form onSubmit={handleUpdate} className="space-y-6">
@@ -118,26 +118,26 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         {/* Immatriculation */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="immatriculation" className="text-sm font-medium">
-                                                Immatriculation *
+                                            <Label htmlFor="immatriculation" className="text-lg text-gray-100 font-medium">
+                                                Immatriculation
                                             </Label>
                                             <Input
                                                 id="immatriculation"
                                                 type="text"
                                                 value={data.immatriculation}
                                                 onChange={(e) => setData('immatriculation', e.target.value)}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                                 placeholder="AB-123-CD"
                                             />
                                         </div>
 
                                         {/* Marque */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="marque" className="text-sm font-medium">
-                                                Marque *
+                                            <Label htmlFor="marque" className="text-lg text-gray-100 font-medium">
+                                                Marque
                                             </Label>
                                             <Select value={data.marque_id.toString()} onValueChange={(value) => setData('marque_id', Number(value))}>
-                                                <SelectTrigger id="marque" className="w-full">
+                                                <SelectTrigger id="marque" className="w-full text-gray-100">
                                                     <SelectValue placeholder="Sélectionnez une marque" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -152,7 +152,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Modèle */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="model" className="text-sm font-medium">
+                                            <Label htmlFor="model" className="text-lg text-gray-100 font-medium">
                                                 Modèle *
                                             </Label>
                                             <Input
@@ -160,21 +160,21 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 type="text"
                                                 value={data.model}
                                                 onChange={(e) => setData('model', e.target.value)}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                                 placeholder="Modèle du véhicule"
                                             />
                                         </div>
 
                                         {/* Type de véhicule */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="typeVehicule" className="text-sm font-medium">
+                                            <Label htmlFor="typeVehicule" className="text-lg text-gray-100 font-medium">
                                                 Type de véhicule *
                                             </Label>
                                             <Select
                                                 value={data.typeVehicule_id.toString()}
                                                 onValueChange={(value) => setData('typeVehicule_id', Number(value))}
                                             >
-                                                <SelectTrigger id="typeVehicule" className="w-full">
+                                                <SelectTrigger id="typeVehicule" className="w-full text-gray-100">
                                                     <SelectValue placeholder="Type de véhicule" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -189,7 +189,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Couleur */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="couleur" className="text-sm font-medium">
+                                            <Label htmlFor="couleur" className="text-lg text-gray-100 font-medium">
                                                 Couleur
                                             </Label>
                                             <Input
@@ -197,21 +197,21 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 type="text"
                                                 value={data.couleur}
                                                 onChange={(e) => setData('couleur', e.target.value)}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                                 placeholder="Couleur du véhicule"
                                             />
                                         </div>
 
                                         {/* Carburant */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="carburant" className="text-sm font-medium">
+                                            <Label htmlFor="carburant" className="text-lg text-gray-100 font-medium">
                                                 Carburant *
                                             </Label>
                                             <Select
                                                 value={data.carburant_id.toString()}
                                                 onValueChange={(value) => setData('carburant_id', Number(value))}
                                             >
-                                                <SelectTrigger id="carburant" className="w-full">
+                                                <SelectTrigger id="carburant" className="w-full text-gray-100">
                                                     <SelectValue placeholder="Type de carburant" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -226,7 +226,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Numéro de série */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="numSerie" className="text-sm font-medium">
+                                            <Label htmlFor="numSerie" className="text-lg text-gray-100 font-medium">
                                                 Numéro de série
                                             </Label>
                                             <Input
@@ -234,14 +234,14 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 type="text"
                                                 value={data.numSerie}
                                                 onChange={(e) => setData('numSerie', e.target.value)}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                                 placeholder="Numéro de série"
                                             />
                                         </div>
 
                                         {/* Année de fabrication */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="anneeFabrication" className="text-sm font-medium">
+                                            <Label htmlFor="anneeFabrication" className="text-lg text-gray-100 font-medium">
                                                 Année de fabrication
                                             </Label>
                                             <Input
@@ -251,14 +251,14 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 max={new Date().getFullYear()}
                                                 value={data.anneeFabrication}
                                                 onChange={(e) => setData('anneeFabrication', Number(e.target.value))}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                                 placeholder="2024"
                                             />
                                         </div>
 
                                         {/* Date d'acquisition */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="dateAcquisition" className="text-sm font-medium">
+                                            <Label htmlFor="dateAcquisition" className="text-lg text-gray-100 font-medium">
                                                 Date d'acquisition
                                             </Label>
                                             <Input
@@ -266,13 +266,13 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 type="date"
                                                 value={data.dateAcquisition}
                                                 onChange={(e) => setData('dateAcquisition', e.target.value)}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                             />
                                         </div>
 
                                         {/* Kilométrage */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="kilometrique" className="text-sm font-medium">
+                                            <Label htmlFor="kilometrique" className="text-lg text-gray-100 font-medium">
                                                 Kilométrage
                                             </Label>
                                             <Input
@@ -281,7 +281,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 min="0"
                                                 value={data.kilometrique}
                                                 onChange={(e) => setData('kilometrique', Number(e.target.value))}
-                                                className="w-full"
+                                                className="w-full text-gray-100"
                                                 placeholder="0"
                                             />
                                         </div>
@@ -290,12 +290,12 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                     {/* Photo */}
                                     <div className="space-y-4 border-t pt-4">
                                         <div className="space-y-2">
-                                            <Label className="text-sm font-medium">Photo du véhicule</Label>
+                                            <Label className="text-lg text-gray-100 font-medium">Photo du véhicule</Label>
 
                                             {/* Photo existante */}
                                             {Vehicule.photo && (
                                                 <div className="mb-4">
-                                                    <p className="mb-2 text-sm text-gray-600">Photo actuelle :</p>
+                                                    <p className="mb-2 text-lg text-gray-100">Photo actuelle :</p>
                                                     <div className="relative inline-block">
                                                         <img
                                                             src={`/storage/${Vehicule.photo}`}
@@ -334,10 +334,15 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                     {/* Bouton de soumission */}
                                     <div className="flex justify-end border-t pt-6">
                                         <div className="flex gap-3">
-                                            <Button type="button" variant="outline" onClick={() => window.history.back()} disabled={processing}>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => window.history.back()}
+                                                className="text-blue-500 hover:text-green-700"
+                                            >
                                                 Annuler
                                             </Button>
-                                            <Button type="submit" disabled={processing} className="min-w-32">
+                                            <Button type="submit" disabled={processing} className="min-w-32 bg-blue-600 hover:bg-blue-700">
                                                 {processing ? (
                                                     <div className="flex items-center gap-2">
                                                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

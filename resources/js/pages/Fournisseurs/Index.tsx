@@ -68,9 +68,9 @@ export default function Index() {
                 <div className="p-2">
                     <div>
                         {flash.message && (
-                            <Alert>
-                                <BellDot />
-                                <AlertTitle>Notification !</AlertTitle>
+                            <Alert className="bg-blue-900/20 border-blue-800 text-blue-200">
+                                <BellDot className="text-blue-300" />
+                                <AlertTitle className="text-blue-100">Notification !</AlertTitle>
                                 <AlertDescription>{flash.message}</AlertDescription>
                             </Alert>
                         )}
@@ -80,20 +80,20 @@ export default function Index() {
                     {fournisseurs.length > 0 && (
                         <div className="">
                             {/* HEADER + BARRE DE RECHERCHE */}
-                            <div className="mb-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                            <div className="mb-4 rounded-2xl border border-gray-700 bg-gray-800 p-6 shadow-sm">
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                     {/* Titre */}
                                     <div className="flex items-center gap-3">
-                                        <div className="rounded-lg bg-blue-50 p-2">
+                                        <div className="rounded-lg bg-blue-900/20 p-2">
                                             <Link href={route('fournisseurs.create')}>
-                                                <Button className="bg-blue-500 hover:bg-blue-600">
+                                                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                                                     <CirclePlus className="h-4 w-4" />
                                                 </Button>
                                             </Link>
                                         </div>
                                         <div>
-                                            <h2 className="text-xl font-bold text-gray-900">Liste des fournisseurs</h2>
-                                            <p className="text-sm text-gray-500">Gérez et consultez les fournisseurs</p>
+                                            <h2 className="text-xl font-bold text-white">Liste des fournisseurs</h2>
+                                            <p className="text-sm text-gray-400">Gérez et consultez les fournisseurs</p>
                                         </div>
                                     </div>
 
@@ -104,12 +104,11 @@ export default function Index() {
                                             <select
                                                 value={searchField}
                                                 onChange={(e) => setSearchField(e.target.value as any)}
-                                                className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                className="w-full cursor-pointer appearance-none rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pr-10 text-sm text-white transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                             >
                                                 <option value="nom">Nom</option>
                                                 <option value="type">Type</option>
                                                 <option value="addresse">Adresse</option>
-                                                {/* <option value="date">Date</option> */}
                                             </select>
                                             <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
                                                 <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +125,7 @@ export default function Index() {
                                                     placeholder={`${searchField}...`}
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 pl-10 text-sm transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                    className="w-full rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pl-10 text-sm text-white transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                                 />
                                                 <div className="absolute top-1/2 left-3 -translate-y-1/2 transform">
                                                     <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,8 +156,8 @@ export default function Index() {
                                 </div>
                                 {/* Indicateur de filtre actif */}
                                 {searchTerm && (
-                                    <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3">
-                                        <div className="flex items-center gap-2 text-sm text-blue-700">
+                                    <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-800 bg-blue-900/20 p-3">
+                                        <div className="flex items-center gap-2 text-sm text-blue-300">
                                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path
                                                     strokeLinecap="round"
@@ -171,7 +170,7 @@ export default function Index() {
                                         </div>
                                         <button
                                             onClick={() => setSearchTerm('')}
-                                            className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800"
+                                            className="flex items-center gap-1 text-sm font-medium text-blue-400 hover:text-blue-300"
                                         >
                                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -183,17 +182,17 @@ export default function Index() {
                             </div>
 
                             <div className="overflow-x-auto rounded-lg">
-                                <Table className="min-w-full rounded-xl border border-gray-200 bg-white">
-                                    <TableHeader className="bg-blue-50 text-blue-700">
+                                <Table className="min-w-full rounded-xl border border-gray-700 bg-gray-800">
+                                    <TableHeader className="bg-blue-900/20 text-blue-300">
                                         <TableRow>
-                                            <TableHead>Id</TableHead>
-                                            <TableHead>Nom</TableHead>
-                                            <TableHead>Type</TableHead>
-                                            <TableHead>Adresse</TableHead>
-                                            <TableHead>Phone</TableHead>
-                                            <TableHead>Email</TableHead>
-                                            <TableHead>Site web</TableHead>
-                                            <TableHead className="text-center">Actions</TableHead>
+                                            <TableHead className="text-blue-200">Id</TableHead>
+                                            <TableHead className="text-blue-200">Nom</TableHead>
+                                            <TableHead className="text-blue-200">Type</TableHead>
+                                            <TableHead className="text-blue-200">Adresse</TableHead>
+                                            <TableHead className="text-blue-200">Phone</TableHead>
+                                            <TableHead className="text-blue-200">Email</TableHead>
+                                            <TableHead className="text-blue-200">Site web</TableHead>
+                                            <TableHead className="text-center text-blue-200">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
 
@@ -202,21 +201,21 @@ export default function Index() {
                                             filteredFournisseurs.map((f, i) => (
                                                 <TableRow
                                                     key={f.id}
-                                                    className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} transition hover:bg-blue-50`}
+                                                    className={`${i % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700/50'} transition hover:bg-blue-900/20`}
                                                 >
-                                                    <TableCell className="font-medium">{f.id}</TableCell>
-                                                    <TableCell>{f.nom}</TableCell>
-                                                    <TableCell>{f.type}</TableCell>
-                                                    <TableCell>{f.addresse}</TableCell>
-                                                    <TableCell>{f.phone}</TableCell>
-                                                    <TableCell>{f.email}</TableCell>
+                                                    <TableCell className="font-medium text-white">{f.id}</TableCell>
+                                                    <TableCell className="text-white">{f.nom}</TableCell>
+                                                    <TableCell className="text-white">{f.type}</TableCell>
+                                                    <TableCell className="text-white">{f.addresse}</TableCell>
+                                                    <TableCell className="text-white">{f.phone}</TableCell>
+                                                    <TableCell className="text-white">{f.email}</TableCell>
                                                     <TableCell>
                                                         {f.siteWeb ? (
-                                                            <a href={f.siteWeb} target="_blank" className="text-blue-600 hover:underline">
+                                                            <a href={f.siteWeb} target="_blank" className="text-blue-400 hover:text-blue-300 hover:underline">
                                                                 {f.siteWeb}
                                                             </a>
                                                         ) : (
-                                                            '-'
+                                                            <span className="text-gray-400">-</span>
                                                         )}
                                                     </TableCell>
                                                     <TableCell className="text-center">
@@ -229,7 +228,7 @@ export default function Index() {
                                                             <Button
                                                                 disabled={processing}
                                                                 onClick={() => handleDelete(f.id, f.nom)}
-                                                                className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
+                                                                className="rounded-full bg-red-600 p-2 text-white hover:bg-red-700"
                                                             >
                                                                 <Trash2 size={16} />
                                                             </Button>
@@ -239,7 +238,7 @@ export default function Index() {
                                             ))
                                         ) : (
                                             <TableRow>
-                                                <TableCell colSpan={8} className="py-6 text-center text-gray-500">
+                                                <TableCell colSpan={8} className="py-6 text-center text-gray-400">
                                                     Aucun fournisseur trouvé
                                                 </TableCell>
                                             </TableRow>
