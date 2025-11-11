@@ -16,20 +16,20 @@ class Intervention extends Model
         'description',
         'user_id',
     ];
+
+    protected $casts = [
+        'kilometrage' => 'integer',
+    ];
+
     public function entretien()
     {
         return $this->belongsTo(Entretien::class);
     }
 
-    public function piece()
-    {
-        return $this->belongsTo(Piece::class);
-    }
     public function vehicule()
     {
         return $this->belongsTo(Vehicule::class);
     }
-
 
     public function pieces()
     {

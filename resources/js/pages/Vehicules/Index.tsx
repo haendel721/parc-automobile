@@ -426,7 +426,7 @@ export default function Index() {
                                                         </div>
 
                                                         {/* Autres actions peuvent être ajoutées ici */}
-                                                        <Link href={route('vehicules.edit', vehicule.id)}>
+                                                        {/* <Link href={route('vehicules.edit', vehicule.id)}>
                                                             <Button
                                                                 variant="outline"
                                                                 size="icon"
@@ -434,7 +434,7 @@ export default function Index() {
                                                             >
                                                                 <Edit3 size={16} />
                                                             </Button>
-                                                        </Link>
+                                                        </Link> */}
                                                     </div>
 
                                                     {/* Lien voir détails avec animation */}
@@ -483,7 +483,7 @@ export default function Index() {
                             intervention={intervention}
                             entretien={entretien}
                             searchTerm={searchTerm}
-                            selectedMarque={selectedMarque}
+                            selehctedMarque={selectedMarque}
                             selectedCarburant={selectedCarburant}
                             selectedTypeVehicule={selectedTypeVehicule}
                             onSearchChange={setSearchTerm}

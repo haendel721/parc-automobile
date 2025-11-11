@@ -85,24 +85,6 @@ class EntretienController extends Controller
     public function store(Request $request)
     {
         $role = Auth::user()->role;
-        // $role === 'admin' ? $validated = $request->validate([
-        //     'vehicule_id' => 'required|exists:vehicules,id',
-        //     'fournisseur_id' => 'nullable|exists:fournisseurs,id',
-        //     'type' => 'required|string|max:255',
-        //     'dernier_visite' => 'nullable|date',
-        //     'cout' => 'nullable|integer',
-        //     'piece_remplacee' => 'nullable|string',
-        //     'probleme' => 'nullable|string',
-        //     'recommandation' => 'nullable|string',
-        //     'prochaine_visite' => 'nullable|date',
-        //     'description' => 'nullable|string',
-        //     'derniere_vidange' => 'nullable|date',
-        // ]) : $validated = $request->validate([
-        //     'vehicule_id' => 'required|exists:vehicules,id',
-        //     'probleme' => 'nullable|string',
-        //     'description' => 'nullable|string',
-        //     'prochaine_visite' => 'nullable|date',
-        // ]);
         $validated = $request->validate([
             'vehicule_id' => 'required|exists:vehicules,id',
             'probleme' => 'nullable|string',
@@ -110,9 +92,9 @@ class EntretienController extends Controller
             'prochaine_visite' => 'nullable|date',
             'mecanicien_id' => 'nullable|exists:users,id',
         ]);
-        
+
         $validated['user_id'] = Auth::id();
-// dd($validated);
+        // dd($validated);
         $entretien = Entretien::create($validated);
 
         // notifier tous les admins
@@ -153,24 +135,6 @@ class EntretienController extends Controller
             'entretienValidated' => $entretienValidated,
         ]);
     }
-    // validation des entretiens
-    // public function validate(Request $request, Entretien $entretien)
-    // {
-    //     // $id = $entretien->id;
-    //     $data = $request->validate([
-    //         'statut' => 'required|in:Validé,Refusé',
-    //         'type' => 'required|in:Préventif,Correctif,Légal',
-    //         'fournisseur_id' => 'required|exists:fournisseurs,id',
-    //         'prochaine_visite' => 'required|date',
-    //     ]);
-
-
-    //     // dd($data);
-    //     $entretien->update($data);
-
-    //     return redirect()->route('entretiens.show', $entretien->id)
-    //         ->with('success', 'Entretien mis à jour avec succès.');
-    // }
 
     public function validate(Request $request, Entretien $entretien)
     {
@@ -220,9 +184,8 @@ class EntretienController extends Controller
         $EntretienValidated = EntretienValidated::create($dataValide);
 
         // notifier le demandeur
-        $utilisateurs = User::where('role', 'utilisateur')->get();
-        foreach ($utilisateurs as $utilisateur) {
-            $utilisateur->notify(new EntretienDemandeNotification($entretien));
+        if ($entretien->vehicule && $entretien->vehicule->user) {
+            $entretien->vehicule->user->notify(new EntretienDemandeNotification($entretien));
         }
 
         // notifier le mécanicien
@@ -249,24 +212,6 @@ class EntretienController extends Controller
     public function update(Request $request, Entretien $entretien)
     {
         $role = Auth::user()->role;
-        // $role === 'admin' ? $validated = $request->validate([
-        //     'vehicule_id' => 'required|exists:vehicules,id',
-        //     'fournisseur_id' => 'nullable|exists:fournisseurs,id',
-        //     'type' => 'required|string|max:255',
-        //     'dernier_visite' => 'nullable|date',
-        //     'cout' => 'nullable|integer',
-        //     'piece_remplacee' => 'nullable|string',
-        //     'probleme' => 'nullable|string',
-        //     'recommandation' => 'nullable|string',
-        //     'prochaine_visite' => 'nullable|date',
-        //     'description' => 'nullable|string',
-        //     'derniere_vidange' => 'nullable|date',
-        // ]) : $validated = $request->validate([
-        //     'vehicule_id' => 'required|exists:vehicules,id',
-        //     'probleme' => 'nullable|string',
-        //     'description' => 'nullable|string',
-        //     'prochaine_visite' => 'nullable|date',
-        // ]);
         $validated = $request->validate([
             'vehicule_id' => 'required|exists:vehicules,id',
             'probleme' => 'nullable|string',

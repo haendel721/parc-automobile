@@ -177,9 +177,9 @@ export default function CreateEntretien() {
                                     </div>
 
                                     {/* Additional Fields - Responsive Grid */}
-                                    <div className="grid grid-cols-1 gap-6 space-y-3 md:grid-cols-2 lg:col-span-2">
+                                    {/* <div className="grid grid-cols-1 gap-6 space-y-3 md:grid-cols-2 lg:col-span-2"> */}
                                         {/* Cost */}
-                                        <div className="space-y-3">
+                                        {/* <div className="space-y-3">
                                             <Label htmlFor="cout" className="text-sm font-medium text-gray-300">
                                                 Coût (€)
                                             </Label>
@@ -191,10 +191,10 @@ export default function CreateEntretien() {
                                                 placeholder="0.00"
                                                 className="w-full rounded-lg border border-gray-600 bg-gray-700/50 px-4 py-3 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                             />
-                                        </div>
+                                        </div> */}
 
                                         {/* Type */}
-                                        <div className="space-y-3">
+                                        {/* <div className="space-y-3">
                                             <Label htmlFor="type" className="text-sm font-medium text-gray-300">
                                                 Type d'entretien
                                             </Label>
@@ -220,8 +220,8 @@ export default function CreateEntretien() {
                                                     Contrôle
                                                 </option>
                                             </select>
-                                        </div>
-                                    </div>
+                                        </div> */}
+                                    {/* </div> */}
                                 </div>
 
                                 {/* Action Buttons */}

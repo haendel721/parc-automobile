@@ -37,7 +37,7 @@ class InterventionController extends Controller
             'main_oeuvre' => 'required|numeric|min:0',
             'entretien_id' => 'required|exists:entretiens,id',
             'vehicule_id' => 'required|exists:vehicules,id',
-            'kilometrage' => 'required|integer|min:0',
+            // 'kilometrage' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'duree_immobilisation' => 'nullable|integer|min:0',
 

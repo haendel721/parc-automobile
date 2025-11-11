@@ -62,12 +62,14 @@ export default function Create() {
         return value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     };
 
-    const handleCoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\s/g, '');
-        if (/^\d*$/.test(value)) {
-            setData('cout', formatCurrency(value));
-        }
-    };
+   const handleCoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Supprime tout sauf les chiffres
+    const value = e.target.value.replace(/\D/g, '');
+    
+    // Met à jour la valeur brute (number) dans ton state
+    setData('cout', value);
+};
+
 
     return (
         <AppLayout

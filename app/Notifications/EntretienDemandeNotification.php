@@ -43,13 +43,13 @@ class EntretienDemandeNotification extends Notification
 
         if ($userRole === 'admin') {
             // Message pour l'admin : nouvelle demande de l'utilisateur
-            $message = "Nouvelle demande d'entretien ";
+            $message = "Nouvelle demande d'entretien " . ', le ' . $entretien->prochaine_visite;
         } elseif ($userRole === 'mecanicien') {
             // Message pour le mécanicien : demande validée
-            $message = "Entretien prévu pour : " . optional($entretien->user)->name;
+            $message = "Entretien prévu pour : " . optional($entretien->user)->name . ', le ' . $entretien->prochaine_visite;
         } else {
             // Message pour l'utilisateur : entretien prévu
-            $message = "Entretien prévu pour votre véhicule : " . optional($entretien->vehicule)->immatriculation;
+            $message = "Entretien prévu pour votre véhicule : " . optional($entretien->vehicule)->immatriculation . ', le ' . $entretien->prochaine_visite;
         }
 
         return [
@@ -58,6 +58,7 @@ class EntretienDemandeNotification extends Notification
             'type'         => $entretien->type,
             'user'         => optional($entretien->user)->name,
             'message'      => $message,
+            'date_entretien' => $entretien->prochaine_visite,
             'url'          => route('entretiens.show', $entretien->id),
         ];
     }

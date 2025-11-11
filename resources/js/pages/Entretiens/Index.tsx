@@ -223,7 +223,7 @@ export default function Index() {
                     <CardHeader className="border-b border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900">
                         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
                             <div>
-                                <CardTitle className="text-xl text-white">Liste des Entretiens</CardTitle>
+                                <CardTitle className="text-xl text-white">Historique des Entretiens</CardTitle>
                                 <CardDescription className="text-gray-400">{filteredEntretiens.length} entretien(s) trouvé(s)</CardDescription>
                             </div>
 

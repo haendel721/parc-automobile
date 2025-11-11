@@ -32,13 +32,13 @@ class UpdateAssuranceStatus extends Command
     {
         $today = Carbon::today()->toDateString();
 
-        // 1️⃣ Récupérer toutes les assurances expirées (avant mise à jour)
+        // Récupérer toutes les assurances expirées (avant mise à jour)
 
         $assurancesExpirees = Assurance::where('dateFin', '<', $today)
             ->where('statut', '!=', 'expire')
             ->get();
 
-        // 2️⃣ Mettre à jour le statut de toutes les assurances
+        // Mettre à jour le statut de toutes les assurances
         DB::table('assurances')
             ->where('dateFin', '<', $today)
             ->update(['statut' => 'expire']);
@@ -47,7 +47,7 @@ class UpdateAssuranceStatus extends Command
             ->where('dateFin', '>', $today)
             ->update(['statut' => 'assure']);
 
-        // 3️⃣ Envoyer une notification à chaque utilisateur concerné
+        //  Envoyer une notification à chaque utilisateur concerné
         foreach ($assurancesExpirees as $assurance) {
             // Récupère l'utilisateur concerné
             $user = \App\Models\User::find($assurance->user_id);
@@ -58,7 +58,7 @@ class UpdateAssuranceStatus extends Command
             }
         }
 
-        // ✅ Utiliser des messages seulement si on a une console
+        // Utiliser des messages seulement si on a une console
         if ($this->output) {
             $this->info('Statuts des assurances mis à jour avec succès.');
         }

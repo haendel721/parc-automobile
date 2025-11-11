@@ -22,6 +22,7 @@ interface Vehicule {
     dateAcquisition: string;
     photo: string;
     kilometrique: number;
+    capacite_reservoir:number;
 }
 
 interface Props {
@@ -45,6 +46,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
         anneeFabrication: Vehicule.anneeFabrication ?? '',
         dateAcquisition: Vehicule.dateAcquisition ?? '',
         kilometrique: Vehicule.kilometrique ?? '',
+        capacite_reservoir:Vehicule.capacite_reservoir ?? '',
     });
 
     const handleUpdate = (e: React.FormEvent) => {
@@ -65,7 +67,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
         >
             <Head title="Mise à jour d'un véhicule" />
 
-            <div className="max-w-10xl container  mx-auto px-4 py-6">
+            <div className="max-w-10xl container mx-auto px-4 py-6">
                 {/* En-tête */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="mb-6">
@@ -89,8 +91,8 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Formulaire principal */}
-                    <div className="lg:col-span-2 ">
-                        <Card className="border-0 shadow-lg bg-gray-900/90">
+                    <div className="lg:col-span-2">
+                        <Card className="border-0 bg-gray-900/90 shadow-lg">
                             <CardHeader className="border-b pb-4">
                                 <CardTitle className="text-xl font-semibold text-gray-200">Informations générales</CardTitle>
                                 <CardDescription className="text-gray-300">Modifiez les détails principaux du véhicule</CardDescription>
@@ -118,7 +120,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         {/* Immatriculation */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="immatriculation" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="immatriculation" className="text-lg font-medium text-gray-100">
                                                 Immatriculation
                                             </Label>
                                             <Input
@@ -133,7 +135,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Marque */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="marque" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="marque" className="text-lg font-medium text-gray-100">
                                                 Marque
                                             </Label>
                                             <Select value={data.marque_id.toString()} onValueChange={(value) => setData('marque_id', Number(value))}>
@@ -152,7 +154,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Modèle */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="model" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="model" className="text-lg font-medium text-gray-100">
                                                 Modèle *
                                             </Label>
                                             <Input
@@ -167,7 +169,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Type de véhicule */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="typeVehicule" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="typeVehicule" className="text-lg font-medium text-gray-100">
                                                 Type de véhicule *
                                             </Label>
                                             <Select
@@ -189,7 +191,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Couleur */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="couleur" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="couleur" className="text-lg font-medium text-gray-100">
                                                 Couleur
                                             </Label>
                                             <Input
@@ -204,7 +206,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Carburant */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="carburant" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="carburant" className="text-lg font-medium text-gray-100">
                                                 Carburant *
                                             </Label>
                                             <Select
@@ -226,7 +228,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Numéro de série */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="numSerie" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="numSerie" className="text-lg font-medium text-gray-100">
                                                 Numéro de série
                                             </Label>
                                             <Input
@@ -238,10 +240,40 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 placeholder="Numéro de série"
                                             />
                                         </div>
-
+                                        {/* Reservoir */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="kilometrique" className="text-lg text-gray-100 font-medium">
+                                                Reservoir
+                                            </Label>
+                                            <Input
+                                                id="capacite_reservoir"
+                                                type="number"
+                                                min="0"
+                                                value={data.capacite_reservoir}
+                                                onChange={(e) => setData('capacite_reservoir', Number(e.target.value))}
+                                                className="w-full text-gray-100"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        {/* Kilométrage */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="kilometrique" className="text-lg font-medium text-gray-100">
+                                                Kilométrage
+                                            </Label>
+                                            <Input
+                                                id="kilometrique"
+                                                type="number"
+                                                min="0"
+                                                disabled={true}
+                                                value={data.kilometrique}
+                                                onChange={(e) => setData('kilometrique', Number(e.target.value))}
+                                                className="w-full text-gray-100"
+                                                placeholder="0"
+                                            />
+                                        </div>
                                         {/* Année de fabrication */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="anneeFabrication" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="anneeFabrication" className="text-lg font-medium text-gray-100">
                                                 Année de fabrication
                                             </Label>
                                             <Input
@@ -258,7 +290,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
 
                                         {/* Date d'acquisition */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="dateAcquisition" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="dateAcquisition" className="text-lg font-medium text-gray-100">
                                                 Date d'acquisition
                                             </Label>
                                             <Input
@@ -269,29 +301,11 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 className="w-full text-gray-100"
                                             />
                                         </div>
-
-                                        {/* Kilométrage */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="kilometrique" className="text-lg text-gray-100 font-medium">
-                                                Kilométrage
-                                            </Label>
-                                            <Input
-                                                id="kilometrique"
-                                                type="number"
-                                                min="0"
-                                                value={data.kilometrique}
-                                                onChange={(e) => setData('kilometrique', Number(e.target.value))}
-                                                className="w-full text-gray-100"
-                                                placeholder="0"
-                                            />
-                                        </div>
                                     </div>
 
                                     {/* Photo */}
                                     <div className="space-y-4 border-t pt-4">
                                         <div className="space-y-2">
-                                            <Label className="text-lg text-gray-100 font-medium">Photo du véhicule</Label>
-
                                             {/* Photo existante */}
                                             {Vehicule.photo && (
                                                 <div className="mb-4">
@@ -312,7 +326,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                         <Upload className="mb-3 h-8 w-8 text-gray-400" />
                                                         <p className="mb-2 text-sm text-gray-500">
-                                                            <span className="font-semibold">Cliquez pour uploader</span> ou glissez-déposez
+                                                            <span className="font-semibold">Cliquez pour uploader</span>
                                                         </p>
                                                         <p className="text-xs text-gray-500">PNG, JPG, JPEG (MAX. 10MB)</p>
                                                     </div>
@@ -358,62 +372,6 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* Sidebar - Informations complémentaires */}
-                    {/* <div className="space-y-6">
-                        <Card className="shadow-lg border-0 bg-blue-50 border-blue-100">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-lg font-semibold text-blue-900">
-                                    Résumé du véhicule
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-blue-700">Immatriculation</span>
-                                    <span className="font-medium text-blue-900">{Vehicule.immatriculation}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-blue-700">Modèle</span>
-                                    <span className="font-medium text-blue-900">{Vehicule.model}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-blue-700">Kilométrage actuel</span>
-                                    <span className="font-medium text-blue-900">
-                                        {Vehicule.kilometrique.toLocaleString()} km
-                                    </span>
-                                </div>
-                            </CardContent>
-                        </Card> */}
-
-                    {/* Carte conseils */}
-                    {/* <Card className="shadow-lg border-0">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-lg font-semibold">
-                                    Conseils
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <div className="flex items-start gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-sm text-gray-600">
-                                        Vérifiez que toutes les informations sont correctes avant de sauvegarder.
-                                    </p>
-                                </div>
-                                <div className="flex items-start gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-sm text-gray-600">
-                                        Les champs marqués d'un * sont obligatoires.
-                                    </p>
-                                </div>
-                                <div className="flex items-start gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-sm text-gray-600">
-                                        La photo doit être nette et montrer clairement le véhicule.
-                                    </p>
-                                </div>
-                            </CardContent>
-                        </Card> */}
-                    {/* </div> */}
                 </div>
             </div>
         </AppLayout>

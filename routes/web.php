@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InterventionController;
+use App\Http\Controllers\KilometrageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehiculeController;
@@ -28,8 +29,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // });
 
 Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->group(function () {
-    // Route::get('/dashboard', fn() => Inertia::render('dashboard'))
-    //     ->name('dashboard');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
@@ -133,7 +132,38 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('pleinCarburant.store');
     Route::delete('/pleinCarburants/{pleinCarburant}', [PleinCarburantController::class, 'destroy'])
         ->name('pleinCarburant.destroy');
-    
+
+    // kilométrage
+    Route::post('/kilometrages', [KilometrageController::class, 'store'])
+        ->name('kilometrages.store');
+    Route::get('/kilometrages/somme/{vehiculeId}', [KilometrageController::class, 'sommeKilometrage'])
+        ->name('kilometrages.somme');
+    Route::get('/test-kilometrage/{vehiculeId}', function ($vehiculeId) {
+        $vehicule = \App\Models\Vehicule::find($vehiculeId);
+
+        if (!$vehicule) {
+            return "Véhicule non trouvé";
+        }
+
+        \Log::info("=== DÉBUT TEST KILOMÉTRAGE ===");
+
+        // Test 1: Calcul normal
+        $resultat = $vehicule->recalculerKilometrage();
+
+        // Test 2: Vérification spécifique du seuil
+        $seuilAtteint = $vehicule->testerSeuil5000km();
+
+        \Log::info("=== FIN TEST KILOMÉTRAGE ===");
+
+        return response()->json([
+            'vehicule' => $vehicule->immatriculation,
+            'kilometrique_actuel' => $vehicule->kilometrique,
+            'kilometriquekm' => $vehicule->historiqueKm,
+            'historique_total' => $vehicule->historiqueKm,
+            'seuil_5000_atteint' => $seuilAtteint,
+            'notification_envoyee' => !$vehicule->notify5000km
+        ]);
+    });
 });
 Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);
 Route::middleware(['auth', 'verified', 'role:admin|mecanicien'])->group(function () {
@@ -156,7 +186,6 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     // Notifications
 
-
     Route::put('/admin/notifications/{id}', [NotificationController::class, 'validate'])
         ->name('admin.notifications.validate');
 
@@ -167,29 +196,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::post('/entretiens/{entretien}/validate', [EntretienController::class, 'validate'])
         ->name('entretiens.validate');
 
-    // Routes pour les produits
-    Route::get('/products', [ProductController::class, 'index'])
-        ->name('products.index');
-    Route::get('/products/create', [ProductController::class, 'create'])
-        ->name('products.create');
-    Route::post('/products', [ProductController::class, 'store'])
-        ->name('products.store');
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])
-        ->name('products.edit');
-    Route::put('/products/{product}', [ProductController::class, 'update'])
-        ->name('products.update');
-    Route::delete('/products/{product}', [ProductController::class, 'destroy'])
-        ->name('products.destroy');
-
-
-
     // Routes pour les utilisateurs
+
     Route::get('/utilisateurs', [UserController::class, 'index'])
         ->name('utilisateurs.index');
     Route::get('/utilisateurs/create', [UserController::class, 'create'])
         ->name('utilisateurs.create');
-    // Route::post('/utilisateurs', [UserController::class, 'store'])
-    //     ->name('utilisateurs.store');
     Route::get('/utilisateurs/{user}/edit', [UserController::class, 'edit'])
         ->name('utilisateurs.edit');
     Route::put('/utilisateurs/{user}', [UserController::class, 'update'])

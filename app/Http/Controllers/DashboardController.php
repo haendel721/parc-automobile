@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\RecommenderEntretien5000km;
 use App\Console\Commands\UpdateAssuranceStatus;
+use App\Console\Commands\NotifyAssurancePreExpiration;
 use App\Models\TypeVehicule;
 use Illuminate\Http\Request;
 use App\Models\Entretien;
@@ -18,11 +20,13 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index(UpdateAssuranceStatus $command, EntretienController $dernierVisite)
+    public function index(UpdateAssuranceStatus $command , NotifyAssurancePreExpiration $notifyAssurancePreExpiration ,  EntretienController $dernierVisite)
     {
-        // ✅ Exécute la logique de la commande à chaque chargement de la page
+        //Exécute la logique de la commande à chaque chargement de la page
         $command->handle();
-        
+        $notifyAssurancePreExpiration->handle();
+        // $notifyEntretien5000km->handle();
+
         $dernierVisite->checkDate();
         $userConnecter = Auth::user();
         $assurances = $userConnecter->role === 'admin'
@@ -32,7 +36,6 @@ class DashboardController extends Controller
         $assurances->transform(function ($assurance) {
             $dateFin = Carbon::parse($assurance->dateFin)->startOfDay();
             $today = Carbon::today();
-            // dd($dateFin , $today);
             //calcul de la duré du jour restant
             $assurance->jour_restant =
                 $today->greaterThan($dateFin)

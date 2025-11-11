@@ -20,10 +20,12 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 interface PleinCarburantData {
     vehicule_id: number;
-    date: string; // attendu ISO (YYYY-MM-DD) ou YYYY-MM
-    total_mensuel: number;
+    annee: number;
+    semaine: number;
+    total_hebdomadaire: number;
     immatriculation: string;
     model: string;
+    periode: string; // ex: "Semaine 42 - 2025"
 }
 
 interface VehiculeGrouped {
@@ -32,20 +34,6 @@ interface VehiculeGrouped {
     model: string;
     data: PleinCarburantData[];
 }
-
-/** Normalise une date en clé mensuelle "YYYY-MM" */
-const toMonthKey = (dateStr: string) => {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr; // fallback si format inattendu
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-};
-
-/** Format d'affichage court "mmm YYYY" */
-const formatMonthLabel = (monthKey: string) => {
-    const [y, m] = monthKey.split('-').map(Number);
-    const dt = new Date(y, m - 1, 1);
-    return dt.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
-};
 
 function GrapheParVehicule() {
     const [chartData, setChartData] = useState<ChartData<'line', number[], string>>({ labels: [], datasets: [] });
@@ -58,6 +46,7 @@ function GrapheParVehicule() {
             setLoading(true);
             setError(null);
 
+            // 🔹 Appel API backend (Laravel)
             const response = await axios.get<PleinCarburantData[]>('/graphe-variation-plein-carburant', { signal });
             const data = response.data ?? [];
 
@@ -66,11 +55,21 @@ function GrapheParVehicule() {
                 return;
             }
 
-            // Normaliser les dates en clé annuelle-mensuelle et récupérer labels triés
-            const allMonthKeys = Array.from(new Set(data.map((d) => toMonthKey(d.date))));
-            allMonthKeys.sort((a, b) => new Date(a + '-01').getTime() - new Date(b + '-01').getTime());
+            // 🔹 Extraire les semaines uniques (labels)
+            const allWeeks = Array.from(new Set(data.map((d) => d.periode)));
 
-            // Grouper par véhicule
+            // 🔹 Tri chronologique (année + semaine)
+            allWeeks.sort((a, b) => {
+                const getWeek = (p: string) => Number((p.match(/Semaine\s+(\d+)/) ?? [])[1]) || 0;
+                const getYear = (p: string) => Number((p.match(/(\d{4})$/) ?? [])[1]) || 0;
+                const aYear = getYear(a);
+                const bYear = getYear(b);
+                const aWeek = getWeek(a);
+                const bWeek = getWeek(b);
+                return aYear !== bYear ? aYear - bYear : aWeek - bWeek;
+            });
+
+            // 🔹 Grouper les données par véhicule
             const vehiculesMap = new Map<number, VehiculeGrouped>();
             data.forEach((item) => {
                 const key = item.vehicule_id;
@@ -84,9 +83,10 @@ function GrapheParVehicule() {
                 }
                 vehiculesMap.get(key)!.data.push(item);
             });
-            console.log('vehiculesMap ', vehiculesMap);
+
+            // 🔹 Palette de couleurs (6 couleurs max, bouclées)
             const colorPalette = [
-                { border: 'rgb(79, 70, 229)', background: 'rgba(229, 70, 70, 0.1)' },
+                { border: 'rgb(79, 70, 229)', background: 'rgba(79, 70, 229, 0.1)' },
                 { border: 'rgb(16, 185, 129)', background: 'rgba(16, 185, 129, 0.1)' },
                 { border: 'rgb(245, 158, 11)', background: 'rgba(245, 158, 11, 0.1)' },
                 { border: 'rgb(239, 68, 68)', background: 'rgba(239, 68, 68, 0.1)' },
@@ -96,10 +96,10 @@ function GrapheParVehicule() {
 
             const vehicules = Array.from(vehiculesMap.values());
 
-            // Construire datasets de façon performante (indexation par date)
+            // 🔹 Construire les datasets pour le graphique
             const datasets: ChartDataset<'line', number[]>[] = vehicules.map((veh, idx) => {
-                const indexByMonth = new Map(veh.data.map((d) => [toMonthKey(d.date), d.total_mensuel]));
-                const dataPoints = allMonthKeys.map((k) => indexByMonth.get(k) ?? 0);
+                const indexByWeek = new Map(veh.data.map((d) => [d.periode, d.total_hebdomadaire]));
+                const dataPoints = allWeeks.map((k) => indexByWeek.get(k) ?? 0);
                 const color = colorPalette[idx % colorPalette.length];
 
                 return {
@@ -121,17 +121,14 @@ function GrapheParVehicule() {
                 } as ChartDataset<'line', number[]>;
             });
 
-            // Mettre à jour le state
+            // 🔹 Mise à jour du graphique
             setChartData({
-                labels: allMonthKeys,
+                labels: allWeeks,
                 datasets,
             });
             setLastUpdated(new Date());
         } catch (err: any) {
-            if (axios.isCancel(err)) {
-                // requête annulée — ne pas modifier l'état
-                return;
-            }
+            if (axios.isCancel(err)) return;
             console.error('Erreur lors du chargement des données:', err);
             setError('Impossible de charger les données des carburants');
         } finally {
@@ -139,17 +136,18 @@ function GrapheParVehicule() {
         }
     }, []);
 
-    // useEffect avec AbortController pour annuler si le composant se démonte
+    // 🔁 Chargement initial
     useEffect(() => {
         const controller = new AbortController();
         fetchData(controller.signal);
-
-        return () => {
-            controller.abort();
-        };
+        return () => controller.abort();
     }, [fetchData]);
 
-    // Options (extrait)
+
+
+
+
+    // 🔧 Options du graphique
     const chartOptions = useMemo(
         () => ({
             responsive: true,
@@ -162,47 +160,36 @@ function GrapheParVehicule() {
                         pointStyle: 'circle' as const,
                         padding: 20,
                         font: { family: 'Arial, sans-serif', size: 14, weight: 500 },
-                        color: '#ffffffff',
+                        color: '#ffffff',
                     },
                 },
                 tooltip: {
                     enabled: true,
                     callbacks: {
-                        title: (tooltipItems: any) => {
-                            const monthKey = tooltipItems[0].label;
-                            return formatMonthLabel(monthKey);
-                        },
+                        title: (tooltipItems: any) => tooltipItems[0].label,
+                        label: (context: any) =>
+                            `${context.dataset.label}: ${context.formattedValue} Ar`,
                     },
                 },
             },
             scales: {
                 x: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'semaines',
-                        color: '#333',
-                        font: {
-                            size: 14,
-                        },
-                    },
                     ticks: {
-                        callback: function (value: any, index: number) {
-                            const label = (this as any).getLabelForValue(index);
-                            return formatMonthLabel(label);
-                        },
+                        color: '#ddd',
+                        maxRotation: 0,
+                        minRotation: 0,
                     },
                 },
                 y: {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Coût (Ar)',
-                        color: '#b0b0b0ff',
-                        font: {
-                            size: 14,
-                        },
+                        text: 'Coût (Ariary)',
+                        color: '#ccc',
+                        font: { size: 14 },
                     },
+                    ticks: { color: '#ddd' },
                 },
             },
             interaction: { mode: 'index' as const, intersect: false },
@@ -210,13 +197,13 @@ function GrapheParVehicule() {
         [],
     );
 
-    // UI identique (chargement / erreur / no data / chart)
+    // 🧭 Gestion des états (chargement / erreur / vide / affichage)
     if (loading) {
         return (
-            <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900/100 shadow-lg ">
+            <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900 shadow-lg">
                 <div className="text-center">
                     <RefreshCw className="mx-auto h-8 w-8 animate-spin text-blue-500" />
-                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">Chargement des données carburant...</p>
+                    <p className="mt-3 text-sm text-gray-400">Chargement des données carburant...</p>
                 </div>
             </div>
         );
@@ -224,11 +211,14 @@ function GrapheParVehicule() {
 
     if (error) {
         return (
-            <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900/100 shadow-lg ">
+            <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900 shadow-lg">
                 <div className="text-center">
                     <AlertCircle className="mx-auto h-8 w-8 text-red-500" />
-                    <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>
-                    <button onClick={() => fetchData()} className="mt-4 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white">
+                    <p className="mt-3 text-sm text-red-400">{error}</p>
+                    <button
+                        onClick={() => fetchData()}
+                        className="mt-4 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white"
+                    >
                         Réessayer
                     </button>
                 </div>
@@ -238,11 +228,14 @@ function GrapheParVehicule() {
 
     if (chartData.datasets.length === 0) {
         return (
-            <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900/100 shadow-lg ">
+            <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900 shadow-lg">
                 <div className="text-center">
                     <TrendingUp className="mx-auto h-8 w-8 text-gray-400" />
-                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">Aucune donnée carburant disponible</p>
-                    <button onClick={() => fetchData()} className="mt-4 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white">
+                    <p className="mt-3 text-sm text-gray-400">Aucune donnée carburant disponible</p>
+                    <button
+                        onClick={() => fetchData()}
+                        className="mt-4 rounded-lg bg-blue-500 px-4 py-2 text-sm text-white"
+                    >
                         Actualiser
                     </button>
                 </div>
@@ -250,14 +243,19 @@ function GrapheParVehicule() {
         );
     }
 
+    // ✅ Affichage du graphique
     return (
-        <div className="m mb-8 w-full bg-gray-900/100">
+        <div className="mb-8 w-full bg-gray-900/100">
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div className="m-4">
-                    <h3 className="text-lg font-semibold text-white">Évolution des coûts du carburants</h3>
-                    <p className="text-sm text-gray-200 ">
-                        Coûts mensuels par véhicule
-                        {lastUpdated && <span className="ml-2 text-xs text-gray-300">(Mise à jour: {lastUpdated.toLocaleTimeString('fr-FR')})</span>}
+                    <h3 className="text-lg font-semibold text-white">Évolution hebdomadaire du coût du carburant</h3>
+                    <p className="text-sm text-gray-300">
+                        Coûts hebdomadaires par véhicule
+                        {lastUpdated && (
+                            <span className="ml-2 text-xs text-gray-400">
+                                (Mise à jour : {lastUpdated.toLocaleTimeString('fr-FR')})
+                            </span>
+                        )}
                     </p>
                 </div>
                 <button
@@ -270,19 +268,19 @@ function GrapheParVehicule() {
                 </button>
             </div>
 
-            <div className="bg-gray-900/80 p-6 shadow-lg ">
+            <div className="bg-gray-900/80 p-6 shadow-lg">
                 <div className="h-80 w-full">
                     <Line data={chartData} options={chartOptions} />
                 </div>
 
-                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-                    <div className="flex items-center gap-2 text-sm text-text-gray-300">
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-gray-700 pt-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
                         <div className="flex h-3 w-3 items-center justify-center rounded-full bg-blue-500">
                             <div className="h-1.5 w-1.5 rounded-full bg-white"></div>
                         </div>
                         <span>{chartData.datasets.length} véhicule(s) suivi(s)</span>
                     </div>
-                    <div className="text-xs text-gray-300">Données en Ariary (Ar)</div>
+                    <div className="text-xs text-gray-400">Données en Ariary (Ar)</div>
                 </div>
             </div>
         </div>

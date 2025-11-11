@@ -180,7 +180,7 @@ export default function Index() {
                                             type="datetime-local" 
                                             value={data.date_plein} 
                                             disabled 
-                                            className="w-full border-gray-600 bg-gray-600 text-gray-400 cursor-not-allowed" 
+                                            className="w-full border-gray-600 bg-gray-600 text-white cursor-not-allowed" 
                                         />
                                     </div>
 
@@ -194,7 +194,7 @@ export default function Index() {
                                             type="number" 
                                             value={data.prix_unitaire} 
                                             disabled 
-                                            className="w-full border-gray-600 bg-gray-600 text-gray-400 cursor-not-allowed" 
+                                            className="w-full border-gray-600 bg-gray-600 text-white cursor-not-allowed" 
                                         />
                                     </div>
 
@@ -209,7 +209,7 @@ export default function Index() {
                                                 type="number" 
                                                 value={data.montant_total} 
                                                 disabled 
-                                                className="w-full border-gray-600 bg-gray-600 text-gray-400 cursor-not-allowed pr-12" 
+                                                className="w-full border-gray-600 bg-gray-600 text-white cursor-not-allowed pr-12" 
                                             />
                                             <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                                                 <span className="text-gray-500 text-sm">Ar</span>

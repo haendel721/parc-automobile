@@ -126,12 +126,13 @@ export default function Edit({ user }: Props) {
                                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                                 <div className="space-y-3">
                                                     <Label htmlFor="name" className="text-sm font-medium text-gray-300">
-                                                        Nom *
+                                                        Nom
                                                     </Label>
                                                     <Input
                                                         id="name"
                                                         type="text"
                                                         value={data.name}
+                                                        disabled={true}
                                                         onChange={(e) => setData('name', e.target.value)}
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-300"
                                                         placeholder="Entrez le nom"
@@ -145,6 +146,7 @@ export default function Edit({ user }: Props) {
                                                         id="prenom"
                                                         type="text"
                                                         value={data.prenom}
+                                                        disabled={true}
                                                         onChange={(e) => setData('prenom', e.target.value)}
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-300"
                                                         placeholder="Entrez le prénom"
@@ -167,6 +169,7 @@ export default function Edit({ user }: Props) {
                                                     <Input
                                                         id="email"
                                                         type="email"
+                                                        disabled={true}
                                                         value={data.email}
                                                         onChange={(e) => setData('email', e.target.value)}
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-green-500 focus:ring-green-500/20 transition-all duration-300"
@@ -181,6 +184,7 @@ export default function Edit({ user }: Props) {
                                                         id="phone"
                                                         type="tel"
                                                         value={data.phone}
+                                                        disabled={true}
                                                         onChange={(e) => setData('phone', e.target.value)}
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-green-500 focus:ring-green-500/20 transition-all duration-300"
                                                         placeholder="+33 1 23 45 67 89"
@@ -205,6 +209,7 @@ export default function Edit({ user }: Props) {
                                                     <Input
                                                         id="fonction"
                                                         type="text"
+                                                        disabled={true}
                                                         value={data.fonction}
                                                         onChange={(e) => setData('fonction', e.target.value)}
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-purple-500/20 transition-all duration-300"
@@ -219,6 +224,7 @@ export default function Edit({ user }: Props) {
                                                         id="statut"
                                                         type="text"
                                                         value={data.statut}
+                                                        disabled={true}
                                                         onChange={(e) => setData('statut', e.target.value)}
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-purple-500/20 transition-all duration-300"
                                                         placeholder="Statut professionnel"
@@ -237,7 +243,7 @@ export default function Edit({ user }: Props) {
                                                 <Label htmlFor="role-select" className="text-sm font-medium text-gray-300">
                                                     Rôle *
                                                 </Label>
-                                                <Select value={data.role} onValueChange={(value) => setData('role', value)}>
+                                                <Select value={data.role}  onValueChange={(value) => setData('role', value)}>
                                                     <SelectTrigger 
                                                         id="role-select" 
                                                         className="w-full bg-gray-700/50 border-gray-600 text-white focus:ring-amber-500/20 focus:border-amber-500 transition-all duration-300"

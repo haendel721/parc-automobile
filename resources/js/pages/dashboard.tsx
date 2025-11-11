@@ -578,7 +578,7 @@ export default function Dashboard() {
 
                     {/* Cartes de statistiques utilisateur */}
                     <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <div className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white shadow-lg">
+                        <div className="rounded-xl bg-gradient-to-br from-blue-700/90 to-blue-800/50 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-white">Mes véhicules</p>
@@ -588,7 +588,7 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="rounded-xl bg-gradient-to-r from-green-500 to-green-600 p-6 text-white">
+                        <div className="rounded-xl bg-gradient-to-r from-green-700/90 to-green-800/50 p-6 text-white">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-white dark:text-gray-400">Assurances actives</p>
@@ -598,7 +598,7 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 p-6 text-white shadow-lg">
+                        <div className="rounded-xl bg-gradient-to-r from-yellow-700/90 to-yellow-800/50 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-white dark:text-gray-400">Entretiens en cours</p>
@@ -613,7 +613,7 @@ export default function Dashboard() {
                     {/* Graphiques */}
                     <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
                         <div className="rounded-2xl bg-gray-900/100 p-6 shadow-lg lg:col-span-2 dark:bg-gray-800/90 backdrop-blur-md text-white">
-                            <h3 className="mb-6 text-lg font-semibold text-white ">Dépenses mensuelles des véhicules</h3>
+                            <h3 className="mb-6 text-lg font-semibold text-white ">Dépenses mensuelles des véhicules en entretiens</h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>

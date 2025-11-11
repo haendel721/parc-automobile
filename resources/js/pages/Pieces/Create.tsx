@@ -301,7 +301,7 @@ export default function Create() {
                                                 />
                                             </div>
 
-                                            <div className="space-y-2">
+                                            {/* <div className="space-y-2">
                                                 <Label className="text-sm font-medium text-gray-300">Kilométrage</Label>
                                                 <Input
                                                     value={data.kilometrage}
@@ -309,7 +309,7 @@ export default function Create() {
                                                     className="w-full border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500"
                                                     placeholder="0"
                                                 />
-                                            </div>
+                                            </div> */}
 
                                             <div className="space-y-2">
                                                 <Label className="text-sm font-medium text-gray-300">Durée d'immobilisation (heures)</Label>

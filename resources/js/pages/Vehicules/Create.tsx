@@ -37,6 +37,7 @@ export default function Index() {
         anneeFabrication: '',
         dateAcquisition: '',
         kilometrage: '',
+        capacite_reservoir: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -146,7 +147,7 @@ export default function Index() {
                                         {/* Modèle */}
                                         <div className="space-y-2">
                                             <Label htmlFor="model" className="text-lg font-medium text-gray-100">
-                                                Modèle *
+                                                Modèle  
                                             </Label>
                                             <Input
                                                 id="model"
@@ -161,7 +162,7 @@ export default function Index() {
                                         {/* Type de véhicule */}
                                         <div className="space-y-2">
                                             <Label htmlFor="typeVehicule_id" className="text-lg font-medium text-gray-100">
-                                                Type de véhicule *
+                                                Type de véhicule  
                                             </Label>
                                             <Select value={data.typeVehicule_id} onValueChange={(value) => setData('typeVehicule_id', value)}>
                                                 <SelectTrigger id="typeVehicule_id" className="w-full text-gray-100 bg-gray-800 border-gray-600">
@@ -192,7 +193,7 @@ export default function Index() {
                                             />
                                         </div>
 
-                                        {/* Carburant */}
+                                        {/* Carburant   */}
                                         <div className="space-y-2">
                                             <Label htmlFor="carburant_id" className="text-lg font-medium text-gray-100">
                                                 Carburant *
@@ -227,15 +228,15 @@ export default function Index() {
 
                                         {/* Année de fabrication */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="anneeFabrication" className="text-lg font-medium text-gray-100">
-                                                Année de fabrication
+                                            <Label htmlFor="capacite_reservoir" className="text-lg font-medium text-gray-100">
+                                                Capacité du réservoir (en litres)
                                             </Label>
                                             <Input
-                                                id="anneeFabrication"
+                                                id="capacite_reservoir"
                                                 type="number"
-                                                placeholder="2023"
-                                                value={data.anneeFabrication}
-                                                onChange={(e) => setData('anneeFabrication', e.target.value)}
+                                                placeholder="10"
+                                                value={data.capacite_reservoir}
+                                                onChange={(e) => setData('capacite_reservoir', e.target.value)}
                                                 className="w-full text-gray-100 bg-gray-800 border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                                             />
                                         </div>
@@ -265,6 +266,20 @@ export default function Index() {
                                                 type="date"
                                                 value={data.dateAcquisition}
                                                 onChange={(e) => setData('dateAcquisition', e.target.value)}
+                                                className="w-full text-gray-100 bg-gray-800 border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                        {/* Année de fabrication */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="anneeFabrication" className="text-lg font-medium text-gray-100">
+                                                Année de fabrication
+                                            </Label>
+                                            <Input
+                                                id="anneeFabrication"
+                                                type="number"
+                                                placeholder="2023"
+                                                value={data.anneeFabrication}
+                                                onChange={(e) => setData('anneeFabrication', e.target.value)}
                                                 className="w-full text-gray-100 bg-gray-800 border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                                             />
                                         </div>

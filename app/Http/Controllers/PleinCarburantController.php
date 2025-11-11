@@ -68,7 +68,16 @@ class PleinCarburantController extends Controller
         ]);
 
         $validated['user_id'] = auth()->id();
-        // dd($validated);
+
+        // Récupérer le véhicule sélectionné
+        $vehicule = Vehicule::find($validated['vehicule_id']);
+
+        // Vérifier la capacité du réservoir
+        if ($validated['quantite'] > $vehicule->capacite_reservoir) {
+            return back()->withErrors([
+                'quantite' => "La quantité saisie ({$validated['quantite']} L) dépasse la capacité du réservoir ({$vehicule->capacite_reservoir} L).",
+            ])->withInput();
+        }
         pleinCarburant::create($validated);
 
         return redirect()->route('pleinCarburant.index')->with('success', 'Plein carburant ajouté avec succès.');
@@ -77,7 +86,7 @@ class PleinCarburantController extends Controller
     {
         // dd($pleinCarburant);
         $pleinCarburant->delete();
-        
+
         return redirect()->route('pleinCarburant.index')
             ->with('message', 'plein supprimée avec succès.');
     }
@@ -86,13 +95,15 @@ class PleinCarburantController extends Controller
         // 🔐 Récupérer l'utilisateur connecté
         $user = auth()->user();
 
-        // 🔎 Construire la requête avec jointure sur la table "vehicules"
+        // 🔎 Construire la requête avec regroupement par semaine
         $query = DB::table('plein_carburants')
             ->join('vehicules', 'plein_carburants.vehicule_id', '=', 'vehicules.id')
             ->select(
                 'plein_carburants.vehicule_id',
-                DB::raw('DATE_FORMAT(plein_carburants.date_plein, "%Y-%m-%d") as date'),
-                DB::raw('SUM(plein_carburants.montant_total) as total_mensuel'),
+                DB::raw('YEAR(plein_carburants.date_plein) as annee'),
+                DB::raw('WEEK(plein_carburants.date_plein, 1) as semaine'), // semaine ISO (lundi = 1)
+                DB::raw('MONTH(plein_carburants.date_plein) as mois'),
+                DB::raw('SUM(plein_carburants.montant_total) as total_hebdomadaire'),
                 'vehicules.immatriculation',
                 'vehicules.model'
             )
@@ -100,21 +111,50 @@ class PleinCarburantController extends Controller
                 'plein_carburants.vehicule_id',
                 'vehicules.immatriculation',
                 'vehicules.model',
-                'date'
+                'annee',
+                'semaine',
+                'mois'
             )
             ->orderBy('plein_carburants.vehicule_id')
-            ->orderBy('date');
+            ->orderBy('annee')
+            ->orderBy('semaine');
 
         // 🧑‍💼 Si ce n'est pas un admin, filtrer les résultats selon l'utilisateur
         if ($user->role !== 'admin') {
             $query->where('plein_carburants.user_id', $user->id);
         }
 
-        // 🚀 Exécuter la requête et retourner les résultats
+        // 🚀 Exécuter la requête
         $data = $query->get();
 
+        // 📅 Tableau des mois en français
+        $moisNoms = [
+            1 => 'Janvier',
+            2 => 'Février',
+            3 => 'Mars',
+            4 => 'Avril',
+            5 => 'Mai',
+            6 => 'Juin',
+            7 => 'Juillet',
+            8 => 'Août',
+            9 => 'Septembre',
+            10 => 'Octobre',
+            11 => 'Novembre',
+            12 => 'Décembre'
+        ];
+
+        // 🧮 Ajouter le label "Mois - Semaine - Année"
+        $data->transform(function ($item) use ($moisNoms) {
+            $moisNom = $moisNoms[$item->mois] ?? 'Inconnu';
+            $item->periode = "Semaine {$item->semaine} - {$item->annee} ({$moisNom})";
+            return $item;
+        });
+
+        // 📤 Retourner les données formatées
         return response()->json($data);
     }
+
+
 
 
 

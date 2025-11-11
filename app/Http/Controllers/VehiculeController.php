@@ -65,13 +65,14 @@ class VehiculeController extends Controller
             'marque_id' => 'required|exists:marques,id',
             'model' => 'required|string|max:255',
             'typeVehicule_id' => 'required|exists:type_vehicules,id',
-            'couleur' => 'required|string|max:100',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // optionnel
+            'couleur' => 'nullable|string|max:100',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'carburant_id' => 'required|exists:carburants,id',
             'numSerie' => 'nullable|string|max:255',
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
-            'kilometrage' => 'required|integer|min:0',
+            'kilometrage' => 'nullable|integer|min:0',
+            'capacite_reservoir' => 'required|integer|min:0',
         ]);
 
         // Ajouter l'utilisateur connecté automatiquement
@@ -95,17 +96,23 @@ class VehiculeController extends Controller
         $userConnecter = Auth::user()->role;
         // Charger la relation assurance pour ce véhicule uniquement
         $vehicule->load('assurance');
+        $user = Auth()->user();
+        $carburants = Carburant::all(); 
+        $typesVehicules = TypeVehicule::all(); 
+        $marques = Marque::all(); 
 
-        $carburants = Carburant::all(); // récupère tous les carburants
-        $typesVehicules = TypeVehicule::all(); // récupère tous les types
-        $marques = Marque::all(); // récupère tous les marque de vehicules
+        // $vehicules = Vehicule::with(['kilometrages', 'interventions'])->findOrFail($vehicule->id);
+        // Appel de la fonction du modèle
+        // $kilometrage_total = $vehicules->calculerEtMettreAJourKilometrage();
         return Inertia::render('Vehicules/Show', [
             'vehicule' => $vehicule,        // un seul véhicule
             'assurance' => $vehicule->assurance, // assurance associée
             'userConnecter' => $userConnecter,
             'carburants' => $carburants,
+            'user' => $user,
             'typesVehicules' => $typesVehicules,
             'marques' => $marques,
+            // 'kilometrage_total' => $kilometrage_total,
         ]);
     }
 
@@ -149,6 +156,7 @@ class VehiculeController extends Controller
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
             'kilometrique' => 'required|integer|min:0',
+            'capacite_reservoir' => 'nullable|integer|min:0',
         ]);
 
         // ✅ Gestion du fichier photo
