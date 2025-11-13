@@ -14,6 +14,7 @@ use App\Models\entretien;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\EntretienKilometrageNotification;
+use App\Models\Kilometrage;
 
 class VehiculeController extends Controller
 {
@@ -100,6 +101,11 @@ class VehiculeController extends Controller
         $carburants = Carburant::all(); 
         $typesVehicules = TypeVehicule::all(); 
         $marques = Marque::all(); 
+         $dernierReleve = Kilometrage::with('user')
+        ->where('vehicule_id', $vehicule->id)
+        ->orderBy('date_releve', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->first();
 
         // $vehicules = Vehicule::with(['kilometrages', 'interventions'])->findOrFail($vehicule->id);
         // Appel de la fonction du modèle
@@ -112,6 +118,7 @@ class VehiculeController extends Controller
             'user' => $user,
             'typesVehicules' => $typesVehicules,
             'marques' => $marques,
+            'dernierReleve' => $dernierReleve,
             // 'kilometrage_total' => $kilometrage_total,
         ]);
     }

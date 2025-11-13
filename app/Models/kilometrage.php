@@ -2,49 +2,38 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Kilometrage extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'vehicule_id',
-        'date_releve',
         'kilometrage',
+        'date_releve',
+        'user_id',
         'type_releve',
+        'kilometrage_parcouru',
+        'difference',
+        'cumul_avant_reinitialisation',
+        'a_generer_entretien'
     ];
 
-    protected $casts = [
-        'date_releve' => 'datetime',
-        'kilometrage' => 'integer',
-    ];
+//    protected $casts = [
+//         'date_releve' => 'date',
+//         'a_generer_entretien' => 'boolean'
+//     ];
 
-    public function vehicule()
+    // Relation avec le véhicule
+     public function vehicule()
     {
         return $this->belongsTo(Vehicule::class);
     }
 
-    protected static function booted()
+    public function user()
     {
-        static::created(function ($model) {
-            $model->declencherRecalculVehicule();
-        });
-        // Recalculer seulement si le kilométrage a changé
-        static::updated(function ($model) {
-            if ($model->isDirty('kilometrage')) {
-                $model->declencherRecalculVehicule();
-            }
-        });
-
-        static::deleted(function ($model) {
-            $model->declencherRecalculVehicule();
-        });
-    }
-
-    protected function declencherRecalculVehicule()
-    {
-        $vehicule = $this->vehicule;
-        if ($vehicule) {
-            $vehicule->calculerEtMettreAJourKilometrage(true);
-        }
+        return $this->belongsTo(User::class);
     }
 }

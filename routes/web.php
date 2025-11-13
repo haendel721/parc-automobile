@@ -134,36 +134,19 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('pleinCarburant.destroy');
 
     // kilométrage
+    Route::post('/vehicules/{vehicule}/kilometrage', [KilometrageController::class, 'store'])->name('kilometrages.store');
+
+    // routes/web.php (pour Inertia)
+    // Route::post('/kilometrages', [KilometrageController::class, 'store'])->name('kilometrages.store');
+    // Routes pour la gestion des kilométrages
+    Route::get('/vehicules/{vehicule}/kilometrages', [KilometrageController::class, 'index'])
+        ->name('vehicules.kilometrages.index');
+
+    Route::get('/vehicules/{vehicule}/dernier-releve', [KilometrageController::class, 'dernierReleve'])
+    ->name('vehicules.dernier-releve');
+
     Route::post('/kilometrages', [KilometrageController::class, 'store'])
         ->name('kilometrages.store');
-    Route::get('/kilometrages/somme/{vehiculeId}', [KilometrageController::class, 'sommeKilometrage'])
-        ->name('kilometrages.somme');
-    Route::get('/test-kilometrage/{vehiculeId}', function ($vehiculeId) {
-        $vehicule = \App\Models\Vehicule::find($vehiculeId);
-
-        if (!$vehicule) {
-            return "Véhicule non trouvé";
-        }
-
-        \Log::info("=== DÉBUT TEST KILOMÉTRAGE ===");
-
-        // Test 1: Calcul normal
-        $resultat = $vehicule->recalculerKilometrage();
-
-        // Test 2: Vérification spécifique du seuil
-        $seuilAtteint = $vehicule->testerSeuil5000km();
-
-        \Log::info("=== FIN TEST KILOMÉTRAGE ===");
-
-        return response()->json([
-            'vehicule' => $vehicule->immatriculation,
-            'kilometrique_actuel' => $vehicule->kilometrique,
-            'kilometriquekm' => $vehicule->historiqueKm,
-            'historique_total' => $vehicule->historiqueKm,
-            'seuil_5000_atteint' => $seuilAtteint,
-            'notification_envoyee' => !$vehicule->notify5000km
-        ]);
-    });
 });
 Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);
 Route::middleware(['auth', 'verified', 'role:admin|mecanicien'])->group(function () {
