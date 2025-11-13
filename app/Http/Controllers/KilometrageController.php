@@ -8,6 +8,7 @@ use App\Models\Entretien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Notifications\NotifyEntretien5000km;
 
 class KilometrageController extends Controller
 {
@@ -25,11 +26,12 @@ class KilometrageController extends Controller
                 'data' => $kilometrages
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Erreur lors du chargement des relevés',
-                'data' => []
-            ], 500);
+            return redirect()->route('vehicules.index')->with('message', "Erreur lors du chargement des relevés");
+            // return response()->json([
+            //     'success' => false,
+            //     'error' => 'Erreur lors du chargement des relevés',
+            //     'data' => []
+            // ], 500);
         }
     }
 
@@ -64,10 +66,12 @@ class KilometrageController extends Controller
             // 1️⃣ Récupération du véhicule
             $vehicule = Vehicule::find($request->vehicule_id);
             if (!$vehicule) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Véhicule non trouvé'
-                ], 404);
+                // return response()->json([
+                //     'success' => false,
+                //     'error' => 'Véhicule non trouvé'
+                // ], 404);
+                return redirect()->route('vehicules.index')->with('message', "Véhicule non trouvé");
+      
             }
 
             // 2️⃣ Récupération du dernier relevé
@@ -83,10 +87,13 @@ class KilometrageController extends Controller
             $referenceKilometrage = $dernierReleve ? $dernierReleve->kilometrage : ($vehicule->kilometrique ?? 0);
 
             if ($request->kilometrage < $referenceKilometrage) {
-                return response()->json([
-                    'success' => false,
-                    'error' => "Le kilométrage saisi ({$request->kilometrage}) est inférieur à la référence ({$referenceKilometrage})."
-                ], 422);
+                // return response()->json([
+                //     'success' => false,
+                //     'error' => "Le kilométrage saisi ({$request->kilometrage}) est inférieur à la référence ({$referenceKilometrage})."
+                // ], 422);
+                
+            return redirect()->route('vehicules.index')->with('message', "Le kilométrage saisi ({$request->kilometrage}) est inférieur à la référence ({$referenceKilometrage}).");
+      
             }
 
             // 4️⃣ Calcul de la différence
@@ -99,14 +106,6 @@ class KilometrageController extends Controller
             // 6️⃣ Vérification entretien
             $aGenererEntretien = false;
             $seuilEntretien = 5000;
-
-            if ($nouveauCumul >= $seuilEntretien) {
-                $aGenererEntretien = true;
-                $this->creerEntretien($vehicule, $request->kilometrage);
-                // dd('Entretien généré pour le véhicule ID ' . $vehicule->id);
-                $nouveauCumul = 0; // Réinitialisation
-            }
-
             // 7️⃣ Enregistrement du relevé
             $kilometrage = Kilometrage::create([
                 'vehicule_id' => $request->vehicule_id,
@@ -117,6 +116,17 @@ class KilometrageController extends Controller
                 'cumul_avant_reinitialisation' => $cumulAvantReinitialisation,
                 'a_generer_entretien' => $aGenererEntretien
             ]);
+            if ($nouveauCumul >= $seuilEntretien) {
+                $aGenererEntretien = true;
+                // Déclencher la notification
+                $this->declencherNotificationEntretien($vehicule, $nouveauCumul, $kilometrage);
+
+                // Créer l'entretien si nécessaire
+                $this->creerEntretien($vehicule, $request->kilometrage);
+                $nouveauCumul = 0; // Réinitialisation
+            }
+
+
 
             // Debug après création
             // dd('Relevé créé:', $kilometrage);
@@ -129,33 +139,67 @@ class KilometrageController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => '✅ Relevé enregistré avec succès',
-                'data' => $kilometrage,
-                'cumul_total' => $cumulAvantReinitialisation,
-                'nouveau_cumul' => $nouveauCumul,
-                'entretien_genere' => $aGenererEntretien
-            ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => '✅ Relevé enregistré avec succès',
+            //     'data' => $kilometrage,
+            //     'cumul_total' => $cumulAvantReinitialisation,
+            //     'nouveau_cumul' => $nouveauCumul,
+            //     'entretien_genere' => $aGenererEntretien
+            // ]);
+            return redirect()->route('vehicules.index')->with('message', 'Relevé enregistré avec succès');
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             // Debug en cas d'erreur
             dd('Erreur:', $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'error' => 'Erreur lors de l\'enregistrement du relevé: ' . $e->getMessage()
-            ], 500);
+
+            return redirect()->route('vehicules.index')->with('message', 'Erreur lors de l\'enregistrement du relevé');
+            // return response()->json([
+            //     'success' => false,
+            //     'error' => 'Erreur lors de l\'enregistrement du relevé: ' . $e->getMessage()
+            // ], 500);
         }
     }
+    /**
+     * Déclenche la notification d'entretien 5000km
+     */
+    private function declencherNotificationEntretien(Vehicule $vehicule, $kilometrageCumule, Kilometrage $kilometrage)
+    {
+        try {
+            // Mettre à jour les données du véhicule pour la notification
+            $vehicule->refresh(); // Recharger les données fraîches
 
+            // Notifier les utilisateurs concernés (ex: administrateurs, responsables flotte)
+            $usersANotifier = $this->getUsersANotifier();
+
+            foreach ($usersANotifier as $user) {
+                $user->notify(new NotifyEntretien5000km($vehicule, $kilometrageCumule, $kilometrage));
+            }
+
+            // Alternative: Notification via facade
+            // Notification::send($usersANotifier, new NotifyEntretien5000km($vehicule));
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de l\'envoi de la notification d\'entretien: ' . $e->getMessage());
+        }
+    }
+    private function getUsersANotifier()
+    {
+        // Exemple: notifier les administrateurs et responsables flotte
+        // return \App\Models\User::whereHas('roles', function($query) {
+        //     $query->whereIn('name', ['admin', 'responsable_flotte', 'superviseur']);
+        // })->get();
+
+        // Alternative: notifier un utilisateur spécifique
+        return \App\Models\User::where('id', auth()->id())->get();
+    }
     private function creerEntretien(Vehicule $vehicule, $kilometrageActuel)
     {
         Entretien::create([
             'vehicule_id' => $vehicule->id,
             'type_entretien' => 'Maintenance périodique',
-            'user_id'=> auth()->id(),
+            'user_id' => auth()->id(),
             'date_entretien' => Carbon::now(),
             'kilometrage_entretien' => $kilometrageActuel,
             'prochaine_visite' => Carbon::now()->addMonths(6),

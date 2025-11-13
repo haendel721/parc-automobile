@@ -1,7 +1,7 @@
 import { router, useForm, usePage } from '@inertiajs/react';
 import { AlertTriangle, Calendar, Gauge, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-
+import {route} from 'ziggy-js';
 interface KilometrageModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -158,12 +158,6 @@ const KilometrageModal: React.FC<KilometrageModalProps> = ({
                         <p className="text-sm text-red-300">{apiError}</p>
                     </div>
                 )}
-
-                {/* ✅ AJOUT : Debug des valeurs */}
-                <div className="mb-4 rounded-lg bg-gray-700/30 p-3">
-                    <p className="text-xs text-gray-400">Debug: dernierKm = {dernierKm}, cumulActuel = {cumulActuel}</p>
-                </div>
-
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Informations actuelles */}
                     <div className="grid grid-cols-2 gap-4 rounded-xl bg-gray-700/50 p-4">

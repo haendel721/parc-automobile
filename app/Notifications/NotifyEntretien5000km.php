@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Kilometrage;
 use App\Models\Vehicule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,10 +14,13 @@ class NotifyEntretien5000km extends Notification
     use Queueable;
 
     protected $vehicule;
-
-    public function __construct($vehicule)
+    protected $kilometrageCumule;
+    protected $kilometrage;
+    public function __construct(Vehicule $vehicule, $kilometrageCumule, Kilometrage $kilometrage)
     {
         $this->vehicule = $vehicule;
+        $this->kilometrageCumule = $kilometrageCumule;
+        $this->kilometrage = $kilometrage;
     }
 
     public function via(object $notifiable): array
@@ -24,15 +28,18 @@ class NotifyEntretien5000km extends Notification
         return ['database'];
     }
 
-     public function toDatabase($notifiable)
+    public function toDatabase($notifiable)
     {
         return [
             'type' => 'entretien_5000km',
             'vehicule_id' => $this->vehicule->id,
             'vehicule_immatriculation' => $this->vehicule->immatriculation,
-            'kilometrage_total' => $this->vehicule->kilometrage_total,
-            'diff_km_cumule' => $this->vehicule->diff_km_cumule,
-            'message' => "Le véhicule {$this->vehicule->immatriculation} a atteint {$this->vehicule->diff_km_cumule} km depuis le dernier entretien. Un entretien est requis.",
+            'kilometrage_total' => $this->vehicule->kilometrique,
+            'kilometrage_cumule' => $this->kilometrageCumule,
+            'kilometrage_releve_id' => $this->kilometrage->id,
+            'message' => "Le véhicule {$this->vehicule->immatriculation} a atteint " .
+                $this->kilometrage->cumul_avant_reinitialisation .
+                " km. Il est recommandé d'envoyer une demande d'entretien.",
             'url' => route('vehicules.show', $this->vehicule->id),
             'timestamp' => now()->toDateTimeString(),
         ];
