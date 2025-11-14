@@ -18,7 +18,8 @@ class Kilometrage extends Model
         'kilometrage_parcouru',
         'difference',
         'cumul_avant_reinitialisation',
-        'a_generer_entretien'
+        'a_generer_entretien',
+        'kmCarburant'
     ];
 
 //    protected $casts = [

@@ -50,7 +50,7 @@ const KilometrageModal: React.FC<KilometrageModalProps> = ({
         }
     }, [isOpen, vehiculeId]);
 
-    // ✅ CORRECTION : Vérification robuste de dernierReleve
+    //  Vérification robuste de dernierReleve
     const getDernierKm = () => {
         console.log('dernierReleve:', dernierReleve); // Debug
         console.log('vehiculeData:', vehiculeData); // Debug

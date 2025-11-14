@@ -161,6 +161,99 @@ class KilometrageController extends Controller
             // ], 500);
         }
     }
+    public function kmCarburantStore(Request $request)
+    {
+        // Debug des données reçues
+        // dd('Données reçues:', $request->all());
+
+        $request->validate([
+            'vehicule_id' => 'required|exists:vehicules,id',
+            'user_id' => 'required|exists:users,id',
+            'date_releve' => 'required|date',
+            'kilometrage' => 'required|integer|min:0',
+            'kmCarburant' => 'required|integer|min:0',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // 1️⃣ Récupération du véhicule
+            $vehicule = Vehicule::find($request->vehicule_id);
+            if (!$vehicule) {
+                return redirect()->route('vehicules.index')->with('message', "Véhicule non trouvé");
+      
+            }
+
+            // 2️⃣ Récupération du dernier relevé
+            $dernierReleve = Kilometrage::where('vehicule_id', $request->vehicule_id)
+                ->orderBy('date_releve', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            // Debug du dernier relevé
+            // dd('Dernier relevé trouvé:', $dernierReleve, 'Véhicule:', $vehicule);
+
+            // 3️⃣ Vérification de cohérence
+            $referenceKilometrage = $dernierReleve ? $dernierReleve->kilometrage : ($vehicule->kilometrique ?? 0);
+
+            if ($request->kilometrage < $referenceKilometrage) {
+            return redirect()->route('pleinCarburant.index')->with('message', "Le kilométrage saisi ({$request->kilometrage}) est inférieur à la référence ({$referenceKilometrage}).");
+      
+            }
+
+            // 4️⃣ Calcul de la différence
+            $difference = $request->kilometrage - $referenceKilometrage;
+
+            // 5️⃣ Mise à jour du cumul
+            $nouveauCumul = ($vehicule->releve_km_cumule ?? 0) + $difference;
+            $cumulAvantReinitialisation = $nouveauCumul;
+
+            // 6️⃣ Vérification entretien
+            $aGenererEntretien = false;
+            $seuilEntretien = 5000;
+            // 7️⃣ Enregistrement du relevé
+            $kilometrage = Kilometrage::create([
+                'vehicule_id' => $request->vehicule_id,
+                'user_id' => $request->user_id,
+                'date_releve' => $request->date_releve,
+                'kilometrage' => $request->kilometrage,
+                'kmCarburant' => $request->kmCarburant,
+                'difference' => $difference,
+                'cumul_avant_reinitialisation' => $cumulAvantReinitialisation,
+                'a_generer_entretien' => $aGenererEntretien
+            ]);
+            if ($nouveauCumul >= $seuilEntretien) {
+                $aGenererEntretien = true;
+                // Déclencher la notification
+                $this->declencherNotificationEntretien($vehicule, $nouveauCumul, $kilometrage);
+
+                // Créer l'entretien si nécessaire
+                $this->creerEntretien($vehicule, $request->kilometrage);
+                $nouveauCumul = 0; // Réinitialisation
+            }
+
+
+
+            // Debug après création
+            // dd('Relevé créé:', $kilometrage);
+
+            // 8️⃣ Mise à jour du véhicule
+            $vehicule->update([
+                'kilometrique' => $request->kilometrage,
+                'releve_km_cumule' => $nouveauCumul
+            ]);
+
+            DB::commit();
+            return redirect()->route('pleinCarburant.index')->with('success', 'Plein carburant ajouté avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Debug en cas d'erreur
+            dd('Erreur:', $e->getMessage());
+
+            return redirect()->route('pleinCarburant.index')->with('message', 'Erreur lors de l\'enregistrement du relevé');
+        }
+    }
     /**
      * Déclenche la notification d'entretien 5000km
      */

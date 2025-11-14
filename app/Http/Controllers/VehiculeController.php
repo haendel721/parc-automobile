@@ -180,10 +180,9 @@ class VehiculeController extends Controller
             // Si aucune nouvelle photo n'est envoyée, ne pas modifier la photo existante
             unset($data['photo']);
         }
-
+        
         // ✅ Mise à jour des données du véhicule
         $vehicule->update($data);
-
         // ✅ Vérification du kilométrage pour déclencher une notification
         if ($vehicule->kilometrique >= 5000) {
             // Récupération de l'utilisateur propriétaire (assure-toi que la relation user() existe dans ton modèle Vehicule)

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowRight, BellDot, Car, CirclePlus, Edit3, Filter, Fuel, Gauge, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
+import { ArrowRight, BellDot, Car, CirclePlus, Filter, Fuel, Gauge, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 import VehiculeUser from './VehiculeUser';
@@ -309,7 +309,7 @@ export default function Index() {
             {/* Notification */}
             {flash.message && (
                 <div className="mx-4 mb-6 sm:mx-6">
-                    <Alert className="border-l-4 border-l-blue-500 bg-blue-50/50 backdrop-blur-sm dark:border-l-blue-400 dark:bg-blue-900/20">
+                    {/* <Alert className="border-l-4 border-l-blue-500 bg-blue-50/50 backdrop-blur-sm dark:border-l-blue-400 dark:bg-blue-900/20">
                         <div className="flex items-start gap-3">
                             <div className="flex-shrink-0">
                                 <BellDot className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -319,6 +319,11 @@ export default function Index() {
                                 <AlertDescription className="mt-1 text-blue-800 dark:text-blue-200">{flash.message}</AlertDescription>
                             </div>
                         </div>
+                    </Alert> */}
+                    <Alert className="border-blue-800 bg-blue-900/20 text-blue-200">
+                        <BellDot className="text-blue-300" />
+                        <AlertTitle className="text-blue-100">Notification !</AlertTitle>
+                        <AlertDescription>{flash.message}</AlertDescription>
                     </Alert>
                 </div>
             )}

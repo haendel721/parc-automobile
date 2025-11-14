@@ -284,6 +284,7 @@ function GrapheParVehicule() {
                 </div>
             </div>
         </div>
+        
     );
 }
 

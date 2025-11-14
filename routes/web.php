@@ -147,6 +147,8 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
 
     Route::post('/kilometrages', [KilometrageController::class, 'store'])
         ->name('kilometrages.store');
+    Route::post('/kilometrages/carburant', [KilometrageController::class, 'kmCarburantStore'])
+        ->name('kilometrages.carburantStore');
 });
 Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);
 Route::middleware(['auth', 'verified', 'role:admin|mecanicien'])->group(function () {

@@ -22,7 +22,8 @@ class Vehicule extends Model
         'kilometrique',
         'dernier_kilometrage',
         'dernier_releve_date',
-        'releve_km_cumule'
+        'releve_km_cumule',
+        "capacite_reservoir"
     ];
 
     // protected $casts = [
