@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConsommationController;
 use App\Http\Controllers\InterventionController;
 use App\Http\Controllers\KilometrageController;
 use App\Http\Controllers\ProductController;
@@ -132,7 +133,11 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('pleinCarburant.store');
     Route::delete('/pleinCarburants/{pleinCarburant}', [PleinCarburantController::class, 'destroy'])
         ->name('pleinCarburant.destroy');
-
+        
+        // Route pour l'API JSON
+Route::get('/api/consommation', [ConsommationController::class, 'index'])->name('api.consommation');
+// Ou la version alternative
+Route::get('/api/consommation-simple', [ConsommationController::class, 'consommationJson'])->name('api.consommation.simple');
     // kilométrage
     Route::post('/vehicules/{vehicule}/kilometrage', [KilometrageController::class, 'store'])->name('kilometrages.store');
 
@@ -149,6 +154,7 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         ->name('kilometrages.store');
     Route::post('/kilometrages/carburant', [KilometrageController::class, 'kmCarburantStore'])
         ->name('kilometrages.carburantStore');
+
 });
 Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);
 Route::middleware(['auth', 'verified', 'role:admin|mecanicien'])->group(function () {

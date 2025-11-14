@@ -1,3 +1,4 @@
+import ConsommationChart from '@/components/ConsommationChart';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
@@ -92,10 +93,8 @@ export default function Dashboard() {
     const vehiculeConnecter = vehicules.filter((v) => v.user_id === userConnecter.id);
     const assuranceConnecter = assurances.filter((a) => a.user_id === userConnecter.id);
     const entretiensConnecter = entretiens.filter((e) => e.user_id === userConnecter.id);
-    // console.log(
-    //     'vehiculeConnecter',
-    //     vehicules.map((v) => v.user_id),
-    // );
+    const { weeksData } = usePage().props as any;
+
     const vehiculesAvecMarque = vehiculeConnecter.map((v) => {
         const marque = marques.find((m) => m.id === v.marque_id);
         return {
@@ -203,10 +202,10 @@ export default function Dashboard() {
 
             {userConnecter.role === 'admin' ? (
                 // VUE ADMIN
-                <div className="min-h-screen  p-6 dark:bg-gray-900/30">
+                <div className="min-h-screen p-6 dark:bg-gray-900/30">
                     {/* Cartes de statistiques */}
                     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
-                        <div className="rounded-2xl bg-gradient-to-br from-blue-700/90 to-blue-800/50  p-6 text-white shadow-lg">
+                        <div className="rounded-2xl bg-gradient-to-br from-blue-700/90 to-blue-800/50 p-6 text-white shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-blue-100">Total Véhicules</p>
@@ -259,10 +258,8 @@ export default function Dashboard() {
 
                     {/* Graphiques */}
                     <div className="mb-8 grid grid-cols-1 gap-2 lg:grid-cols-3">
-                        <div className="rounded-2xl bg-gray-900/50 p-6 shadow-lg lg:col-span-2 dark:bg-gray-800/90 backdrop-blur-md text-white">
-                            <h3 className="mb-6 text-lg font-semibold text-white ">
-                                Dépenses mensuelles des véhicules en entretiens
-                            </h3>
+                        <div className="rounded-2xl bg-gray-900/50 p-6 text-white shadow-lg backdrop-blur-md lg:col-span-2 dark:bg-gray-800/90">
+                            <h3 className="mb-6 text-lg font-semibold text-white">Dépenses mensuelles des véhicules en entretiens</h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -300,7 +297,7 @@ export default function Dashboard() {
                         </div>
 
                         <div className="rounded-2xl bg-gray-900/90 p-6 shadow-lg dark:bg-gray-800">
-                            <h3 className="mb-6 text-lg justify-center flex font-semibold text-white">Statut des assurances</h3>
+                            <h3 className="mb-6 flex justify-center text-lg font-semibold text-white">Statut des assurances</h3>
                             <div className="h-80">
                                 {dataAssurance.length > 0 ? (
                                     <ResponsiveContainer width="100%" height="100%">
@@ -337,191 +334,193 @@ export default function Dashboard() {
                     </div>
 
                     {/* Tableau des véhicules */}
-                   <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700">
-    {/* Header avec recherche */}
-    <div className="border-b border-gray-700 p-6">
-        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-            <div>
-                <h2 className="text-2xl font-bold text-white">Gestion des véhicules</h2>
-                <p className="text-gray-400 mt-1">Consultez et gérez votre parc automobile</p>
-            </div>
+                    <div className="rounded-2xl border border-gray-700 bg-gray-800/90 shadow-2xl backdrop-blur-sm">
+                        {/* Header avec recherche */}
+                        <div className="border-b border-gray-700 p-6">
+                            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-white">Gestion des véhicules</h2>
+                                    <p className="mt-1 text-gray-400">Consultez et gérez votre parc automobile</p>
+                                </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-                {/* Sélecteur de champ de recherche */}
-                <div className="relative">
-                    <select
-                        value={searchField}
-                        onChange={(e) => setSearchField(e.target.value as any)}
-                        className="rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pl-10 pr-8 text-sm text-white transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
-                    >
-                        <option value="immatriculation">Immatriculation</option>
-                        <option value="model">Modèle</option>
-                        <option value="marque">Marque</option>
-                        <option value="carburant">Carburant</option>
-                        <option value="type">Type</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                                <div className="flex flex-col gap-3 sm:flex-row">
+                                    {/* Sélecteur de champ de recherche */}
+                                    <div className="relative">
+                                        <select
+                                            value={searchField}
+                                            onChange={(e) => setSearchField(e.target.value as any)}
+                                            className="appearance-none rounded-xl border border-gray-600 bg-gray-700 px-4 py-2.5 pr-8 pl-10 text-sm text-white transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        >
+                                            <option value="immatriculation">Immatriculation</option>
+                                            <option value="model">Modèle</option>
+                                            <option value="marque">Marque</option>
+                                            <option value="carburant">Carburant</option>
+                                            <option value="type">Type</option>
+                                        </select>
+                                        <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                                            <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    {/* Champ de recherche */}
+                                    <div className="relative">
+                                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                        <input
+                                            type="text"
+                                            placeholder={`${searchField}...`}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="w-full rounded-xl border border-gray-600 bg-gray-700 py-2.5 pr-4 pl-10 text-sm text-white transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none md:w-64"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Indicateur de filtre actif */}
+                            {searchTerm && (
+                                <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-800 bg-blue-900/20 p-3">
+                                    <div className="flex items-center gap-2 text-sm text-blue-300">
+                                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                                            />
+                                        </svg>
+                                        Filtre actif : {searchField} - "{searchTerm}"
+                                    </div>
+                                    <button
+                                        onClick={() => setSearchTerm('')}
+                                        className="text-blue-400 transition-colors duration-200 hover:text-blue-300"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Tableau */}
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader className="bg-blue-900/20">
+                                    <TableRow>
+                                        <TableHead className="font-semibold text-blue-200">Véhicule</TableHead>
+                                        <TableHead className="font-semibold text-blue-200">Immatriculation</TableHead>
+                                        <TableHead className="font-semibold text-blue-200">Marque</TableHead>
+                                        <TableHead className="font-semibold text-blue-200">Modèle</TableHead>
+                                        <TableHead className="font-semibold text-blue-200">Carburant</TableHead>
+                                        <TableHead className="font-semibold text-blue-200">Type</TableHead>
+                                        <TableHead className="font-semibold text-blue-200">Assurance</TableHead>
+                                        <TableHead className="text-right font-semibold text-blue-200">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredVehicules.map((v, index) => {
+                                        const assuranceV = assurances.find((a) => a.vehicule_id === v.id);
+                                        const marqueNom = marques.find((m) => m.id === v.marque_id)?.nom || '';
+                                        const carburantType = carburant.find((c) => c.id === v.carburant_id)?.type || '';
+                                        const typeNom = typeVehicule.find((t) => t.id === v.typeVehicule_id)?.nom || '';
+
+                                        return (
+                                            <TableRow
+                                                key={v.id}
+                                                className={`border-gray-700 transition-all duration-200 hover:bg-blue-900/10 ${
+                                                    index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'
+                                                }`}
+                                            >
+                                                <TableCell>
+                                                    <div className="flex items-center gap-3">
+                                                        <img
+                                                            src={v.photo ? `/storage/${v.photo}` : '/images/default-car.png'}
+                                                            alt={v.model}
+                                                            className="h-12 w-12 rounded-xl border border-gray-600 object-cover shadow-sm"
+                                                        />
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="font-medium text-white">{v.immatriculation}</TableCell>
+                                                <TableCell className="text-gray-300">{marqueNom}</TableCell>
+                                                <TableCell className="text-gray-300">{v.model}</TableCell>
+                                                <TableCell className="text-gray-300">{carburantType}</TableCell>
+                                                <TableCell className="text-gray-300">{typeNom}</TableCell>
+                                                <TableCell>
+                                                    {assuranceV ? (
+                                                        <span
+                                                            className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                                                                assuranceV.jour_restant === -1
+                                                                    ? 'border border-red-800/50 bg-red-900/40 text-red-300'
+                                                                    : assuranceV.jour_restant < 8
+                                                                      ? 'border border-yellow-800/50 bg-yellow-900/40 text-yellow-300'
+                                                                      : 'border border-green-800/50 bg-green-900/40 text-green-300'
+                                                            }`}
+                                                        >
+                                                            {assuranceV.jour_restant === -1
+                                                                ? '🔄 Expiré'
+                                                                : assuranceV.jour_restant === 0
+                                                                  ? '⏳ 0 jour'
+                                                                  : `✅ ${assuranceV.jour_restant} jour(s)`}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center rounded-full border border-gray-600 bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-400">
+                                                            ⚠️ Sans assurance
+                                                        </span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex justify-end gap-2">
+                                                        <Link href={route('vehicules.show', v.id)}>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="border-gray-600 bg-gray-700 text-gray-300 transition-all duration-200 hover:bg-gray-600 hover:text-white"
+                                                            >
+                                                                <Eye className="h-4 w-4" />
+                                                            </Button>
+                                                        </Link>
+                                                        <Link href={route('vehicules.edit', v.id)}>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                className="border-blue-600 bg-blue-900/20 text-blue-400 transition-all duration-200 hover:bg-blue-800 hover:text-white"
+                                                            >
+                                                                <SquarePen className="h-4 w-4" />
+                                                            </Button>
+                                                        </Link>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="destructive"
+                                                            onClick={() => handleDelete(v.id, v.immatriculation)}
+                                                            disabled={processing}
+                                                            className="border border-red-800/50 bg-red-900/20 text-red-400 transition-all duration-200 hover:bg-red-800 hover:text-white"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+
+                            {/* État vide */}
+                            {filteredVehicules.length === 0 && (
+                                <div className="p-12 text-center">
+                                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-700">
+                                        <Car className="h-8 w-8 text-gray-400" />
+                                    </div>
+                                    <p className="text-lg font-medium text-gray-400">Aucun véhicule trouvé</p>
+                                    <p className="mt-2 text-gray-500">
+                                        {searchTerm
+                                            ? 'Aucun résultat ne correspond à votre recherche'
+                                            : 'Commencez par ajouter votre premier véhicule'}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-
-                {/* Champ de recherche */}
-                <div className="relative">
-                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder={`${searchField}...`}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full rounded-xl border border-gray-600 bg-gray-700 py-2.5 pr-4 pl-10 text-sm text-white transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none md:w-64"
-                    />
-                </div>
-            </div>
-        </div>
-
-        {/* Indicateur de filtre actif */}
-        {searchTerm && (
-            <div className="mt-4 flex items-center justify-between rounded-lg border border-blue-800 bg-blue-900/20 p-3">
-                <div className="flex items-center gap-2 text-sm text-blue-300">
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                        />
-                    </svg>
-                    Filtre actif : {searchField} - "{searchTerm}"
-                </div>
-                <button 
-                    onClick={() => setSearchTerm('')} 
-                    className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
-                >
-                    <X className="h-4 w-4" />
-                </button>
-            </div>
-        )}
-    </div>
-
-    {/* Tableau */}
-    <div className="overflow-x-auto">
-        <Table>
-            <TableHeader className="bg-blue-900/20">
-                <TableRow>
-                    <TableHead className="text-blue-200 font-semibold">Véhicule</TableHead>
-                    <TableHead className="text-blue-200 font-semibold">Immatriculation</TableHead>
-                    <TableHead className="text-blue-200 font-semibold">Marque</TableHead>
-                    <TableHead className="text-blue-200 font-semibold">Modèle</TableHead>
-                    <TableHead className="text-blue-200 font-semibold">Carburant</TableHead>
-                    <TableHead className="text-blue-200 font-semibold">Type</TableHead>
-                    <TableHead className="text-blue-200 font-semibold">Assurance</TableHead>
-                    <TableHead className="text-right text-blue-200 font-semibold">Actions</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {filteredVehicules.map((v, index) => {
-                    const assuranceV = assurances.find((a) => a.vehicule_id === v.id);
-                    const marqueNom = marques.find((m) => m.id === v.marque_id)?.nom || '';
-                    const carburantType = carburant.find((c) => c.id === v.carburant_id)?.type || '';
-                    const typeNom = typeVehicule.find((t) => t.id === v.typeVehicule_id)?.nom || '';
-
-                    return (
-                        <TableRow 
-                            key={v.id} 
-                            className={`border-gray-700 transition-all duration-200 hover:bg-blue-900/10 ${
-                                index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'
-                            }`}
-                        >
-                            <TableCell>
-                                <div className="flex items-center gap-3">
-                                    <img
-                                        src={v.photo ? `/storage/${v.photo}` : '/images/default-car.png'}
-                                        alt={v.model}
-                                        className="h-12 w-12 rounded-xl object-cover border border-gray-600 shadow-sm"
-                                    />
-                                </div>
-                            </TableCell>
-                            <TableCell className="font-medium text-white">{v.immatriculation}</TableCell>
-                            <TableCell className="text-gray-300">{marqueNom}</TableCell>
-                            <TableCell className="text-gray-300">{v.model}</TableCell>
-                            <TableCell className="text-gray-300">{carburantType}</TableCell>
-                            <TableCell className="text-gray-300">{typeNom}</TableCell>
-                            <TableCell>
-                                {assuranceV ? (
-                                    <span
-                                        className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
-                                            assuranceV.jour_restant === -1
-                                                ? 'bg-red-900/40 text-red-300 border border-red-800/50'
-                                                : assuranceV.jour_restant < 8
-                                                  ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-800/50'
-                                                  : 'bg-green-900/40 text-green-300 border border-green-800/50'
-                                        }`}
-                                    >
-                                        {assuranceV.jour_restant === -1
-                                            ? '🔄 Expiré'
-                                            : assuranceV.jour_restant === 0
-                                              ? '⏳ 0 jour'
-                                              : `✅ ${assuranceV.jour_restant} jour(s)`}
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center rounded-full bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-400 border border-gray-600">
-                                        ⚠️ Sans assurance
-                                    </span>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                <div className="flex justify-end gap-2">
-                                    <Link href={route('vehicules.show', v.id)}>
-                                        <Button 
-                                            size="sm" 
-                                            variant="outline" 
-                                            className="border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white transition-all duration-200"
-                                        >
-                                            <Eye className="h-4 w-4" />
-                                        </Button>
-                                    </Link>
-                                    <Link href={route('vehicules.edit', v.id)}>
-                                        <Button 
-                                            size="sm" 
-                                            variant="outline"
-                                            className="border-blue-600 bg-blue-900/20 text-blue-400 hover:bg-blue-800 hover:text-white transition-all duration-200"
-                                        >
-                                            <SquarePen className="h-4 w-4" />
-                                        </Button>
-                                    </Link>
-                                    <Button
-                                        size="sm"
-                                        variant="destructive"
-                                        onClick={() => handleDelete(v.id, v.immatriculation)}
-                                        disabled={processing}
-                                        className="bg-red-900/20 text-red-400 border border-red-800/50 hover:bg-red-800 hover:text-white transition-all duration-200"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    );
-                })}
-            </TableBody>
-        </Table>
-
-        {/* État vide */}
-        {filteredVehicules.length === 0 && (
-            <div className="p-12 text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-700">
-                    <Car className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-400 text-lg font-medium">Aucun véhicule trouvé</p>
-                <p className="text-gray-500 mt-2">
-                    {searchTerm ? "Aucun résultat ne correspond à votre recherche" : "Commencez par ajouter votre premier véhicule"}
-                </p>
-            </div>
-        )}
-    </div>
-</div>  
                 </div>
             ) : (
                 // VUE UTILISATEUR
@@ -575,7 +574,6 @@ export default function Dashboard() {
                             </div>
                         </div>
                     )}
-
                     {/* Cartes de statistiques utilisateur */}
                     <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div className="rounded-xl bg-gradient-to-br from-blue-700/90 to-blue-800/50 p-6 text-white shadow-lg">
@@ -608,12 +606,11 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-
                     {/* Graphiques utilisateur */}
                     {/* Graphiques */}
                     <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        <div className="rounded-2xl bg-gray-900/100 p-6 shadow-lg lg:col-span-2 dark:bg-gray-800/90 backdrop-blur-md text-white">
-                            <h3 className="mb-6 text-lg font-semibold text-white ">Dépenses mensuelles des véhicules en entretiens</h3>
+                        <div className="rounded-2xl bg-gray-900/100 p-6 text-white shadow-lg backdrop-blur-md lg:col-span-2 dark:bg-gray-800/90">
+                            <h3 className="mb-6 text-lg font-semibold text-white">Dépenses mensuelles des véhicules en entretiens</h3>
                             <div className="h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -644,7 +641,8 @@ export default function Dashboard() {
                         </div>
 
                         <div className="rounded-2xl bg-gray-900/90 p-6 shadow-lg dark:bg-gray-800">
-                            <h3 className="mb-6 text-lg justify-center flex font-semibold text-white">Statut des assurances</h3>    <div className="h-80">
+                            <h3 className="mb-6 flex justify-center text-lg font-semibold text-white">Statut des assurances</h3>{' '}
+                            <div className="h-80">
                                 {dataAssurance.length > 0 ? (
                                     <ResponsiveContainer width="100%" height="100%">
                                         <PieChart>
@@ -673,10 +671,12 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-
                     {/* Graphique carburant */}
                     <div className="bg-gray-800/40">
                         <PleinCarburantCharts />
+                    </div>
+                    <div>
+                        <ConsommationChart />
                     </div>
                 </div>
             )}
