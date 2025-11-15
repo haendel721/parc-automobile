@@ -72,7 +72,7 @@ class VehiculeController extends Controller
             'numSerie' => 'nullable|string|max:255',
             'anneeFabrication' => 'nullable|integer|min:1900|max:' . date('Y'),
             'dateAcquisition' => 'nullable|date',
-            'kilometrage' => 'nullable|integer|min:0',
+            'kilometrique' => 'nullable|integer|min:0',
             'capacite_reservoir' => 'required|integer|min:0',
         ]);
 

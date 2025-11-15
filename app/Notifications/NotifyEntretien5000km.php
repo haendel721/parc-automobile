@@ -33,7 +33,7 @@ class NotifyEntretien5000km extends Notification
         return [
             'type' => 'entretien_5000km',
             'vehicule_id' => $this->vehicule->id,
-            'vehicule_immatriculation' => $this->vehicule->immatriculation,
+            'vehicule' => $this->vehicule->immatriculation,
             'kilometrage_total' => $this->vehicule->kilometrique,
             'kilometrage_cumule' => $this->kilometrageCumule,
             'kilometrage_releve_id' => $this->kilometrage->id,

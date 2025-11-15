@@ -36,7 +36,7 @@ export default function Index() {
         numSerie: '',
         anneeFabrication: '',
         dateAcquisition: '',
-        kilometrage: '',
+        kilometrique: '',
         capacite_reservoir: '',
     });
 
@@ -243,15 +243,15 @@ export default function Index() {
 
                                         {/* Kilométrage */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="kilometrage" className="text-lg font-medium text-gray-100">
+                                            <Label htmlFor="kilometrique" className="text-lg font-medium text-gray-100">
                                                 Kilométrage
                                             </Label>
                                             <Input
-                                                id="kilometrage"
+                                                id="kilometrique"
                                                 type="number"
                                                 placeholder="0"
-                                                value={data.kilometrage}
-                                                onChange={(e) => setData('kilometrage', e.target.value)}
+                                                value={data.kilometrique}
+                                                onChange={(e) => setData('kilometrique', e.target.value)}
                                                 className="w-full text-gray-100 bg-gray-800 border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                                             />
                                         </div>

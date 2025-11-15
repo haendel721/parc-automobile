@@ -56,32 +56,32 @@ class PleinCarburantController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'vehicule_id' => 'required',
-            'date_plein' => 'required|date',
-            'quantite' => 'required|numeric|min:0',
-            'station' => 'nullable|string|max:255',
-            'prix_unitaire' => 'required',
-            'montant_total' => 'required',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'vehicule_id' => 'required',
+    //         'date_plein' => 'required|date',
+    //         'quantite' => 'required|numeric|min:0',
+    //         'station' => 'nullable|string|max:255',
+    //         'prix_unitaire' => 'required',
+    //         'montant_total' => 'required',
+    //     ]);
 
-        $validated['user_id'] = auth()->id();
+    //     $validated['user_id'] = auth()->id();
 
-        // Récupérer le véhicule sélectionné
-        $vehicule = Vehicule::find($validated['vehicule_id']);
+    //     // Récupérer le véhicule sélectionné
+    //     $vehicule = Vehicule::find($validated['vehicule_id']);
 
-        // Vérifier la capacité du réservoir
-        if ($validated['quantite'] > $vehicule->capacite_reservoir) {
-            return back()->withErrors([
-                'quantite' => "La quantité saisie ({$validated['quantite']} L) dépasse la capacité du réservoir ({$vehicule->capacite_reservoir} L).",
-            ])->withInput();
-        }
-        pleinCarburant::create($validated);
+    //     // Vérifier la capacité du réservoir
+    //     if ($validated['quantite'] > $vehicule->capacite_reservoir) {
+    //         return back()->withErrors([
+    //             'quantite' => "La quantité saisie ({$validated['quantite']} L) dépasse la capacité du réservoir ({$vehicule->capacite_reservoir} L).",
+    //         ])->withInput();
+    //     }
+    //     pleinCarburant::create($validated);
 
-        return redirect()->route('pleinCarburant.index')->with('success', 'Plein carburant ajouté avec succès.');
-    }
+    //     return redirect()->route('pleinCarburant.index')->with('success', 'Plein carburant ajouté avec succès.');
+    // }
     public function destroy(pleinCarburant $pleinCarburant)
     {
         // dd($pleinCarburant);
