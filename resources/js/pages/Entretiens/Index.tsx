@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { BellDot, Calendar, Car, Eye, Filter, Plus, Search, SquarePen, Users, Wrench } from 'lucide-react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { BellDot, Calendar, Car, Eye, Filter, Plus, Search, SquarePen, Trash2, Users, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -94,7 +94,12 @@ export default function Index() {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
-
+    const {processing , delete: destroy } = useForm();
+    const handleDelete = (id: number) => {
+        if (confirm(`Êtes-vous sûr de vouloir le supprimer ?`)) {
+            destroy(route('entretiens.destroy', id));
+        }
+    };
     // Fonction pour trouver le nom du mécanicien correspondant
     const getMecanicienName = (id: number) => T_user.find((u) => u.id === id)?.name || 'Non assigné';
 
@@ -152,7 +157,7 @@ export default function Index() {
 
                 {/* Cartes de statistiques */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/50 border border-blue-800/30">
+                    <Card className="border border-blue-800/30 bg-gradient-to-br from-blue-900/50 to-blue-800/50">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -166,7 +171,7 @@ export default function Index() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-gradient-to-br from-yellow-900/50 to-yellow-900/50 border border-yellow-900/50">
+                    <Card className="border border-yellow-900/50 bg-gradient-to-br from-yellow-900/50 to-yellow-900/50">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -180,7 +185,7 @@ export default function Index() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-gradient-to-br from-green-900/50 to-green-900/50 border border-green-900/50">
+                    <Card className="border border-green-900/50 bg-gradient-to-br from-green-900/50 to-green-900/50">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -194,7 +199,7 @@ export default function Index() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-gradient-to-br from-purple-900/50 to-purple-900/50 border border-purple-800/30">
+                    <Card className="border border-purple-800/30 bg-gradient-to-br from-purple-900/50 to-purple-900/50">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -219,7 +224,7 @@ export default function Index() {
                 )}
 
                 {/* Carte principale */}
-                <Card className="shadow-2xl border border-gray-700 bg-gray-900/90 backdrop-blur-sm">
+                <Card className="border border-gray-700 bg-gray-900/90 shadow-2xl backdrop-blur-sm">
                     <CardHeader className="border-b border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900">
                         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
                             <div>
@@ -272,7 +277,7 @@ export default function Index() {
                                         placeholder="immatriculation"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-10 border-gray-600 bg-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500"
+                                        className="border-gray-600 bg-gray-700 pl-10 text-white placeholder:text-gray-400 focus:border-blue-500"
                                     />
                                 </div>
                             </div>
@@ -300,8 +305,8 @@ export default function Index() {
                                     <TableBody>
                                         {filteredEntretiens.length > 0 ? (
                                             filteredEntretiens.map((e, index) => (
-                                                <TableRow 
-                                                    key={e.id} 
+                                                <TableRow
+                                                    key={e.id}
                                                     className={`group transition-all hover:bg-blue-900/10 ${
                                                         index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-800/50'
                                                     }`}
@@ -352,10 +357,10 @@ export default function Index() {
                                                             }
                                                             className={
                                                                 e.statut === 'Validé'
-                                                                    ? 'bg-green-900/40 text-green-300 border border-green-800/50'
+                                                                    ? 'border border-green-800/50 bg-green-900/40 text-green-300'
                                                                     : e.statut === 'En attente'
-                                                                      ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-800/50'
-                                                                      : 'bg-blue-900/40 text-blue-300 border border-blue-800/50'
+                                                                      ? 'border border-yellow-800/50 bg-yellow-900/40 text-yellow-300'
+                                                                      : 'border border-blue-800/50 bg-blue-900/40 text-blue-300'
                                                             }
                                                         >
                                                             {e.statut}
@@ -410,7 +415,10 @@ export default function Index() {
                                             const totalCout = getTotalCost(e.id);
 
                                             return (
-                                                <Card key={e.id} className="group transition-all duration-300 hover:shadow-2xl border border-gray-700 bg-gray-800/80 backdrop-blur-sm hover:bg-gray-750">
+                                                <Card
+                                                    key={e.id}
+                                                    className="group hover:bg-gray-750 border border-gray-700 bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl"
+                                                >
                                                     <CardHeader className="pb-4">
                                                         <div className="flex items-start justify-between">
                                                             <div>
@@ -432,10 +440,10 @@ export default function Index() {
                                                                 }
                                                                 className={
                                                                     e.statut === 'Validé'
-                                                                        ? 'bg-green-900/40 text-green-300 border border-green-800/50'
+                                                                        ? 'border border-green-800/50 bg-green-900/40 text-green-300'
                                                                         : e.statut === 'En attente'
-                                                                          ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-800/50'
-                                                                          : 'bg-blue-900/40 text-blue-300 border border-blue-800/50'
+                                                                          ? 'border border-yellow-800/50 bg-yellow-900/40 text-yellow-300'
+                                                                          : 'border border-blue-800/50 bg-blue-900/40 text-blue-300'
                                                                 }
                                                             >
                                                                 {e.statut}
@@ -475,6 +483,16 @@ export default function Index() {
                                                                     </Button>
                                                                 </Link>
                                                             )}
+                                                        </div>
+                                                        <div className="flex justify-end pt-2">
+                                                            <Button
+                                                                disabled={processing}
+                                                                onClick={() => handleDelete(e.id)}
+                                                                className="bg-red-600 text-white hover:bg-red-700"
+                                                                size="sm"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
                                                         </div>
                                                     </CardContent>
                                                 </Card>

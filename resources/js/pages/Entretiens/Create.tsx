@@ -175,60 +175,13 @@ export default function CreateEntretien() {
                                             className="w-full resize-none rounded-lg border border-gray-600 bg-gray-700/50 px-4 py-3 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-
-                                    {/* Additional Fields - Responsive Grid */}
-                                    {/* <div className="grid grid-cols-1 gap-6 space-y-3 md:grid-cols-2 lg:col-span-2"> */}
-                                        {/* Cost */}
-                                        {/* <div className="space-y-3">
-                                            <Label htmlFor="cout" className="text-sm font-medium text-gray-300">
-                                                Coût (€)
-                                            </Label>
-                                            <Input
-                                                id="cout"
-                                                type="number"
-                                                value={data.cout}
-                                                onChange={(e) => setData('cout', e.target.value)}
-                                                placeholder="0.00"
-                                                className="w-full rounded-lg border border-gray-600 bg-gray-700/50 px-4 py-3 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div> */}
-
-                                        {/* Type */}
-                                        {/* <div className="space-y-3">
-                                            <Label htmlFor="type" className="text-sm font-medium text-gray-300">
-                                                Type d'entretien
-                                            </Label>
-                                            <select
-                                                id="type"
-                                                value={data.type}
-                                                onChange={(e) => setData('type', e.target.value)}
-                                                className="w-full rounded-lg border border-gray-600 bg-gray-700/50 px-4 py-3 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                            >
-                                                <option value="" className="bg-gray-800 text-gray-400">
-                                                    Type d'entretien
-                                                </option>
-                                                <option value="vidange" className="bg-gray-800 text-white">
-                                                    Vidange
-                                                </option>
-                                                <option value="revision" className="bg-gray-800 text-white">
-                                                    Révision
-                                                </option>
-                                                <option value="reparation" className="bg-gray-800 text-white">
-                                                    Réparation
-                                                </option>
-                                                <option value="controle" className="bg-gray-800 text-white">
-                                                    Contrôle
-                                                </option>
-                                            </select>
-                                        </div> */}
-                                    {/* </div> */}
                                 </div>
 
                                 {/* Action Buttons */}
                                 <div className="flex flex-col justify-end gap-4 border-t border-gray-700/50 pt-8 sm:flex-row">
                                     <Button
                                         type="submit"
-                                        disabled={processing}
+                                        disabled={processing || !data.probleme || !data.vehicule_id || !data.prochaine_visite}
                                         className="flex-1 transform bg-blue-500 px-8 py-3 font-medium text-white hover:bg-blue-600 sm:flex-none"
                                     >
                                         {processing ? (

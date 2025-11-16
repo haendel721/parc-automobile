@@ -337,15 +337,14 @@ export default function Index() {
                                             <div className="flex items-center justify-between">
                                                 <CardTitle className="text-white text-lg flex items-center gap-2">
                                                     <Fuel className="h-5 w-5 text-green-400" />
-                                                    Plein #{pc.id}
+                                                    Plein pour {getVehicleImmatriculation(pc.vehicule_id)}
                                                 </CardTitle>
                                                 <Badge variant="outline" className="bg-gray-700 text-gray-300">
                                                     {formatDate(pc.date_plein)}
                                                 </Badge>
                                             </div>
                                             <CardDescription className="text-gray-400 flex items-center gap-2">
-                                                <Car className="h-4 w-4" />
-                                                {getVehicleImmatriculation(pc.vehicule_id)}
+                                                
                                             </CardDescription>
                                         </CardHeader>
                                         

@@ -84,6 +84,7 @@ class EntretienController extends Controller
     // 📌 Enregistrer un nouvel entretien
     public function store(Request $request)
     {
+        $today = Carbon::today();
         $role = Auth::user()->role;
         $validated = $request->validate([
             'vehicule_id' => 'required|exists:vehicules,id',
@@ -95,6 +96,11 @@ class EntretienController extends Controller
 
         $validated['user_id'] = Auth::id();
         // dd($validated);
+        if($validated["prochaine_visite"]<=$today){
+            return back()->withErrors([
+                'prochaine_visite' => "la date de la demande doit être supérieur ou égall à la date d'aujourd'hui",
+            ])->withInput();
+        }
         $entretien = Entretien::create($validated);
 
         // notifier tous les admins

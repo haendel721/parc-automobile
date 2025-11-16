@@ -154,6 +154,8 @@ Route::get('/api/consommation-simple', [ConsommationController::class, 'consomma
         ->name('kilometrages.store');
     Route::post('/kilometrages/carburant', [KilometrageController::class, 'kmCarburantStore'])
         ->name('kilometrages.carburantStore');
+    Route::delete('/entretiens/{entretien}', [EntretienController::class, 'destroy'])
+        ->name('entretiens.destroy');
 
 });
 Route::get('/graphe-variation-plein-carburant', [PleinCarburantController::class, 'grapheVariationPleinCarburantParVehicule']);
@@ -182,8 +184,6 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
 
     // entretien 
 
-    Route::delete('/entretiens/{entretien}', [EntretienController::class, 'destroy'])
-        ->name('entretiens.destroy');
     Route::post('/entretiens/{entretien}/validate', [EntretienController::class, 'validate'])
         ->name('entretiens.validate');
 
