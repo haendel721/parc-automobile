@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { ArrowRight, BellDot, Car, CirclePlus, Filter, Fuel, Gauge, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
+import { ArrowRight, BellDot, Car, CirclePlus, Edit3, Filter, Fuel, Gauge, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 import VehiculeUser from './VehiculeUser';
@@ -115,7 +115,7 @@ export default function Index() {
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                     {/* Titre et informations */}
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-4 rounded-xl bg-blue-50 p-3 dark:bg-blue-900/20">
+                        <div className="flex items-center gap-4 rounded-2xl bg-blue-500/10 p-3">
                             <Link href={route('vehicules.create')}>
                                 <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
                                     <CirclePlus className="h-4 w-4" />
@@ -419,27 +419,22 @@ export default function Index() {
                                                                 onClick={() => handleDelete(vehicule.id, vehicule.immatriculation)}
                                                                 variant="destructive"
                                                                 size="icon"
-                                                                className="h-9 w-9 rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
+                                                                className="h-9 w-9 border rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
                                                             >
                                                                 <Trash2 size={16} />
                                                             </Button>
-                                                            <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 transform opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                                                <div className="rounded-md bg-gray-900 px-2 py-1 text-xs whitespace-nowrap text-white">
-                                                                    Supprimer
-                                                                </div>
-                                                            </div>
                                                         </div>
 
                                                         {/* Autres actions peuvent être ajoutées ici */}
-                                                        {/* <Link href={route('vehicules.edit', vehicule.id)}>
+                                                        <Link href={route('vehicules.edit', vehicule.id)}>
                                                             <Button
                                                                 variant="outline"
                                                                 size="icon"
-                                                                className="h-9 w-9 rounded-full bg-gray-500 transition-all duration-200 hover:bg-gray-400 dark:border-gray-600 dark:hover:bg-gray-800"
+                                                                className="h-9 w-9 rounded-full bg-blue-500 transition-all duration-200 hover:bg-blue-400 "
                                                             >
                                                                 <Edit3 size={16} />
                                                             </Button>
-                                                        </Link> */}
+                                                        </Link>
                                                     </div>
 
                                                     {/* Lien voir détails avec animation */}

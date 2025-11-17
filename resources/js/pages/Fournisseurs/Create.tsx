@@ -44,6 +44,7 @@ export default function Index() {
         { value: 'equipement', label: 'Équipement automobile' },
         { value: 'pneu', label: 'Pneus' },
         { value: 'lubrifiant', label: 'Lubrifiants' },
+        { value: 'Carburant', label: 'Carburant' },
         { value: 'autre', label: 'Autre' },
     ];
 

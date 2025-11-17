@@ -22,7 +22,7 @@ interface Vehicule {
     dateAcquisition: string;
     photo: string;
     kilometrique: number;
-    capacite_reservoir:number;
+    capacite_reservoir: number;
 }
 
 interface Props {
@@ -32,7 +32,7 @@ interface Props {
     marques: { id: number; nom: string }[];
 }
 
-export default function Edit({ Vehicule, typesVehicules, carburants, marques }: Props) {
+export default function Edit({ Vehicule, typesVehicules, carburants, marques, userConnecter }: Props) {
     const { processing, data, setData, post, errors } = useForm({
         id: Vehicule.id,
         immatriculation: Vehicule.immatriculation ?? '',
@@ -46,7 +46,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
         anneeFabrication: Vehicule.anneeFabrication ?? '',
         dateAcquisition: Vehicule.dateAcquisition ?? '',
         kilometrique: Vehicule.kilometrique ?? '',
-        capacite_reservoir:Vehicule.capacite_reservoir ?? '',
+        capacite_reservoir: Vehicule.capacite_reservoir ?? '',
     });
 
     const handleUpdate = (e: React.FormEvent) => {
@@ -127,6 +127,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 id="immatriculation"
                                                 type="text"
                                                 value={data.immatriculation}
+                                                disabled={userConnecter !== 'admin'}
                                                 onChange={(e) => setData('immatriculation', e.target.value)}
                                                 className="w-full text-gray-100"
                                                 placeholder="AB-123-CD"
@@ -138,7 +139,11 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                             <Label htmlFor="marque" className="text-lg font-medium text-gray-100">
                                                 Marque
                                             </Label>
-                                            <Select value={data.marque_id.toString()} onValueChange={(value) => setData('marque_id', Number(value))}>
+                                            <Select
+                                                disabled={userConnecter !== 'admin'}
+                                                value={data.marque_id.toString()}
+                                                onValueChange={(value) => setData('marque_id', Number(value))}
+                                            >
                                                 <SelectTrigger id="marque" className="w-full text-gray-100">
                                                     <SelectValue placeholder="Sélectionnez une marque" />
                                                 </SelectTrigger>
@@ -155,11 +160,12 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                         {/* Modèle */}
                                         <div className="space-y-2">
                                             <Label htmlFor="model" className="text-lg font-medium text-gray-100">
-                                                Modèle *
+                                                Modèle
                                             </Label>
                                             <Input
                                                 id="model"
                                                 type="text"
+                                                disabled={userConnecter !== 'admin'}
                                                 value={data.model}
                                                 onChange={(e) => setData('model', e.target.value)}
                                                 className="w-full text-gray-100"
@@ -170,9 +176,10 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                         {/* Type de véhicule */}
                                         <div className="space-y-2">
                                             <Label htmlFor="typeVehicule" className="text-lg font-medium text-gray-100">
-                                                Type de véhicule *
+                                                Type de véhicule
                                             </Label>
                                             <Select
+                                                disabled={userConnecter !== 'admin'}
                                                 value={data.typeVehicule_id.toString()}
                                                 onValueChange={(value) => setData('typeVehicule_id', Number(value))}
                                             >
@@ -207,7 +214,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                         {/* Carburant */}
                                         <div className="space-y-2">
                                             <Label htmlFor="carburant" className="text-lg font-medium text-gray-100">
-                                                Carburant *
+                                                Carburant
                                             </Label>
                                             <Select
                                                 value={data.carburant_id.toString()}
@@ -234,6 +241,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                             <Input
                                                 id="numSerie"
                                                 type="text"
+                                                disabled={userConnecter !== 'admin'}
                                                 value={data.numSerie}
                                                 onChange={(e) => setData('numSerie', e.target.value)}
                                                 className="w-full text-gray-100"
@@ -242,7 +250,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                         </div>
                                         {/* Reservoir */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="kilometrique" className="text-lg text-gray-100 font-medium">
+                                            <Label htmlFor="kilometrique" className="text-lg font-medium text-gray-100">
                                                 Reservoir
                                             </Label>
                                             <Input
@@ -280,6 +288,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                                 id="anneeFabrication"
                                                 type="number"
                                                 min="1900"
+                                                disabled={userConnecter !== 'admin'}
                                                 max={new Date().getFullYear()}
                                                 value={data.anneeFabrication}
                                                 onChange={(e) => setData('anneeFabrication', Number(e.target.value))}
@@ -296,6 +305,7 @@ export default function Edit({ Vehicule, typesVehicules, carburants, marques }: 
                                             <Input
                                                 id="dateAcquisition"
                                                 type="date"
+                                                disabled={userConnecter !== 'admin'}
                                                 value={data.dateAcquisition}
                                                 onChange={(e) => setData('dateAcquisition', e.target.value)}
                                                 className="w-full text-gray-100"

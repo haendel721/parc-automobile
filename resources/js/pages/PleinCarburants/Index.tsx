@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, CirclePlus, Trash2, Car, User, Calendar, Fuel, DollarSign, MapPin, Filter, Search, X } from 'lucide-react';
+import { BellDot, CirclePlus, Trash2, Car, User, Calendar, Fuel, DollarSign, MapPin, Filter, Search, X, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
 
@@ -86,6 +86,9 @@ export default function Index() {
     const [weekStart, setWeekStart] = useState<string>('');
     const [weekEnd, setWeekEnd] = useState<string>('');
 
+    // État pour le mode d'affichage des statistiques
+    const [statViewMode, setStatViewMode] = useState<'total' | 'weekly'>('total');
+
     // Filtrage des données
     const filteredPleinCarburant = pleinCarburant.filter((pc) => {
         const pcDate = new Date(pc.date_plein);
@@ -144,6 +147,44 @@ export default function Index() {
         return vehicle ? vehicle.immatriculation : 'Inconnu';
     };
 
+    // Fonction pour calculer la consommation par semaine
+    const getWeeklyConsumption = (vehicleId: number) => {
+        // Filtrer les pleins pour ce véhicule
+        const vehicleFillUps = pleinCarburant.filter(pc => pc.vehicule_id === vehicleId);
+        
+        // Grouper par semaine
+        const weeklyData: { [key: string]: { quantite: number; montant: number } } = {};
+        
+        vehicleFillUps.forEach(pc => {
+            const date = new Date(pc.date_plein);
+            // Obtenir le lundi de la semaine
+            const startOfWeek = new Date(date);
+            const day = startOfWeek.getDay();
+            const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Ajuster pour lundi comme premier jour
+            startOfWeek.setDate(diff);
+            
+            const weekKey = startOfWeek.toISOString().split('T')[0]; // Utiliser la date du lundi comme clé
+            
+            if (!weeklyData[weekKey]) {
+                weeklyData[weekKey] = { quantite: 0, montant: 0 };
+            }
+            
+            weeklyData[weekKey].quantite += pc.quantite;
+            weeklyData[weekKey].montant += pc.montant_total;
+        });
+        
+        return weeklyData;
+    };
+
+    // Fonction pour formater la période de la semaine
+    const formatWeekPeriod = (weekStart: string) => {
+        const start = new Date(weekStart);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6); // Samedi
+        
+        return `Semaine du ${formatDate(weekStart)} au ${formatDate(end.toISOString())}`;
+    };
+
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -170,8 +211,8 @@ export default function Index() {
                                     <p className="text-gray-400">Vue d'ensemble des dépenses par véhicule</p>
                                 </div>
                                 
-                                {/* Barre de recherche */}
                                 <div className="flex flex-col sm:flex-row gap-3">
+                                    {/* Barre de recherche */}
                                     <div className="relative flex-1 min-w-[250px]">
                                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                         <input
@@ -182,16 +223,44 @@ export default function Index() {
                                             className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                         />
                                     </div>
+                                    
+                                    {/* Bouton de basculement de vue */}
+                                    <div className="flex gap-2">
+                                        <Button
+                                            onClick={() => setStatViewMode('total')}
+                                            variant={statViewMode === 'total' ? 'default' : 'outline'}
+                                            className={`flex items-center gap-2 ${
+                                                statViewMode === 'total' 
+                                                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                                                    : 'bg-gray-700 hover:bg-gray-600 text-gray-300 border-gray-600'
+                                            }`}
+                                        >
+                                            <DollarSign className="h-4 w-4" />
+                                            Total
+                                        </Button>
+                                        <Button
+                                            onClick={() => setStatViewMode('weekly')}
+                                            variant={statViewMode === 'weekly' ? 'default' : 'outline'}
+                                            className={`flex items-center gap-2 ${
+                                                statViewMode === 'weekly' 
+                                                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                                                    : 'bg-gray-700 hover:bg-gray-600 text-gray-300 border-gray-600'
+                                            }`}
+                                        >
+                                            <BarChart3 className="h-4 w-4" />
+                                            Par semaine
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Grille des véhicules */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filteredVehicules.length > 0 ? (
                                 filteredVehicules.map((vehicle) => {
                                     const totalMontant = montantTotal.find(mt => mt.vehicule_id === vehicle.id)?.totalMontant || 0;
                                     const totalQuantite = Quantite.find(q => q.vehicule_id === vehicle.id)?.Quantite || 0;
+                                    const weeklyConsumption = getWeeklyConsumption(vehicle.id);
                                     
                                     return (
                                         <Card key={vehicle.id} className="bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-200">
@@ -210,24 +279,65 @@ export default function Index() {
                                                 </CardDescription>
                                             </CardHeader>
                                             <CardContent className="space-y-3">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-gray-400 flex items-center gap-2">
-                                                        <Fuel className="h-4 w-4" />
-                                                        Quantité totale
-                                                    </span>
-                                                    <span className="text-white font-semibold">
-                                                        {totalQuantite} L
-                                                    </span>
-                                                </div>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-gray-400 flex items-center gap-2">
-                                                        <DollarSign className="h-4 w-4" />
-                                                        Montant total
-                                                    </span>
-                                                    <span className="text-green-400 font-semibold">
-                                                        {totalMontant.toLocaleString('fr-FR')} Ar
-                                                    </span>
-                                                </div>
+                                                {statViewMode === 'total' ? (
+                                                    // Vue totale
+                                                    <>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-gray-400 flex items-center gap-2">
+                                                                <Fuel className="h-4 w-4" />
+                                                                Quantité totale
+                                                            </span>
+                                                            <span className="text-white font-semibold">
+                                                                {totalQuantite} L
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-gray-400 flex items-center gap-2">
+                                                                <DollarSign className="h-4 w-4" />
+                                                                Montant total
+                                                            </span>
+                                                            <span className="text-green-400 font-semibold">
+                                                                {totalMontant.toLocaleString('fr-FR')} Ar
+                                                            </span>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    // Vue par semaine
+                                                    <div className="space-y-3">
+                                                        <div className="text-center mb-2">
+                                                            <Badge variant="outline" className="bg-green-900/20 text-green-300">
+                                                                Consommation hebdomadaire
+                                                            </Badge>
+                                                        </div>
+                                                        {Object.keys(weeklyConsumption).length > 0 ? (
+                                                            Object.entries(weeklyConsumption)
+                                                                .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime()) // Plus récent en premier
+                                                                .slice(0, 2) // Afficher seulement les 2 dernières semaines
+                                                                .map(([weekStart, data]) => (
+                                                                    <div key={weekStart} className="bg-gray-700/30 rounded-lg p-3 space-y-2">
+                                                                        <div className="text-xs text-gray-400 font-medium">
+                                                                            {formatWeekPeriod(weekStart)}
+                                                                        </div>
+                                                                        <div className="flex justify-between items-center text-sm">
+                                                                            <span className="text-gray-300">Quantité:</span>
+                                                                            <span className="text-white font-semibold">{data.quantite} L</span>
+                                                                        </div>
+                                                                        <div className="flex justify-between items-center text-sm">
+                                                                            <span className="text-gray-300">Montant:</span>
+                                                                            <span className="text-green-400 font-semibold">
+                                                                                {data.montant.toLocaleString('fr-FR')} Ar
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                ))
+                                                        ) : (
+                                                            <div className="text-center py-4 text-gray-400 text-sm">
+                                                                <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-600" />
+                                                                Aucune donnée cette semaine
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </CardContent>
                                         </Card>
                                     );
@@ -244,8 +354,10 @@ export default function Index() {
                         </div>
                     </section>
 
+                    {/* Le reste du code reste inchangé */}
                     {/* SECTION HISTORIQUE DES PLEINS */}
                     <section>
+                        {/* ... Le code de la section historique reste identique ... */}
                         <div className="mb-6">
                             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                                 <div>

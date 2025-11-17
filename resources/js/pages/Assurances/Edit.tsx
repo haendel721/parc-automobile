@@ -170,7 +170,6 @@ export default function Edit({ assurance, Vehicule }: Props) {
                                     <Input 
                                         id="NumContrat" 
                                         type="text" 
-                                        disabled 
                                         value={data.NumContrat} 
                                         className="h-11 border-gray-600 bg-gray-600 text-gray-400" 
                                     />

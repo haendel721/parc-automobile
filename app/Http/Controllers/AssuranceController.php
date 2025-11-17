@@ -90,7 +90,7 @@ class AssuranceController extends Controller
                 'unique:assurances,vehicule_id',
             ],
             'NomCompagnie' => 'required|string|max:255',
-            'NumContrat' => 'required|string|max:255|unique:assurances,NumContrat',
+            'NumContrat' => 'nullable|string|max:255|unique:assurances,NumContrat',
             'cout' => 'required|numeric',
             'dateDebut' => 'required|date',
             'dateFin' => 'required|date|after:dateDebut',

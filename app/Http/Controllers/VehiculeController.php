@@ -133,12 +133,13 @@ class VehiculeController extends Controller
         $carburants = Carburant::all(); // récupère tous les carburants
         $typesVehicules = TypeVehicule::all(); // récupère tous les types
         $marques = Marque::all(); // récupère tous les marque de vehicules
-
+        $userConnecter = Auth::user()->role;
         return Inertia::render('Vehicules/Edit', [
             'Vehicule' => $Vehicule,
             'carburants' => $carburants,
             'typesVehicules' => $typesVehicules,
             'marques' => $marques,
+            'userConnecter' => $userConnecter,
         ]);
     }
 

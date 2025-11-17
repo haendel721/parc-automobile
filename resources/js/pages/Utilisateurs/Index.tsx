@@ -8,9 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { BellDot, Filter, Search, SquarePen, Trash2, Users, X } from 'lucide-react';
+import { BellDot, CirclePlus, Filter, Search, SquarePen, Trash2, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { route } from 'ziggy-js';
+import {register} from "@/routes";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -121,7 +122,12 @@ export default function Index() {
                             <CardHeader className="pb-4">
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className="rounded-2xl bg-blue-500/10 p-3">
+                                        <div className="flex items-center gap-4 rounded-2xl bg-blue-500/10 p-3 ">
+                                            <Link href={register()}>
+                                                <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
+                                                    <CirclePlus className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
                                             <Users className="h-8 w-8 text-blue-400" />
                                         </div>
                                         <div>

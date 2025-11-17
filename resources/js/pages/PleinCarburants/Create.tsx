@@ -146,8 +146,8 @@ export default function Index() {
                         <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg">
                             <Fuel className="h-8 w-8 text-white" />
                         </div>
-                        <h1 className="mb-2 text-3xl font-bold text-white">Nouveau Plein Carburant</h1>
-                        <p className="text-lg text-gray-400">Enregistrez les détails du remplissage de carburant</p>
+                        {/* <h1 className="mb-2 text-3xl font-bold text-white">Plein Carburant</h1> */}
+                        <p className="text-lg text-gray-400 text-lg font-bold">Enregistrez les détails du remplissage de carburant</p>
                     </div>
 
                     {/* Main Form Card */}

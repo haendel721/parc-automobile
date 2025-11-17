@@ -294,7 +294,7 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                         className="flex items-center gap-2 border-blue-900 bg-blue-900/20 text-blue-400 transition-all duration-200 hover:bg-blue-900/50 hover:text-white"
                                                     >
                                                         <Eye className="h-4 w-4" />
-                                                        Voir détails
+                                                        Détails
                                                     </Button>
                                                 </Link>
 
@@ -313,7 +313,7 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                     <Link href={route('assurances.byVehicule', vehicule.id)}>
                                                         <Button className="flex items-center gap-2 border border-green-500 bg-green-800/20 text-green-400 transition-all duration-200 hover:bg-green-700/50 hover:text-white">
                                                             <Eye className="h-4 w-4" />
-                                                            Voir l'assurance
+                                                            Assurance
                                                         </Button>
                                                     </Link>
                                                 ) : (

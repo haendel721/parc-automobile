@@ -331,7 +331,7 @@ const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
                                         )}
 
                                         {/* Actions */}
-                                        <div className="flex justify-end pt-4">
+                                        {/* <div className="flex justify-end pt-4">
                                             <Link href={route('assurances.edit', assurance.id)}>
                                                 <Button
                                                     variant="outline"
@@ -342,7 +342,7 @@ const IndexUser: React.FC<AssuranceProps> = ({ assurances }) => {
                                                     Modifier
                                                 </Button>
                                             </Link>
-                                        </div>
+                                        </div> */}
                                     </CardContent>
                                 </Card>
                             );
