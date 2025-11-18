@@ -7,8 +7,10 @@ type Notification = {
     id: string;
     read_at: string | null;
     created_at: string;
+    type: string;
     data: {
         vehicule?: string;
+        entretien_id: number
         message?: string;
         user?: string;
         url?: string;
@@ -21,7 +23,7 @@ export default function NotificationsDrawer() {
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [filter, setFilter] = useState<'all' | 'read' | 'unread'>('all');
-
+    console.log("Data notificartion : " , notifications.map(notification => notification.data.entretien_id));
     useEffect(() => {
         setNotifications(serverNotifications ? JSON.parse(JSON.stringify(serverNotifications)) : []);
     }, [serverNotifications]);
@@ -207,7 +209,7 @@ export default function NotificationsDrawer() {
                                                             Marquer lu
                                                         </button>
                                                     )}
-                                                    {n.data?.url && (
+                                                    {n.data?.url && n.data.entretien_id ? (
                                                         <a
                                                             href={n.data.url}
                                                             className="flex items-center gap-1 rounded-lg bg-blue-600/20 hover:bg-blue-500/30 px-3 py-1.5 text-xs text-blue-300 hover:text-blue-200 transition-all duration-200 border border-blue-500/30"
@@ -219,7 +221,9 @@ export default function NotificationsDrawer() {
                                                             <Eye className="w-3 h-3" />
                                                             Voir
                                                         </a>
-                                                    )}
+                                                    )
+                                                :
+                                                ""}
                                                     <button 
                                                         onClick={() => deleteNotification(n.id)} 
                                                         className="flex items-center gap-1 rounded-lg bg-red-600/20 hover:bg-red-500/30 px-3 py-1.5 text-xs text-red-300 hover:text-red-200 transition-all duration-200 border border-red-500/30 ml-auto"
