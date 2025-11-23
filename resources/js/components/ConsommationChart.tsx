@@ -36,7 +36,7 @@ interface ApiResponse {
 
 function Consommation() {
     const [chartData, setChartData] = useState<ChartData<'line', number[], string>>({ labels: [], datasets: [] });
-    const [originalData, setOriginalData] = useState<WeekData[]>([]); // 🔥 Stocker les données originales
+    const [originalData, setOriginalData] = useState<WeekData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -46,20 +46,54 @@ function Consommation() {
             setLoading(true);
             setError(null);
 
-            // 🔹 Appel API backend (Laravel)
-            const response = await axios.get<ApiResponse>('/api/consommation', { signal });
-            const data = response.data.weeksData ?? [];
+            console.log('🔍 Début du chargement des données...');
 
-            // 🔥 Stocker les données originales pour le tableau
-            setOriginalData(data);
+            // 🔹 Appel API backend (Laravel)
+            const response = await axios.get<ApiResponse>('/api/consommation', { 
+                signal,
+                timeout: 10000
+            });
+            
+            console.log('📊 Réponse API:', response.data);
+
+            // Vérifier que la réponse est bien un objet
+            if (typeof response.data !== 'object' || response.data === null) {
+                throw new Error('Format de réponse invalide');
+            }
+
+            // Vérifier le succès de la requête
+            if (!response.data.success) {
+                throw new Error(response.data.message || 'Erreur serveur');
+            }
+
+            // S'assurer que weeksData est un tableau
+            const data = Array.isArray(response.data.weeksData) ? response.data.weeksData : [];
+            
+            console.log(`📈 ${data.length} enregistrements reçus`);
 
             if (!data.length) {
+                console.log('ℹ️ Aucune donnée disponible');
                 setChartData({ labels: [], datasets: [] });
+                setOriginalData([]);
                 return;
             }
 
+            // Vérifier que chaque élément est un objet valide
+            const validData = data.filter((item: any) => 
+                item && 
+                typeof item === 'object' && 
+                'week' in item && 
+                'vehicule_id' in item &&
+                'vehicule_nom' in item
+            );
+
+            console.log(`✅ ${validData.length} données valides après filtrage`);
+
+            // 🔹 Stocker les données originales
+            setOriginalData(validData);
+
             // 🔹 Extraire les semaines uniques (labels)
-            const allWeeks = Array.from(new Set(data.map((d) => d.week)));
+            const allWeeks = Array.from(new Set(validData.map((d: WeekData) => d.week)));
 
             // 🔹 Tri chronologique des semaines
             allWeeks.sort((a, b) => {
@@ -69,10 +103,12 @@ function Consommation() {
                 return yearA !== yearB ? yearA - yearB : weekA - weekB;
             });
 
+            console.log('📅 Semaines triées:', allWeeks);
+
             // 🔹 Grouper les données par véhicule
             const vehiculesMap = new Map<number, { id: number; nom: string; data: WeekData[] }>();
             
-            data.forEach((item) => {
+            validData.forEach((item: WeekData) => {
                 const key = item.vehicule_id;
                 if (!vehiculesMap.has(key)) {
                     vehiculesMap.set(key, {
@@ -81,10 +117,15 @@ function Consommation() {
                         data: [],
                     });
                 }
-                vehiculesMap.get(key)!.data.push(item);
+                // S'assurer qu'on pousse un objet valide
+                if (item && typeof item === 'object') {
+                    vehiculesMap.get(key)!.data.push(item);
+                }
             });
 
-            // 🔹 Palette de couleurs (6 couleurs max, bouclées)
+            console.log(`🚗 ${vehiculesMap.size} véhicules trouvés`);
+
+            // 🔹 Palette de couleurs
             const colorPalette = [
                 { border: 'rgb(79, 70, 229)', background: 'rgba(79, 70, 229, 0.1)' },
                 { border: 'rgb(16, 185, 129)', background: 'rgba(16, 185, 129, 0.1)' },
@@ -99,10 +140,13 @@ function Consommation() {
             // 🔹 Construire les datasets pour le graphique
             const datasets: ChartDataset<'line', number[]>[] = vehicules.map((veh, idx) => {
                 // Créer un map pour accéder rapidement aux données par semaine
-                const indexByWeek = new Map(veh.data.map((d) => [d.week, d.consommation]));
+                const indexByWeek = new Map(veh.data.map((d: WeekData) => [d.week, d.consommation]));
                 
                 // Pour chaque semaine, récupérer la consommation ou 0 si pas de données
-                const dataPoints = allWeeks.map((week) => indexByWeek.get(week) ?? 0);
+                const dataPoints = allWeeks.map((week) => {
+                    const consommation = indexByWeek.get(week);
+                    return typeof consommation === 'number' ? consommation : 0;
+                });
                 
                 const color = colorPalette[idx % colorPalette.length];
 
@@ -125,16 +169,39 @@ function Consommation() {
                 } as ChartDataset<'line', number[]>;
             });
 
+            console.log('🎨 Datasets créés:', datasets.length);
+
             // 🔹 Mise à jour du graphique
             setChartData({
                 labels: allWeeks,
                 datasets,
             });
             setLastUpdated(new Date());
+            
+            console.log('✅ Graphique mis à jour avec succès');
+
         } catch (err: any) {
-            if (axios.isCancel(err)) return;
-            console.error('Erreur lors du chargement des données:', err);
-            setError('Impossible de charger les données de consommation');
+            if (axios.isCancel(err)) {
+                console.log('❌ Requête annulée');
+                return;
+            }
+            
+            console.error('💥 Erreur détaillée:', err);
+            
+            if (err.response) {
+                // Erreur HTTP (4xx, 5xx)
+                console.error('📡 Statut HTTP:', err.response.status);
+                console.error('📦 Données erreur:', err.response.data);
+                setError(`Erreur serveur (${err.response.status}): ${err.response.data?.message || 'Impossible de charger les données'}`);
+            } else if (err.request) {
+                // Pas de réponse du serveur
+                console.error('🌐 Pas de réponse du serveur');
+                setError('Impossible de se connecter au serveur. Vérifiez votre connexion.');
+            } else {
+                // Erreur de configuration
+                console.error('⚙️ Erreur de configuration:', err.message);
+                setError(`Erreur: ${err.message}`);
+            }
         } finally {
             setLoading(false);
         }
@@ -166,9 +233,19 @@ function Consommation() {
                 tooltip: {
                     enabled: true,
                     callbacks: {
-                        title: (tooltipItems: any) => tooltipItems[0].label,
-                        label: (context: any) =>
-                            `${context.dataset.label}: ${context.formattedValue} L/100km`,
+                        title: (tooltipItems: any) => {
+                            // Vérifier que tooltipItems est un tableau
+                            if (Array.isArray(tooltipItems) && tooltipItems.length > 0) {
+                                return tooltipItems[0].label || '';
+                            }
+                            return '';
+                        },
+                        label: (context: any) => {
+                            if (context && context.dataset && context.dataset.label && context.formattedValue) {
+                                return `${context.dataset.label}: ${context.formattedValue} L/100km`;
+                            }
+                            return '';
+                        },
                     },
                 },
                 title: {
@@ -186,8 +263,8 @@ function Consommation() {
                     beginAtZero: true,
                     ticks: {
                         color: '#ddd',
-                        maxRotation: 0,
-                        minRotation: 0,
+                        maxRotation: 45,
+                        minRotation: 45,
                         font: {
                             size: 11
                         }
@@ -207,7 +284,7 @@ function Consommation() {
                     ticks: { 
                         color: '#ddd',
                         callback: function(value: any) {
-                            return value + ' L';
+                            return typeof value === 'number' ? value + ' L' : '0 L';
                         }
                     },
                     grid: {
@@ -228,19 +305,57 @@ function Consommation() {
         [],
     );
 
-    // 🔥 Préparer les données pour le tableau
-    const tableData = useMemo(() => {
-        if (!originalData.length) return [];
+    // Fonction pour obtenir les données détaillées d'une semaine et véhicule
+    const getDetailedData = (week: string, vehiculeNom: string) => {
+        if (!Array.isArray(originalData)) return undefined;
         
-        return originalData
-            .filter(data => data.consommation > 0) // Filtrer les données valides
-            .sort((a, b) => {
-                // Trier par semaine puis par véhicule
-                const weekCompare = a.week.localeCompare(b.week);
-                if (weekCompare !== 0) return weekCompare;
-                return a.vehicule_nom.localeCompare(b.vehicule_nom);
+        return originalData.find(
+            (d: WeekData) => d && d.week === week && d.vehicule_nom === vehiculeNom
+        );
+    };
+
+    // Fonction pour rendre le tableau des données
+    const renderDataTable = () => {
+        if (!chartData.labels || !Array.isArray(chartData.labels) || !Array.isArray(chartData.datasets)) {
+            return null;
+        }
+
+        const rows: JSX.Element[] = [];
+
+        chartData.datasets.forEach((dataset) => {
+            const vehiculeNom = dataset.label || '';
+            
+            chartData.labels?.forEach((week, weekIndex) => {
+                // Vérifier que dataset.data est un tableau
+                if (!Array.isArray(dataset.data)) return;
+                
+                const consommation = dataset.data[weekIndex];
+                
+                // Ignorer les valeurs nulles ou non numériques
+                if (typeof consommation !== 'number' || consommation === 0) return;
+
+                const detailedData = getDetailedData(week, vehiculeNom);
+
+                rows.push(
+                    <tr key={`${vehiculeNom}-${week}`} className="hover:bg-gray-700/50 transition-colors">
+                        <td className="px-4 py-3 text-sm text-gray-300">{week}</td>
+                        <td className="px-4 py-3 text-sm text-gray-300">{vehiculeNom}</td>
+                        <td className="px-4 py-3 text-sm text-gray-300 text-right">
+                            {detailedData?.litres || 'N/A'} L
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-300 text-right">
+                            {detailedData?.km || 'N/A'} km
+                        </td>
+                        <td className="px-4 py-3 text-sm font-semibold text-right">
+                            <span className="text-blue-400">{consommation} L/100km</span>
+                        </td>
+                    </tr>
+                );
             });
-    }, [originalData]);
+        });
+
+        return rows.length > 0 ? rows : null;
+    };
 
     // 🧭 Gestion des états (chargement / erreur / vide / affichage)
     if (loading) {
@@ -271,7 +386,7 @@ function Consommation() {
         );
     }
 
-    if (chartData.datasets.length === 0) {
+    if (chartData.datasets.length === 0 || !Array.isArray(chartData.datasets)) {
         return (
             <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-900 shadow-lg">
                 <div className="text-center">
@@ -329,7 +444,7 @@ function Consommation() {
                 </div>
             </div>
 
-            {/* 🔥 Tableau des données détaillées - VERSION CORRIGÉE */}
+            {/* Tableau des données détaillées */}
             <div className="mt-8 p-6 bg-gray-800/50 rounded-lg">
                 <h4 className="text-lg font-semibold text-white mb-4">Détails des données</h4>
                 <div className="overflow-x-auto">
@@ -344,52 +459,16 @@ function Consommation() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-700">
-                            {tableData.length > 0 ? (
-                                tableData.map((data, index) => (
-                                    <tr key={`${data.vehicule_id}-${data.week}-${index}`} className="hover:bg-gray-700/50 transition-colors">
-                                        <td className="px-4 py-3 text-sm text-gray-300">{data.week}</td>
-                                        <td className="px-4 py-3 text-sm text-gray-300">{data.vehicule_nom}</td>
-                                        <td className="px-4 py-3 text-sm text-gray-300 text-right">{data.litres.toFixed(1)} L</td>
-                                        <td className="px-4 py-3 text-sm text-gray-300 text-right">{data.km} km</td>
-                                        <td className="px-4 py-3 text-sm font-semibold text-right">
-                                            <span className="text-blue-400">{data.consommation.toFixed(2)} L/100km</span>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
+                            {renderDataTable() || (
                                 <tr>
-                                    <td colSpan={5} className="px-4 py-4 text-center text-sm text-gray-400">
-                                        Aucune donnée détaillée disponible
+                                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-400">
+                                        Aucune donnée à afficher
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
-
-                {/* 🔥 Statistiques récapitulatives */}
-                {tableData.length > 0 && (
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-700">
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-400">
-                                {chartData.datasets.length}
-                            </div>
-                            <div className="text-sm text-gray-400">Véhicules suivis</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-green-400">
-                                {tableData.length}
-                            </div>
-                            <div className="text-sm text-gray-400">Enregistrements</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-yellow-400">
-                                {Math.max(...tableData.map(d => d.consommation)).toFixed(1)} L
-                            </div>
-                            <div className="text-sm text-gray-400">Consommation max</div>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );

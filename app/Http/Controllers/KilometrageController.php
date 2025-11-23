@@ -320,18 +320,18 @@ class KilometrageController extends Controller
         // Alternative: notifier un utilisateur spécifique
         return \App\Models\User::where('id', auth()->id())->get();
     }
-    private function creerEntretien(Vehicule $vehicule, $kilometrageActuel)
-    {
-        Entretien::create([
-            'vehicule_id' => $vehicule->id,
-            'type_entretien' => 'Maintenance périodique',
-            'user_id' => auth()->id(),
-            'date_entretien' => Carbon::now(),
-            'kilometrage_entretien' => $kilometrageActuel,
-            'prochaine_visite' => Carbon::now()->addMonths(6),
-            'kilometrage_prochaine_visite' => $kilometrageActuel + 5000,
-            'statut' => 'programmé',
-            'notes' => 'Entretien généré automatiquement - Seuil de 5000 km atteint'
-        ]);
-    }
+    // private function creerEntretien(Vehicule $vehicule, $kilometrageActuel)
+    // {
+    //     Entretien::create([
+    //         'vehicule_id' => $vehicule->id,
+    //         'type_entretien' => 'Maintenance périodique',
+    //         'user_id' => auth()->id(),
+    //         'date_entretien' => Carbon::now(),
+    //         'kilometrage_entretien' => $kilometrageActuel,
+    //         'prochaine_visite' => Carbon::now()->addMonths(6),
+    //         'kilometrage_prochaine_visite' => $kilometrageActuel + 5000,
+    //         'statut' => 'programmé',
+    //         'notes' => 'Entretien généré automatiquement - Seuil de 5000 km atteint'
+    //     ]);
+    // }
 }

@@ -54,11 +54,11 @@ const mainNavItemsAdmin: NavItem[] = [
         href: '/entretiens',
         icon: Hammer,
     },
-    {
-        title: 'Gestion administrative',
-        href: '/gestionAdmin',
-        icon: FileSliders,
-    },
+    // {
+    //     title: 'Gestion administrative',
+    //     href: '/gestionAdmin',
+    //     icon: FileSliders,
+    // },
 ];
 
 const mainNavItemsUtilisateur: NavItem[] = [

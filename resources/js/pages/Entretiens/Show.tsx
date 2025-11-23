@@ -316,7 +316,7 @@ export default function Index() {
                                                     Valider l'Entretien
                                                 </Button>
                                             )}
-                                            {userConnecter === 'mecanicien' && (
+                                            {userConnecter === 'mecanicien' && entretien.statut !== 'Terminé' && (
                                                 <Link href={route('pieces.create' , {entretien_id: entretien.id, vehicule_id: entretien.vehicule_id })}>
                                                     <Button className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-white shadow-lg transition-all duration-200 hover:bg-emerald-700 hover:shadow-xl">
                                                         <Wrench className="h-4 w-4" />

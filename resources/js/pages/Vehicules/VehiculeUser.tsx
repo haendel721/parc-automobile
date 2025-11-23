@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { AlertTriangle, Badge, Calendar, CalendarDays, Car, Eye, Fuel, Gauge, ShieldOff, SquarePen, Trash2 } from 'lucide-react';
+import { AlertTriangle, Badge, Calendar, CalendarDays, Car, CirclePlus, Eye, Fuel, Gauge, ShieldOff, SquarePen, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { route } from 'ziggy-js';
 import KilometrageModal from './KilometrageModal';
@@ -190,10 +190,10 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                         <div className="relative z-10">
                                                             <div className="space-y-4">
                                                                 <div className="flex items-center justify-between">
-                                                                    <span className="text-sm font-medium text-gray-400">Année</span>
+                                                                    <span className="text-sm font-medium text-gray-400">Kilométrage</span>
                                                                     <div className="flex items-center gap-2">
                                                                         <CalendarDays className="h-4 w-4 text-emerald-400" />
-                                                                        <span className="font-medium text-white">{vehicule.anneeFabrication}</span>
+                                                                        <span className="font-medium text-white">{vehicule.kilometrique}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex items-center justify-between">
@@ -222,15 +222,15 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                                                 assuranceDaysRemaining < 0
                                                                                     ? 'destructive'
                                                                                     : assuranceDaysRemaining <= 14
-                                                                                      ? 'secondary'
-                                                                                      : 'default'
+                                                                                        ? 'secondary'
+                                                                                        : 'default'
                                                                             }
                                                                             className={
                                                                                 assuranceDaysRemaining < 0
                                                                                     ? 'border-red-500/30 bg-red-500/20 text-red-300'
                                                                                     : assuranceDaysRemaining <= 14
-                                                                                      ? 'border-yellow-500/30 bg-yellow-500/20 text-yellow-300'
-                                                                                      : 'border-green-500/30 bg-green-500/20 text-green-300'
+                                                                                        ? 'border-yellow-500/30 bg-yellow-500/20 text-yellow-300'
+                                                                                        : 'border-green-500/30 bg-green-500/20 text-green-300'
                                                                             }
                                                                         >
                                                                             {assuranceDaysRemaining > 0
@@ -239,13 +239,12 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                                         </Badge>
                                                                     </div>
                                                                     <span
-                                                                        className={`text-sm font-medium ${
-                                                                            assuranceDaysRemaining < 0
-                                                                                ? 'text-red-400'
-                                                                                : assuranceDaysRemaining <= 14
-                                                                                  ? 'text-yellow-400'
-                                                                                  : 'text-green-400'
-                                                                        }`}
+                                                                        className={`text-sm font-medium ${assuranceDaysRemaining < 0
+                                                                            ? 'text-red-400'
+                                                                            : assuranceDaysRemaining <= 14
+                                                                                ? 'text-yellow-400'
+                                                                                : 'text-green-400'
+                                                                            }`}
                                                                     >
                                                                         {assuranceDaysRemaining > 0
                                                                             ? `${assuranceDaysRemaining} jour(s) restant`
@@ -297,8 +296,6 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                         Détails
                                                     </Button>
                                                 </Link>
-
-                                                {/* ✅ CORRIGÉ : Bouton Kilométrage */}
                                                 <Button
                                                     onClick={() => handleOpenKilometrageModal(vehicule)}
                                                     variant="outline"
@@ -317,9 +314,17 @@ const VehiculeUser: React.FC<VehiculeUserProps> = ({
                                                         </Button>
                                                     </Link>
                                                 ) : (
-                                                    <span className="rounded-lg border border-dashed border-gray-600 px-3 py-2 text-sm text-gray-500">
-                                                        Aucune assurance
-                                                    </span>
+                                                    <Link
+                                                        href={route('assurances.create')}
+                                                        className="group relative inline-flex items-center gap-2 text-sm font-medium text-blue-600 transition-all duration-300 hover:gap-3 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                                    > <Button
+                                                        variant="outline"
+                                                        className="flex items-center gap-2 border-green-500 bg-green-800/20 text-green-400 transition-all duration-200 hover:bg-green-700/50 hover:text-white"
+                                                    >
+                                                            <CirclePlus className="h-4 w-4" />
+                                                            Assurance
+                                                        </Button>
+                                                    </Link>
                                                 )}
                                             </div>
                                         </div>

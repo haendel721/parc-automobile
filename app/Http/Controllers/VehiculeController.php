@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\EntretienKilometrageNotification;
 use App\Models\Kilometrage;
+use App\Notifications\NotifyEntretien5000km;
 
 class VehiculeController extends Controller
 {
@@ -185,20 +186,20 @@ class VehiculeController extends Controller
         // ✅ Mise à jour des données du véhicule
         $vehicule->update($data);
         // ✅ Vérification du kilométrage pour déclencher une notification
-        if ($vehicule->kilometrique >= 5000) {
-            // Récupération de l'utilisateur propriétaire (assure-toi que la relation user() existe dans ton modèle Vehicule)
-            $user = $vehicule->user;
+        // if ($vehicule->kilometrique >= 5000) {
+        //     // Récupération de l'utilisateur propriétaire (assure-toi que la relation user() existe dans ton modèle Vehicule)
+        //     $user = $vehicule->user;
 
-            // Vérification pour éviter les doublons (par exemple, si la notification a déjà été envoyée)
-            $dejaNotif = $user->notifications()
-                ->where('data->vehicule_id', $vehicule->id)
-                ->where('data->type', 'kilometrage')
-                ->exists();
+        //     // Vérification pour éviter les doublons (par exemple, si la notification a déjà été envoyée)
+        //     $dejaNotif = $user->notifications()
+        //         ->where('data->vehicule_id', $vehicule->id)
+        //         ->where('data->type', 'kilometrage')
+        //         ->exists();
 
-            if (!$dejaNotif) {
-                $user->notify(new EntretienKilometrageNotification($vehicule));
-            }
-        }
+        //     if (!$dejaNotif) {
+        //         $user->notify(new NotifyEntretien5000km($vehicule,$kilometrageCumule,$kilometrage));
+        //     }
+        // }
 
         return redirect()->route('vehicules.index')->with('message', 'Véhicule mis à jour avec succès.');
     }

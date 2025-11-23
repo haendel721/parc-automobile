@@ -136,10 +136,11 @@ Route::middleware(['auth', 'verified', 'role:admin|utilisateur|mecanicien'])->gr
         
         // Route pour l'API JSON
 Route::get('/api/consommation', [ConsommationController::class, 'index'])->name('api.consommation');
+Route::get('/consommation', [ConsommationController::class, 'getConsommationData']);
 // Ou la version alternative
 Route::get('/api/consommation-simple', [ConsommationController::class, 'consommationJson'])->name('api.consommation.simple');
     // kilométrage
-    Route::post('/vehicules/{vehicule}/kilometrage', [KilometrageController::class, 'store'])->name('kilometrages.store');
+    // Route::post('/vehicules/{vehicule}/kilometrage', [KilometrageController::class, 'store'])->name('kilometrages.store');
 
     // routes/web.php (pour Inertia)
     // Route::post('/kilometrages', [KilometrageController::class, 'store'])->name('kilometrages.store');

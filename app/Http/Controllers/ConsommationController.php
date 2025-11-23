@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\pleinCarburant;
 use App\Services\PleinCarburantService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -67,7 +69,100 @@ class ConsommationController extends Controller
             ], 500);
         }
     }
+    public function getConsommationData(): JsonResponse
+    {
+        try {
+            // 🔹 Récupérer tous les pleins de carburant avec les véhicules associés
+            $pleins = pleinCarburant::with('vehicule')
+                ->select([
+                    'vehicule_id',
+                    'date_plein',
+                    'quantite',
+                    'kilometrage',
+                    DB::raw('YEAR(date_plein) as annee'),
+                    DB::raw('WEEK(date_plein, 1) as semaine') // Semaine commençant le lundi
+                ])
+                ->whereNotNull('kilometrage')
+                ->orderBy('date_plein')
+                ->get();
 
+            if ($pleins->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'weeksData' => [],
+                    'total' => 0,
+                    'message' => 'Aucune donnée de consommation disponible'
+                ]);
+            }
+
+            // 🔹 Grouper par véhicule et par semaine
+            $groupedData = [];
+            
+            foreach ($pleins as $plein) {
+                $vehiculeId = $plein->vehicule_id;
+                $weekKey = $plein->annee . '-W' . str_pad($plein->semaine, 2, '0', STR_PAD_LEFT);
+                
+                if (!isset($groupedData[$vehiculeId])) {
+                    $groupedData[$vehiculeId] = [];
+                }
+                
+                if (!isset($groupedData[$vehiculeId][$weekKey])) {
+                    $groupedData[$vehiculeId][$weekKey] = [
+                        'vehicule_id' => $vehiculeId,
+                        'vehicule_nom' => $plein->vehicule->immatriculation ?? 'Inconnu',
+                        'week' => $weekKey,
+                        'litres' => 0,
+                        'km' => 0,
+                        'consommation' => 0
+                    ];
+                }
+                
+                // 🔹 Accumuler les litres et le kilométrage
+                $groupedData[$vehiculeId][$weekKey]['litres'] += $plein->quantite;
+                $groupedData[$vehiculeId][$weekKey]['km'] += $plein->kilometrage;
+            }
+
+            // 🔹 Calculer la consommation pour chaque semaine (L/100km)
+            $weeksData = [];
+            
+            foreach ($groupedData as $vehiculeWeeks) {
+                foreach ($vehiculeWeeks as $weekData) {
+                    if ($weekData['km'] > 0) {
+                        $weekData['consommation'] = ($weekData['litres'] / $weekData['km']) * 100;
+                    }
+                    
+                    // S'assurer que toutes les clés sont présentes et bien formatées
+                    $weeksData[] = [
+                        'week' => (string) $weekData['week'],
+                        'litres' => (float) $weekData['litres'],
+                        'km' => (float) $weekData['km'],
+                        'consommation' => (float) $weekData['consommation'],
+                        'vehicule_id' => (int) $weekData['vehicule_id'],
+                        'vehicule_nom' => (string) $weekData['vehicule_nom']
+                    ];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'weeksData' => $weeksData,
+                'total' => count($weeksData),
+                'message' => 'Données récupérées avec succès'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur dans ConsommationController: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'weeksData' => [],
+                'total' => 0,
+                'message' => 'Erreur serveur: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     /**
      * Version alternative avec requête directe comme votre exemple
      */

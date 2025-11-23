@@ -110,7 +110,7 @@ const KilometrageModal: React.FC<KilometrageModalProps> = ({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setApiError('');
-
+        
         post(route('kilometrages.store'), {
             onSuccess: () => {
                 reset();

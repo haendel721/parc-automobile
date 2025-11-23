@@ -123,11 +123,11 @@ export default function Index() {
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-4 rounded-2xl bg-blue-500/10 p-3 ">
-                                            <Link href={register()}>
+                                            {/* <Link href={register()}>
                                                 <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
                                                     <CirclePlus className="h-4 w-4" />
                                                 </Button>
-                                            </Link>
+                                            </Link> */}
                                             <Users className="h-8 w-8 text-blue-400" />
                                         </div>
                                         <div>
