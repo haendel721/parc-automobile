@@ -139,6 +139,7 @@ Route::get('/api/consommation', [ConsommationController::class, 'index'])->name(
 Route::get('/consommation', [ConsommationController::class, 'getConsommationData']);
 // Ou la version alternative
 Route::get('/api/consommation-simple', [ConsommationController::class, 'consommationJson'])->name('api.consommation.simple');
+Route::get('/api/debug-data', [ConsommationController::class, 'debugData'])->name('api.debug.data');
     // kilométrage
     // Route::post('/vehicules/{vehicule}/kilometrage', [KilometrageController::class, 'store'])->name('kilometrages.store');
 

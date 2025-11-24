@@ -88,10 +88,11 @@ class PleinCarburantService
             return $result;
 
         } catch (\Exception $e) {
-            \Log::error("Erreur dans getWeeklyConsumption pour véhicule $vehiculeId: " . $e->getMessage());
+            // \Log::error("Erreur dans getWeeklyConsumption pour véhicule $vehiculeId: " . $e->getMessage());
             return [];
         }
     }
+
     private function formatWeekLabel($date)
     {
         $carbon = Carbon::parse($date);
@@ -101,5 +102,4 @@ class PleinCarburantService
 
         return "Semaine {$week} - {$year} ({$monthName})";
     }
-
 }

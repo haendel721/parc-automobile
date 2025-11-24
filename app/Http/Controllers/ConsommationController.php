@@ -23,7 +23,7 @@ class ConsommationController extends Controller
         try {
             // 1. Récupérer l'utilisateur connecté
             $user = auth()->user();
-            
+
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -33,7 +33,7 @@ class ConsommationController extends Controller
             }
 
             // 2. Récupérer tous les véhicules de l'utilisateur
-            $vehicules = $user->vehicules ?? []; 
+            $vehicules = $user->vehicules ?? [];
 
             // 3. Préparer les données de consommation
             $weeksDataAll = [];
@@ -42,12 +42,18 @@ class ConsommationController extends Controller
                 try {
                     $weeksData = $this->pleinCarburantService->getWeeklyConsumption($vehicule->id);
 
-                    foreach ($weeksData as $week) {
-                        $week['vehicule_id'] = $vehicule->id;
-                        $week['vehicule_nom'] = $vehicule->immatriculation ?? "Véhicule {$vehicule->id}";
-                        $weeksDataAll[] = $week;
+                    // CORRECTION : Vérifier que $weeksData est un tableau et itérer correctement
+                    if (is_array($weeksData)) {
+                        foreach ($weeksData as $weekData) {
+                            // CORRECTION : Ajouter les informations du véhicule à chaque élément de semaine
+                            $weekData['vehicule_id'] = $vehicule->id;
+                            $weekData['vehicule_nom'] = $vehicule->immatriculation ?? "Véhicule {$vehicule->id}";
+                            $weeksDataAll[] = $weekData;
+                        }
                     }
                 } catch (\Exception $e) {
+                    // Log l'erreur pour ce véhicule mais continuer avec les autres
+                    \Log::error("Erreur pour le véhicule {$vehicule->id}: " . $e->getMessage());
                     continue;
                 }
             }
@@ -58,9 +64,9 @@ class ConsommationController extends Controller
                 'weeksData' => $weeksDataAll,
                 'total' => count($weeksDataAll)
             ]);
-
         } catch (\Exception $e) {
-            
+            \Log::error('Erreur dans ConsommationController@index: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Une erreur est survenue lors du chargement des données',
@@ -97,15 +103,15 @@ class ConsommationController extends Controller
 
             // 🔹 Grouper par véhicule et par semaine
             $groupedData = [];
-            
+
             foreach ($pleins as $plein) {
                 $vehiculeId = $plein->vehicule_id;
                 $weekKey = $plein->annee . '-W' . str_pad($plein->semaine, 2, '0', STR_PAD_LEFT);
-                
+
                 if (!isset($groupedData[$vehiculeId])) {
                     $groupedData[$vehiculeId] = [];
                 }
-                
+
                 if (!isset($groupedData[$vehiculeId][$weekKey])) {
                     $groupedData[$vehiculeId][$weekKey] = [
                         'vehicule_id' => $vehiculeId,
@@ -116,7 +122,7 @@ class ConsommationController extends Controller
                         'consommation' => 0
                     ];
                 }
-                
+
                 // 🔹 Accumuler les litres et le kilométrage
                 $groupedData[$vehiculeId][$weekKey]['litres'] += $plein->quantite;
                 $groupedData[$vehiculeId][$weekKey]['km'] += $plein->kilometrage;
@@ -124,13 +130,13 @@ class ConsommationController extends Controller
 
             // 🔹 Calculer la consommation pour chaque semaine (L/100km)
             $weeksData = [];
-            
+
             foreach ($groupedData as $vehiculeWeeks) {
                 foreach ($vehiculeWeeks as $weekData) {
                     if ($weekData['km'] > 0) {
                         $weekData['consommation'] = ($weekData['litres'] / $weekData['km']) * 100;
                     }
-                    
+
                     // S'assurer que toutes les clés sont présentes et bien formatées
                     $weeksData[] = [
                         'week' => (string) $weekData['week'],
@@ -149,7 +155,6 @@ class ConsommationController extends Controller
                 'total' => count($weeksData),
                 'message' => 'Données récupérées avec succès'
             ]);
-
         } catch (\Exception $e) {
             \Log::error('Erreur dans ConsommationController: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
@@ -166,6 +171,29 @@ class ConsommationController extends Controller
     /**
      * Version alternative avec requête directe comme votre exemple
      */
+    /**
+     * Méthode de débogage
+     */
+    public function debugData()
+    {
+        $user = auth()->user();
+
+        // Compter les pleins par véhicule
+        $pleinsCount = PleinCarburant::where('user_id', $user->id)
+            ->select('vehicule_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('vehicule_id')
+            ->get();
+
+        // Véhicules de l'utilisateur
+        $vehicules = $user->vehicules;
+
+        return response()->json([
+            'user_id' => $user->id,
+            'vehicules_count' => $vehicules->count(),
+            'pleins_par_vehicule' => $pleinsCount,
+            'vehicules_list' => $vehicules->pluck('immatriculation', 'id')
+        ]);
+    }
     public function consommationJson()
     {
         // 🔐 Récupérer l'utilisateur connecté
@@ -226,11 +254,11 @@ class ConsommationController extends Controller
             $moisNom = $moisNoms[$item->mois] ?? 'Inconnu';
             $item->periode = "Semaine {$item->semaine} - {$item->annee} ({$moisNom})";
             $item->week = "{$item->annee}-W{$item->semaine}";
-            
+
             // Vous pouvez ajouter d'autres calculs ici si nécessaire
             // Par exemple, si vous avez les kilométrages dans une autre table
             $item->consommation = 0; // À calculer selon votre logique métier
-            
+
             return $item;
         });
 
