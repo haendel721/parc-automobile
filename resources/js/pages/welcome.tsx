@@ -15,7 +15,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Bienvenue - AutoPlus">
+            <Head title="Bienvenue">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
             </Head>
@@ -27,7 +27,7 @@ export default function Welcome() {
                 }}
             >
                 {/* Overlay sombre pour améliorer la lisibilité */}
-                <div className="min-h-screen bg-black/50">
+                <div className="min-h-screen bg-black/85">
                     {/* Navigation */}
                     <header className="px-8 py-4">
                         <nav className="flex items-center justify-between">

@@ -263,8 +263,8 @@ function Consommation() {
                     beginAtZero: true,
                     ticks: {
                         color: '#ddd',
-                        maxRotation: 45,
-                        minRotation: 45,
+                        maxRotation: 0,
+                        minRotation: 0,
                         font: {
                             size: 11
                         }
@@ -445,7 +445,7 @@ function Consommation() {
             </div>
 
             {/* Tableau des données détaillées */}
-            <div className="mt-8 p-6 bg-gray-800/50 rounded-lg">
+            {/* <div className="mt-8 p-6 bg-gray-800/50 rounded-lg">
                 <h4 className="text-lg font-semibold text-white mb-4">Détails des données</h4>
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-gray-900/50 rounded-lg overflow-hidden">
@@ -469,7 +469,7 @@ function Consommation() {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

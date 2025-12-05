@@ -33,7 +33,7 @@ export default function Login({ canResetPassword }: LoginProps) {
                     backgroundImage: `url('${welcomeBackground}')`,
                 }}
             >
-                <div className="flex min-h-screen bg-black/40">
+                <div className="flex min-h-screen bg-black/70">
                     <div className="flex flex-1 items-center justify-center px-4">
                         <div className="w-full max-w-2xl rounded-2xl border border-white/20 bg-gradient-to-br from-gray-900/80 to-gray-800/20 p-8 backdrop-blur-sm sm:p-12 lg:p-16">
                             {/* Icône maison en haut à gauche */}
