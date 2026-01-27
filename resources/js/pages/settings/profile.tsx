@@ -26,7 +26,7 @@ import {
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Profile settings',
+    title: 'Paramètre du profil',
     href: edit().url,
   },
 ];
@@ -36,7 +36,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Profile settings" />
+      <Head title="Paramètre du profil" />
 
       <SettingsLayout>
         <div className="space-y-8">
@@ -67,14 +67,14 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                 <div className="bg-gray-800/30 rounded-2xl border border-gray-700/50 p-6">
                   <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
                     <User className="h-5 w-5 text-blue-400" />
-                    Personal Information
+                    Information personnel 
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-gray-300 flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        First Name
+                        Prénom
                       </Label>
                       <Input
                         id="name"
@@ -83,7 +83,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         name="name"
                         required
                         autoComplete="name"
-                        placeholder="Enter your first name"
+                        placeholder="Entrer votre prénom"
                       />
                       <InputError className="mt-1" message={errors.name} />
                     </div>
@@ -91,7 +91,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     <div className="space-y-2">
                       <Label htmlFor="prenom" className="text-gray-300 flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        Last Name
+                        Nom
                       </Label>
                       <Input
                         id="prenom"
@@ -108,7 +108,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     <div className="space-y-2">
                       <Label htmlFor="phone" className="text-gray-300 flex items-center gap-2">
                         <Phone className="h-4 w-4" />
-                        Phone Number
+                        Téléphone
                       </Label>
                       <Input
                         id="phone"
@@ -125,7 +125,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-gray-300 flex items-center gap-2">
                         <Mail className="h-4 w-4" />
-                        Email Address
+                        Email 
                       </Label>
                       <Input
                         id="email"
@@ -146,7 +146,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                 <div className="bg-gray-800/30 rounded-2xl border border-gray-700/50 p-6">
                   <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
                     <Briefcase className="h-5 w-5 text-green-400" />
-                    Professional Information
+                    Information professionnel
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -170,7 +170,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     <div className="space-y-2">
                       <Label htmlFor="fonction" className="text-gray-300 flex items-center gap-2">
                         <Briefcase className="h-4 w-4" />
-                        Position
+                        Fonction
                       </Label>
                       <Input
                         id="fonction"
@@ -275,7 +275,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                   </div>
 
                   <div className="text-xs text-gray-500 hidden sm:block">
-                    Last updated: {new Date().toLocaleDateString()}
+                    Dernier modification: {new Date().toLocaleDateString()}
                   </div>
                 </div>
               </>
